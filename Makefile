@@ -1,9 +1,9 @@
 # Makefile for Special Token Magic in Transformers book
 
 # Main LaTeX compiler
-LATEX = pdflatex
+LATEX = lualatex
 BIBER = biber
-LATEX_FLAGS = -interaction=nonstopmode -halt-on-error
+LATEX_FLAGS = -shell-escape -interaction=nonstopmode
 
 # Main document
 MAIN = main

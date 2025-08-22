@@ -71,8 +71,10 @@
 % Create grid for attention visualization
 \foreach \i in {0,...,8} {
     \foreach \j in {0,...,8} {
-        \pgfmathsetmacro{\opacity}{0.1 + 0.8*random()}
-        \node[rectangle, fill=bertblue, opacity=\opacity, minimum size=0.3cm] at (2.2+\i*0.2, 2.2+\j*0.2) {};
+        \pgfmathsetmacro{\opacityval}{0.1 + 0.05*(\i+\j)}
+        \pgfmathsetmacro{\xpos}{2.2+\i*0.2}
+        \pgfmathsetmacro{\ypos}{2.2+\j*0.2}
+        \node[rectangle, fill=bertblue, opacity=\opacityval, minimum size=0.3cm] at (\xpos, \ypos) {};
     }
 }
 
@@ -94,13 +96,13 @@
 \node[label, align=left, text width=3cm] at (7, 0.8) {\textcolor{red}{Cross-Segment:}\\Semantic alignment\\Entailment detection};
 
 % Information flow arrows
-\draw[arrow, very thick, bertblue] (1.5, 4.5) -- (1.5, 4);
+\draw[->, very thick, bertblue] (1.5, 4.5) -- (1.5, 4);
 \node[label, bertblue] at (1.5, 4.2) {Local};
 
-\draw[arrow, very thick, sepviolet] (4, 4.5) -- (4, 4);
+\draw[->, very thick, sepviolet] (4, 4.5) -- (4, 4);
 \node[label, sepviolet] at (4, 4.2) {Bridge};
 
-\draw[arrow, very thick, gptgreen] (6.5, 4.5) -- (6.5, 4);
+\draw[->, very thick, gptgreen] (6.5, 4.5) -- (6.5, 4);
 \node[label, gptgreen] at (6.5, 4.2) {Local};
 
 % Bidirectional flow indicator
