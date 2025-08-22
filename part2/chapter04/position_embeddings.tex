@@ -288,10 +288,10 @@ Different position embedding strategies offer varying degrees of invariance:
 \toprule
 \textbf{Position Embedding} & \textbf{Translation} & \textbf{Scale} & \textbf{Rotation} \\
 \midrule
-Learned Absolute & ✗ & ✗ & ✗ \\
-Sinusoidal 2D & ✗ & ✓ (partial) & ✗ \\
-Relative 2D & ✓ (partial) & ✓ (partial) & ✗ \\
-Rotary 2D & ✓ (partial) & ✓ (partial) & ✓ (partial) \\
+Learned Absolute & $\times$ & $\times$ & $\times$ \\
+Sinusoidal 2D & $\times$ & $\checkmark$ (partial) & $\times$ \\
+Relative 2D & $\checkmark$ (partial) & $\checkmark$ (partial) & $\times$ \\
+Rotary 2D & $\checkmark$ (partial) & $\checkmark$ (partial) & $\checkmark$ (partial) \\
 \bottomrule
 \end{tabular}
 \caption{Invariance properties of different position embedding strategies in vision transformers.}
@@ -608,7 +608,7 @@ Based on extensive research and practical experience, several best practices eme
     \item Detection/Segmentation: Relative or conditional embeddings preferred
     \item Multi-scale tasks: Hierarchical embeddings recommended
     \end{itemize}
-\item \textbf{Initialization Strategy}: Initialize learned embeddings with small random values (σ ≈ 0.02)
+\item \textbf{Initialization Strategy}: Initialize learned embeddings with small random values ($\sigma \approx 0.02$)
 \item \textbf{Interpolation Method}: Use bicubic interpolation for resolution transfer
 \item \textbf{Spatial Consistency}: Ensure position embeddings maintain spatial relationships
 \item \textbf{Regular Evaluation}: Test position embedding effectiveness across different resolutions
