@@ -1,7 +1,7 @@
 \documentclass[11pt,oneside]{book}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
-\usepackage{lmodern}
+\usepackage{times}
 \usepackage{geometry}
 \geometry{
     paperwidth=7in,
@@ -43,7 +43,7 @@
 
 % Code listing settings
 \lstset{
-    basicstyle=\ttfamily\small,
+    basicstyle=\ttfamily\scriptsize,
     keywordstyle=\color{bertblue}\bfseries,
     commentstyle=\color{gray}\itshape,
     stringstyle=\color{gptgreen},
@@ -53,14 +53,21 @@
     frame=single,
     backgroundcolor=\color{gray!5},
     tabsize=2,
-    captionpos=b
+    captionpos=b,
+    xleftmargin=0.5cm,
+    xrightmargin=0.5cm
 }
 
 % Theorem environments
 \theoremstyle{definition}
 \newtheorem{definition}{Definition}[chapter]
-\newtheorem{example}{Example}[chapter]
+\newtheorem{exampleinner}{Example}[chapter]
 \newtheorem{principle}{Principle}[chapter]
+
+% Custom example environment with proper spacing for code blocks
+\newenvironment{example}
+  {\begin{exampleinner}\leavevmode\par\nobreak\vspace{0.5\baselineskip}}
+  {\end{exampleinner}}
 
 \theoremstyle{plain}
 \newtheorem{theorem}{Theorem}[chapter]
@@ -87,8 +94,9 @@
 \title{{\Huge \textbf{Special Token Magic\\in Transformers}}\\[0.5cm]
 {\Large A Comprehensive Guide for AI Practitioners}\\[1cm]
 {\large From Fundamentals to Advanced Applications}}
-\author{{\Large An AI-Assisted Technical Book}\\[0.5cm]
-{\normalsize Exploring the Hidden Power of Special Tokens}}
+\author{{\Large Haifeng Gong}\\[0.3cm]
+{\normalsize haifeng.gong@gmail.com}\\[0.5cm]
+{\small A Comprehensive Guide for AI Practitioners}}
 \date{\today}
 
 \begin{document}
@@ -170,8 +178,51 @@
 \input{part3/chapter09/fine_tuning}
 \input{part3/chapter09/evaluation_metrics}
 
-% Part IV-V and appendices commented out for future expansion
-% TODO: Uncomment as content is added
+% Part IV: Practical Implementation
+\part{Practical Implementation}
+
+\chapter{Implementation Guidelines}
+\input{part4/chapter10/introduction}
+\input{part4/chapter10/tokenizer_modification}
+\input{part4/chapter10/embedding_design}
+\input{part4/chapter10/attention_masks}
+\input{part4/chapter10/position_encoding}
+
+% Part IV continued: Chapters 11-12 commented out for future expansion
+% TODO: Uncomment as content is developed
+
+% \chapter{Training Strategies}
+% \input{part4/chapter11/introduction}
+% \input{part4/chapter11/initialization}
+% \input{part4/chapter11/learning_rate_scheduling}
+% \input{part4/chapter11/freezing_strategies}
+% \input{part4/chapter11/regularization}
+
+% \chapter{Debugging and Analysis}
+% \input{part4/chapter12/introduction}
+% \input{part4/chapter12/attention_visualization}
+% \input{part4/chapter12/probing_representations}
+% \input{part4/chapter12/common_pitfalls}
+% \input{part4/chapter12/performance_profiling}
+
+% Part V: Future Directions commented out for future expansion
+% TODO: Uncomment as content is developed
+
+% \part{Future Directions}
+
+% \chapter{Emerging Paradigms}
+% \input{part5/chapter13/introduction}
+% \input{part5/chapter13/dynamic_tokens}
+% \input{part5/chapter13/hierarchical_tokens}
+% \input{part5/chapter13/cross_architecture_transfer}
+% \input{part5/chapter13/neural_architecture_search}
+
+% \chapter{Research Frontiers}
+% \input{part5/chapter14/introduction}
+% \input{part5/chapter14/theoretical_understanding}
+% \input{part5/chapter14/biological_inspirations}
+% \input{part5/chapter14/quantum_inspired}
+% \input{part5/chapter14/open_problems}
 
 \printbibliography[heading=bibintoc,title={References}]
 

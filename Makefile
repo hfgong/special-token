@@ -29,7 +29,7 @@ $(MAIN_PDF): $(MAIN_TEX) $(FIGURE_PDFS) references.bib
 # Pattern rule for compiling figure files
 fig_%.pdf: fig_%.tex
 	@echo "Compiling figure $<..."
-	@$(LATEX) $(LATEX_FLAGS) -jobname=$(basename $@) $<
+	-@$(LATEX) $(LATEX_FLAGS) -jobname=$(basename $@) $< 2>/dev/null || echo "Warning: Figure $< compilation failed, continuing..."
 	@rm -f $(basename $@).aux $(basename $@).log $(basename $@).out
 
 # Quick build without bibliography

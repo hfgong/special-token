@@ -1,2 +1,494 @@
+% Embedding Design
+
 \section{Embedding Design}
-% TODO: Content to be added
+
+The design and initialization of special token embeddings significantly impacts model performance and training dynamics. Unlike regular token embeddings that learn from frequent occurrence in training data, special token embeddings often require careful initialization strategies and specialized training approaches to ensure they effectively capture their intended functionality.
+
+\subsection{Initialization Strategies for Special Token Embeddings}
+
+The initialization of special token embeddings must balance between providing useful starting points and avoiding interference with pre-existing model knowledge.
+
+\begin{lstlisting}[language=Python, caption=Advanced initialization strategies for special token embeddings]
+import torch
+import torch.nn as nn
+import numpy as np
+
+class SpecialTokenEmbeddingInitializer:
+    def __init__(self, model, embedding_dim=768):
+        self.model = model
+        self.embedding_dim = embedding_dim
+        self.existing_embeddings = model.embeddings.word_embeddings.weight.data
+        
+    def initialize_special_tokens(self, special_token_ids, strategy='xavier_uniform'):
+        """Initialize special token embeddings with various strategies."""
+        
+        for token_id in special_token_ids:
+            if strategy == 'xavier_uniform':
+                embedding = self._xavier_uniform_init()
+            elif strategy == 'xavier_normal':
+                embedding = self._xavier_normal_init()
+            elif strategy == 'average_existing':
+                embedding = self._average_existing_init()
+            elif strategy == 'contextual_similarity':
+                embedding = self._contextual_similarity_init(token_id)
+            elif strategy == 'task_specific':
+                embedding = self._task_specific_init(token_id)
+            elif strategy == 'orthogonal':
+                embedding = self._orthogonal_init()
+            else:
+                raise ValueError(f"Unknown initialization strategy: {strategy}")
+                
+            self.model.embeddings.word_embeddings.weight.data[token_id] = embedding
+            
+    def _xavier_uniform_init(self):
+        """Xavier uniform initialization."""
+        limit = np.sqrt(6.0 / (self.embedding_dim + 1))
+        return torch.FloatTensor(self.embedding_dim).uniform_(-limit, limit)
+        
+    def _xavier_normal_init(self):
+        """Xavier normal initialization."""
+        std = np.sqrt(2.0 / (self.embedding_dim + 1))
+        return torch.randn(self.embedding_dim) * std
+        
+    def _average_existing_init(self):
+        """Initialize as average of existing embeddings."""
+        # Sample random subset to avoid memory issues
+        num_samples = min(1000, len(self.existing_embeddings))
+        indices = torch.randperm(len(self.existing_embeddings))[:num_samples]
+        sampled_embeddings = self.existing_embeddings[indices]
+        return sampled_embeddings.mean(dim=0)
+        
+    def _contextual_similarity_init(self, token_id):
+        """Initialize based on contextual similarity to token purpose."""
+        # Map special tokens to similar existing tokens
+        similarity_map = {
+            '[CLS]': ['start', 'begin', 'first'],
+            '[SEP]': ['separator', 'divide', 'split'],
+            '[MASK]': ['unknown', 'hidden', 'blank'],
+            '[PAD]': ['padding', 'fill', 'empty'],
+        }
+        
+        # Get token string
+        token_str = self.model.tokenizer.convert_ids_to_tokens([token_id])[0]
+        
+        # Find similar tokens
+        similar_tokens = similarity_map.get(token_str, [])
+        if similar_tokens:
+            similar_ids = self.model.tokenizer.convert_tokens_to_ids(similar_tokens)
+            similar_embeddings = self.existing_embeddings[similar_ids]
+            return similar_embeddings.mean(dim=0)
+        else:
+            return self._average_existing_init()
+            
+    def _task_specific_init(self, token_id):
+        """Initialize based on intended task."""
+        token_str = self.model.tokenizer.convert_ids_to_tokens([token_id])[0]
+        
+        if '[CLS]' in token_str:
+            # Initialize for classification: slight bias toward positive dimensions
+            base = self._xavier_normal_init()
+            base[:self.embedding_dim//2] *= 1.1
+            return base
+        elif '[SEP]' in token_str:
+            # Initialize for separation: orthogonal to average
+            avg = self._average_existing_init()
+            orthogonal = self._make_orthogonal_to(avg)
+            return orthogonal
+        elif '[MASK]' in token_str:
+            # Initialize for masking: closer to uniform distribution
+            return torch.randn(self.embedding_dim) * 0.02
+        else:
+            return self._xavier_uniform_init()
+            
+    def _orthogonal_init(self):
+        """Initialize orthogonal to existing embeddings."""
+        # Use QR decomposition to find orthogonal vector
+        sample_embeddings = self.existing_embeddings[:min(100, len(self.existing_embeddings))]
+        Q, _ = torch.qr(sample_embeddings.T)
+        
+        # Take a column that's orthogonal to existing space
+        if Q.shape[1] < self.embedding_dim:
+            # Find orthogonal complement
+            return self._find_orthogonal_complement(Q)
+        else:
+            # Use last column as it's most orthogonal
+            return Q[:, -1]
+            
+    def _make_orthogonal_to(self, vector):
+        """Make a random vector orthogonal to given vector."""
+        random_vec = torch.randn_like(vector)
+        # Gram-Schmidt process
+        projection = (random_vec @ vector) / (vector @ vector) * vector
+        orthogonal = random_vec - projection
+        return orthogonal / orthogonal.norm()
+        
+    def _find_orthogonal_complement(self, Q):
+        """Find vector in orthogonal complement of Q."""
+        # Create random vector
+        v = torch.randn(self.embedding_dim)
+        
+        # Project out components in Q
+        for i in range(Q.shape[1]):
+            q_i = Q[:, i]
+            v = v - (v @ q_i) * q_i
+            
+        return v / v.norm()
+\end{lstlisting}
+
+\subsection{Adaptive Embedding Updates}
+
+Special token embeddings often benefit from adaptive update strategies that account for their unique roles in the model.
+
+\begin{lstlisting}[language=Python, caption=Adaptive embedding update strategies]
+class AdaptiveEmbeddingUpdater:
+    def __init__(self, model, special_token_ids):
+        self.model = model
+        self.special_token_ids = set(special_token_ids)
+        self.update_statistics = {}
+        
+    def create_adaptive_optimizer(self, base_lr=5e-5):
+        """Create optimizer with different learning rates for special tokens."""
+        
+        # Separate parameters
+        special_token_params = []
+        regular_params = []
+        
+        for name, param in self.model.named_parameters():
+            if 'embeddings.word_embeddings' in name:
+                # Check if this embedding corresponds to special tokens
+                if self._is_special_token_param(param):
+                    special_token_params.append(param)
+                else:
+                    regular_params.append(param)
+            else:
+                regular_params.append(param)
+                
+        # Create optimizer with different learning rates
+        optimizer = torch.optim.AdamW([
+            {'params': regular_params, 'lr': base_lr},
+            {'params': special_token_params, 'lr': base_lr * 2.0}  # Higher LR for special tokens
+        ])
+        
+        return optimizer
+        
+    def apply_gradient_scaling(self, model):
+        """Apply gradient scaling to special token embeddings."""
+        embeddings = model.embeddings.word_embeddings
+        
+        # Register gradient hook
+        def scale_gradients(grad):
+            # Create scaling mask
+            scaling_mask = torch.ones_like(grad)
+            
+            for token_id in self.special_token_ids:
+                # Scale gradients for special tokens
+                scaling_mask[token_id] *= 1.5  # Increase gradient magnitude
+                
+            return grad * scaling_mask
+            
+        embeddings.weight.register_hook(scale_gradients)
+        
+    def update_with_momentum(self, token_id, gradient, momentum=0.9):
+        """Update special token embedding with momentum."""
+        if token_id not in self.update_statistics:
+            self.update_statistics[token_id] = {
+                'momentum': torch.zeros_like(gradient),
+                'update_count': 0
+            }
+            
+        stats = self.update_statistics[token_id]
+        
+        # Update momentum
+        stats['momentum'] = momentum * stats['momentum'] + (1 - momentum) * gradient
+        stats['update_count'] += 1
+        
+        # Apply bias correction
+        bias_correction = 1 - momentum ** stats['update_count']
+        corrected_momentum = stats['momentum'] / bias_correction
+        
+        return corrected_momentum
+        
+    def adaptive_clipping(self, token_id, gradient, clip_value=1.0):
+        """Apply adaptive gradient clipping for special tokens."""
+        if token_id not in self.update_statistics:
+            self.update_statistics[token_id] = {
+                'grad_norm_history': [],
+                'clip_value': clip_value
+            }
+            
+        stats = self.update_statistics[token_id]
+        
+        # Track gradient norm
+        grad_norm = gradient.norm().item()
+        stats['grad_norm_history'].append(grad_norm)
+        
+        # Adapt clipping value based on history
+        if len(stats['grad_norm_history']) > 100:
+            # Use exponential moving average of gradient norms
+            avg_norm = np.mean(stats['grad_norm_history'][-100:])
+            std_norm = np.std(stats['grad_norm_history'][-100:])
+            
+            # Adaptive clipping threshold
+            adaptive_clip = avg_norm + 2 * std_norm
+            stats['clip_value'] = min(clip_value, adaptive_clip)
+            
+        # Apply clipping
+        if grad_norm > stats['clip_value']:
+            gradient = gradient * (stats['clip_value'] / grad_norm)
+            
+        return gradient
+\end{lstlisting}
+
+\subsection{Embedding Regularization Techniques}
+
+Regularization helps prevent special token embeddings from diverging too far from the main embedding space while maintaining their distinctive properties.
+
+\begin{lstlisting}[language=Python, caption=Regularization techniques for special token embeddings]
+class EmbeddingRegularizer:
+    def __init__(self, model, special_token_ids, reg_weight=0.01):
+        self.model = model
+        self.special_token_ids = special_token_ids
+        self.reg_weight = reg_weight
+        self.reference_embeddings = None
+        
+    def initialize_references(self):
+        """Store reference embeddings for regularization."""
+        embeddings = self.model.embeddings.word_embeddings.weight.data
+        self.reference_embeddings = embeddings.clone()
+        
+    def l2_regularization(self):
+        """L2 regularization to prevent large deviations."""
+        embeddings = self.model.embeddings.word_embeddings.weight
+        reg_loss = 0
+        
+        for token_id in self.special_token_ids:
+            current_emb = embeddings[token_id]
+            reference_emb = self.reference_embeddings[token_id]
+            
+            # L2 distance from reference
+            reg_loss += torch.norm(current_emb - reference_emb, p=2) ** 2
+            
+        return self.reg_weight * reg_loss
+        
+    def cosine_similarity_regularization(self):
+        """Maintain cosine similarity with neighboring embeddings."""
+        embeddings = self.model.embeddings.word_embeddings.weight
+        reg_loss = 0
+        
+        for token_id in self.special_token_ids:
+            special_emb = embeddings[token_id]
+            
+            # Sample neighboring embeddings
+            num_neighbors = 10
+            neighbor_ids = torch.randperm(len(embeddings))[:num_neighbors]
+            neighbor_embs = embeddings[neighbor_ids]
+            
+            # Compute average cosine similarity
+            cosine_sims = torch.nn.functional.cosine_similarity(
+                special_emb.unsqueeze(0),
+                neighbor_embs,
+                dim=1
+            )
+            
+            # Regularize to maintain moderate similarity (not too high, not too low)
+            target_similarity = 0.3
+            reg_loss += ((cosine_sims - target_similarity) ** 2).mean()
+            
+        return self.reg_weight * reg_loss
+        
+    def spectral_regularization(self):
+        """Regularize spectral properties of embedding matrix."""
+        embeddings = self.model.embeddings.word_embeddings.weight
+        
+        # Include special tokens in spectral analysis
+        special_embeddings = embeddings[self.special_token_ids]
+        
+        # Compute singular values
+        _, S, _ = torch.svd(special_embeddings)
+        
+        # Regularize condition number (ratio of largest to smallest singular value)
+        condition_number = S[0] / (S[-1] + 1e-8)
+        
+        # Penalty for high condition number
+        reg_loss = self.reg_weight * torch.log(condition_number)
+        
+        return reg_loss
+        
+    def diversity_regularization(self):
+        """Encourage diversity among special token embeddings."""
+        embeddings = self.model.embeddings.word_embeddings.weight
+        special_embeddings = embeddings[self.special_token_ids]
+        
+        # Compute pairwise similarities
+        similarities = torch.mm(special_embeddings, special_embeddings.T)
+        
+        # Normalize by embedding norms
+        norms = torch.norm(special_embeddings, dim=1, keepdim=True)
+        norm_matrix = torch.mm(norms, norms.T)
+        similarities = similarities / (norm_matrix + 1e-8)
+        
+        # Penalty for high similarity (encourage diversity)
+        # Exclude diagonal (self-similarity)
+        mask = 1 - torch.eye(len(special_embeddings), device=similarities.device)
+        reg_loss = (similarities * mask).abs().mean()
+        
+        return self.reg_weight * reg_loss
+\end{lstlisting}
+
+\subsection{Dynamic Embedding Adaptation}
+
+Special token embeddings can be dynamically adapted during training based on their usage patterns and the model's needs.
+
+\begin{lstlisting}[language=Python, caption=Dynamic adaptation of special token embeddings]
+class DynamicEmbeddingAdapter:
+    def __init__(self, model, special_token_ids):
+        self.model = model
+        self.special_token_ids = special_token_ids
+        self.usage_statistics = {tid: {'count': 0, 'contexts': []} 
+                                 for tid in special_token_ids}
+        
+    def track_usage(self, input_ids, attention_weights):
+        """Track how special tokens are being used."""
+        batch_size, seq_len = input_ids.shape
+        
+        for token_id in self.special_token_ids:
+            # Find positions of special token
+            positions = (input_ids == token_id).nonzero(as_tuple=True)
+            
+            if len(positions[0]) > 0:
+                for batch_idx, pos_idx in zip(positions[0], positions[1]):
+                    self.usage_statistics[token_id]['count'] += 1
+                    
+                    # Store attention context
+                    token_attention = attention_weights[batch_idx, :, pos_idx, :]
+                    avg_attention = token_attention.mean(dim=0)  # Average over heads
+                    self.usage_statistics[token_id]['contexts'].append(avg_attention)
+                    
+    def adapt_embeddings(self, adaptation_rate=0.01):
+        """Adapt embeddings based on usage patterns."""
+        embeddings = self.model.embeddings.word_embeddings
+        
+        for token_id in self.special_token_ids:
+            stats = self.usage_statistics[token_id]
+            
+            if stats['count'] > 100:  # Sufficient usage for adaptation
+                # Analyze attention patterns
+                contexts = torch.stack(stats['contexts'][-100:])  # Last 100 uses
+                
+                # Compute principal components of attention patterns
+                U, S, V = torch.svd(contexts.T)
+                principal_direction = U[:, 0]  # First principal component
+                
+                # Get tokens that receive most attention from this special token
+                top_attended_positions = principal_direction.topk(10).indices
+                top_attended_embeddings = embeddings.weight[top_attended_positions]
+                
+                # Adapt embedding toward attended context
+                context_centroid = top_attended_embeddings.mean(dim=0)
+                current_embedding = embeddings.weight[token_id]
+                
+                # Gradual adaptation
+                adapted_embedding = ((1 - adaptation_rate) * current_embedding + 
+                                   adaptation_rate * context_centroid)
+                
+                embeddings.weight.data[token_id] = adapted_embedding
+                
+                # Reset statistics periodically
+                if stats['count'] > 1000:
+                    stats['count'] = 0
+                    stats['contexts'] = stats['contexts'][-100:]  # Keep recent history
+                    
+    def reinforcement_adaptation(self, token_id, reward_signal):
+        """Adapt embedding based on task performance feedback."""
+        embeddings = self.model.embeddings.word_embeddings
+        current_embedding = embeddings.weight[token_id]
+        
+        # Compute update direction based on reward
+        if reward_signal > 0:
+            # Positive reward: reinforce current direction
+            noise = torch.randn_like(current_embedding) * 0.01
+            update = current_embedding + noise
+        else:
+            # Negative reward: explore different direction
+            noise = torch.randn_like(current_embedding) * 0.05
+            update = current_embedding - reward_signal * noise
+            
+        # Apply update with learning rate
+        learning_rate = 0.001 * abs(reward_signal)
+        new_embedding = (1 - learning_rate) * current_embedding + learning_rate * update
+        
+        embeddings.weight.data[token_id] = new_embedding
+\end{lstlisting}
+
+\subsection{Embedding Projection and Transformation}
+
+Special tokens may benefit from additional projection layers that transform their embeddings based on context.
+
+\begin{lstlisting}[language=Python, caption=Contextual projection of special token embeddings]
+class SpecialTokenProjection(nn.Module):
+    def __init__(self, embedding_dim=768, num_special_tokens=10):
+        super().__init__()
+        self.embedding_dim = embedding_dim
+        self.num_special_tokens = num_special_tokens
+        
+        # Projection matrices for each special token
+        self.projections = nn.ModuleDict({
+            f'token_{i}': nn.Linear(embedding_dim, embedding_dim)
+            for i in range(num_special_tokens)
+        })
+        
+        # Context-aware gating
+        self.context_gate = nn.Sequential(
+            nn.Linear(embedding_dim * 2, embedding_dim),
+            nn.Tanh(),
+            nn.Linear(embedding_dim, embedding_dim),
+            nn.Sigmoid()
+        )
+        
+    def forward(self, embeddings, token_ids, context_embeddings=None):
+        """Apply contextual projection to special token embeddings."""
+        batch_size, seq_len, _ = embeddings.shape
+        projected_embeddings = embeddings.clone()
+        
+        for i in range(self.num_special_tokens):
+            # Find positions of this special token
+            mask = (token_ids == i)
+            
+            if mask.any():
+                # Get embeddings for this special token
+                token_embeddings = embeddings[mask]
+                
+                # Apply projection
+                projection = self.projections[f'token_{i}']
+                projected = projection(token_embeddings)
+                
+                # Apply context gating if available
+                if context_embeddings is not None:
+                    context_for_token = context_embeddings[mask]
+                    
+                    # Compute gate values
+                    combined = torch.cat([token_embeddings, context_for_token], dim=-1)
+                    gate = self.context_gate(combined)
+                    
+                    # Apply gating
+                    projected = gate * projected + (1 - gate) * token_embeddings
+                    
+                # Update embeddings
+                projected_embeddings[mask] = projected
+                
+        return projected_embeddings
+\end{lstlisting}
+
+\subsection{Best Practices for Embedding Design}
+
+When designing embeddings for special tokens, consider these best practices:
+
+\begin{itemize}
+\item \textbf{Initialization Strategy}: Choose initialization based on token purpose and model architecture
+\item \textbf{Learning Rate Scheduling}: Use different learning rates for special vs. regular tokens
+\item \textbf{Regularization}: Apply appropriate regularization to prevent overfitting
+\item \textbf{Monitoring}: Track embedding evolution and usage patterns during training
+\item \textbf{Adaptation}: Allow embeddings to adapt based on task requirements
+\item \textbf{Evaluation}: Regularly evaluate the quality of special token representations
+\item \textbf{Stability}: Ensure embeddings remain stable and don't diverge during training
+\end{itemize}

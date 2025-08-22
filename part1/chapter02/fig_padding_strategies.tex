@@ -6,6 +6,8 @@
 \definecolor{gptgreen}{RGB}{52,168,83}
 \definecolor{padgray}{RGB}{200,200,200}
 \definecolor{realtoken}{RGB}{255,255,255}
+\definecolor{sepviolet}{RGB}{142,36,245}
+\definecolor{clsorange}{RGB}{251,188,5}
 
 \begin{document}
 \begin{tikzpicture}[
@@ -60,7 +62,7 @@
 
 % Bucket 1: Short sequences
 \node[label] at (5, 7.5) {Bucket 1:};
-\node[label] at (5, 7.3) {(len ≤ 3)};
+\node[label] at (5, 7.3) {(len $\leq$ 3)};
 \foreach \i in {0,...,2} {
     \node[realtoken] at (6+\i*0.3, 7.5) {};
 }
@@ -75,7 +77,7 @@
 
 % Bucket 2: Medium sequences
 \node[label] at (5, 6.8) {Bucket 2:};
-\node[label] at (5, 6.6) {(len ≤ 7)};
+\node[label] at (5, 6.6) {(len $\leq$ 7)};
 \foreach \i in {0,...,6} {
     \node[realtoken] at (6+\i*0.3, 6.8) {};
 }
@@ -83,7 +85,7 @@
 
 % Bucket 3: Long sequences
 \node[label] at (5, 6.3) {Bucket 3:};
-\node[label] at (5, 6.1) {(len ≤ 10)};
+\node[label] at (5, 6.1) {(len $\leq$ 10)};
 \foreach \i in {0,...,9} {
     \node[realtoken] at (6+\i*0.3, 6.3) {};
 }

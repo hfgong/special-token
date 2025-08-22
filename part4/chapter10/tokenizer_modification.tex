@@ -1,2 +1,232 @@
+% Tokenizer Modification
+
 \section{Tokenizer Modification}
-% TODO: Content to be added
+
+Modifying tokenizers to accommodate special tokens is a fundamental step in implementing custom transformer architectures. This process requires careful consideration of vocabulary management, encoding/decoding pipelines, and compatibility with existing preprocessing workflows.
+
+\subsection{Extending Tokenizer Vocabularies}
+
+The first step in tokenizer modification involves extending the vocabulary to include new special tokens while maintaining compatibility with existing tokens.
+
+\begin{lstlisting}[language=Python, caption=Safe vocabulary extension for special tokens]
+class ExtendedTokenizer:
+    def __init__(self, base_tokenizer, special_tokens=None):
+        self.base_tokenizer = base_tokenizer
+        self.special_tokens = special_tokens or {}
+        self.special_token_ids = {}
+        
+        # Reserve token IDs for special tokens
+        self._reserve_special_token_ids()
+        
+    def _reserve_special_token_ids(self):
+        """Reserve vocabulary slots for special tokens."""
+        # Get current vocabulary size
+        base_vocab_size = len(self.base_tokenizer.vocab)
+        
+        # Assign IDs to special tokens
+        for i, (token_name, token_str) in enumerate(self.special_tokens.items()):
+            token_id = base_vocab_size + i
+            self.special_token_ids[token_str] = token_id
+            
+            # Update reverse mapping
+            self.base_tokenizer.ids_to_tokens[token_id] = token_str
+            self.base_tokenizer.vocab[token_str] = token_id
+            
+        # Update vocabulary size
+        self.vocab_size = base_vocab_size + len(self.special_tokens)
+        
+    def add_special_tokens(self, tokens_dict):
+        """Dynamically add new special tokens."""
+        for token_name, token_str in tokens_dict.items():
+            if token_str not in self.special_token_ids:
+                # Assign new ID
+                new_id = self.vocab_size
+                self.special_token_ids[token_str] = new_id
+                self.special_tokens[token_name] = token_str
+                
+                # Update mappings
+                self.base_tokenizer.ids_to_tokens[new_id] = token_str
+                self.base_tokenizer.vocab[token_str] = new_id
+                
+                self.vocab_size += 1
+                
+        return len(tokens_dict)
+\end{lstlisting}
+
+\subsection{Encoding Pipeline Integration}
+
+Integrating special tokens into the encoding pipeline requires careful handling of token insertion, position tracking, and segment identification.
+
+\begin{lstlisting}[language=Python, caption=Special token-aware encoding pipeline]
+class SpecialTokenEncoder:
+    def __init__(self, tokenizer):
+        self.tokenizer = tokenizer
+        self.special_patterns = self._compile_special_patterns()
+        
+    def encode_with_special_tokens(self, text, add_special_tokens=True,
+                                    max_length=512, task_type=None):
+        """Encode text with appropriate special tokens."""
+        
+        # Detect and preserve special tokens in input
+        preserved_tokens = self._preserve_existing_special_tokens(text)
+        
+        # Tokenize regular text
+        if preserved_tokens:
+            tokens = self._tokenize_with_preserved(text, preserved_tokens)
+        else:
+            tokens = self.tokenizer.tokenize(text)
+            
+        # Add task-specific special tokens
+        if add_special_tokens:
+            tokens = self._add_special_tokens(tokens, task_type)
+            
+        # Convert to IDs
+        token_ids = self.tokenizer.convert_tokens_to_ids(tokens)
+        
+        # Handle truncation
+        if len(token_ids) > max_length:
+            token_ids = self._truncate_sequence(token_ids, max_length)
+            
+        # Create attention mask
+        attention_mask = [1] * len(token_ids)
+        
+        # Create token type IDs
+        token_type_ids = self._create_token_type_ids(token_ids)
+        
+        return {
+            'input_ids': token_ids,
+            'attention_mask': attention_mask,
+            'token_type_ids': token_type_ids,
+            'special_tokens_mask': self._create_special_tokens_mask(token_ids)
+        }
+        
+    def _add_special_tokens(self, tokens, task_type):
+        """Add appropriate special tokens based on task type."""
+        if task_type == 'classification':
+            tokens = [self.tokenizer.cls_token] + tokens + [self.tokenizer.sep_token]
+        elif task_type == 'generation':
+            tokens = [self.tokenizer.bos_token] + tokens + [self.tokenizer.eos_token]
+        elif task_type == 'masked_lm':
+            # Tokens already contain [MASK] tokens
+            tokens = [self.tokenizer.cls_token] + tokens + [self.tokenizer.sep_token]
+        elif task_type == 'dual_sequence':
+            # Handle with separator tokens between sequences
+            # Assumes tokens is a list of two sequences
+            if isinstance(tokens[0], list):
+                tokens = ([self.tokenizer.cls_token] + tokens[0] + 
+                         [self.tokenizer.sep_token] + tokens[1] + 
+                         [self.tokenizer.sep_token])
+        
+        return tokens
+\end{lstlisting}
+
+\subsection{Handling Special Token Collisions}
+
+When working with pre-trained models and custom special tokens, collision handling becomes critical to avoid vocabulary conflicts.
+
+\begin{lstlisting}[language=Python, caption=Collision detection and resolution]
+class CollisionAwareTokenizer:
+    def __init__(self, base_tokenizer):
+        self.base_tokenizer = base_tokenizer
+        self.collision_map = {}
+        self.reserved_patterns = set()
+        
+    def register_special_token(self, token_str, force=False):
+        """Register a special token with collision detection."""
+        
+        # Check for exact collision
+        if token_str in self.base_tokenizer.vocab:
+            if not force:
+                # Generate alternative
+                alternative = self._generate_alternative(token_str)
+                self.collision_map[token_str] = alternative
+                token_str = alternative
+            else:
+                # Override existing token
+                print(f"Warning: Overriding existing token '{token_str}'")
+                
+        # Check for pattern collision
+        if self._check_pattern_collision(token_str):
+            raise ValueError(f"Token '{token_str}' conflicts with reserved pattern")
+            
+        # Register the token
+        self._add_to_vocabulary(token_str)
+        return token_str
+        
+    def _generate_alternative(self, token_str):
+        """Generate alternative token string to avoid collision."""
+        # Try adding underscores
+        for i in range(1, 10):
+            alternative = f"{token_str}{'_' * i}"
+            if alternative not in self.base_tokenizer.vocab:
+                return alternative
+                
+        # Try adding version number
+        for i in range(1, 100):
+            alternative = f"{token_str}_v{i}"
+            if alternative not in self.base_tokenizer.vocab:
+                return alternative
+                
+        raise ValueError(f"Could not find alternative for '{token_str}'")
+\end{lstlisting}
+
+\subsection{Batch Processing with Special Tokens}
+
+Efficient batch processing requires careful handling of special tokens across sequences of different lengths, ensuring proper alignment and padding strategies.
+
+\begin{lstlisting}[language=Python, caption=Batch processing with special token alignment]
+class BatchTokenProcessor:
+    def __init__(self, tokenizer, pad_to_multiple_of=8):
+        self.tokenizer = tokenizer
+        self.pad_to_multiple_of = pad_to_multiple_of
+        
+    def process_batch(self, texts, max_length=512, padding='longest'):
+        """Process a batch of texts with special token handling."""
+        
+        # Encode all texts
+        encoded_batch = []
+        for text in texts:
+            encoded = self.tokenizer.encode_with_special_tokens(
+                text, 
+                add_special_tokens=True,
+                max_length=max_length
+            )
+            encoded_batch.append(encoded)
+            
+        # Determine padding length
+        if padding == 'max_length':
+            pad_length = max_length
+        elif padding == 'longest':
+            pad_length = max(len(enc['input_ids']) for enc in encoded_batch)
+            # Round up to multiple if specified
+            if self.pad_to_multiple_of:
+                pad_length = ((pad_length + self.pad_to_multiple_of - 1) // 
+                             self.pad_to_multiple_of * self.pad_to_multiple_of)
+        else:
+            return encoded_batch  # No padding
+            
+        # Apply padding
+        padded_batch = self._apply_padding(encoded_batch, pad_length)
+        
+        # Stack into tensors
+        import torch
+        batch_tensors = {
+            key: torch.tensor([item[key] for item in padded_batch])
+            for key in padded_batch[0].keys()
+        }
+        
+        return batch_tensors
+\end{lstlisting}
+
+\subsection{Best Practices for Tokenizer Modification}
+
+When modifying tokenizers for special tokens, consider these best practices:
+
+\begin{itemize}
+\item \textbf{Preserve Backward Compatibility}: Always maintain compatibility with existing model checkpoints
+\item \textbf{Document Special Tokens}: Maintain clear documentation of all special tokens and their purposes
+\item \textbf{Test Edge Cases}: Thoroughly test handling of empty inputs, very long sequences, and special character combinations
+\item \textbf{Version Control}: Implement versioning for tokenizer configurations to manage updates
+\item \textbf{Performance Monitoring}: Track tokenization speed and memory usage, especially for large batches
+\item \textbf{Error Handling}: Implement robust error handling for invalid token configurations
+\end{itemize}

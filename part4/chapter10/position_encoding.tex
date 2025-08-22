@@ -1,2 +1,541 @@
+% Position Encoding
+
 \section{Position Encoding}
-% TODO: Content to be added
+
+Position encoding for special tokens presents unique challenges since these tokens often don't follow conventional sequential ordering rules. Special tokens may represent global context, structural boundaries, or meta-information that transcends positional constraints. This section explores strategies for effectively encoding positional information for special tokens while maintaining their semantic purpose.
+
+\subsection{Special Token Position Assignment}
+
+The assignment of positional information to special tokens requires careful consideration of their semantic roles and interaction patterns.
+
+\begin{lstlisting}[language=Python, caption=Flexible position encoding for special tokens]
+import torch
+import torch.nn as nn
+import math
+
+class SpecialTokenPositionEncoder:
+    def __init__(self, max_length=512, d_model=768, special_token_map=None):
+        self.max_length = max_length
+        self.d_model = d_model
+        self.special_token_map = special_token_map or {}
+        
+        # Standard sinusoidal position encodings
+        self.pe_matrix = self._create_sinusoidal_encodings()
+        
+        # Learnable special position encodings
+        self.special_position_embeddings = nn.ParameterDict()
+        self._initialize_special_positions()
+        
+    def _create_sinusoidal_encodings(self):
+        """Create standard sinusoidal position encodings."""
+        pe = torch.zeros(self.max_length, self.d_model)
+        position = torch.arange(0, self.max_length).unsqueeze(1).float()
+        
+        div_term = torch.exp(torch.arange(0, self.d_model, 2).float() *
+                           -(math.log(10000.0) / self.d_model))
+        
+        pe[:, 0::2] = torch.sin(position * div_term)
+        pe[:, 1::2] = torch.cos(position * div_term)
+        
+        return pe
+        
+    def _initialize_special_positions(self):
+        """Initialize learnable position encodings for special tokens."""
+        special_positions = {
+            'cls_position': nn.Parameter(torch.randn(self.d_model) * 0.02),
+            'sep_position': nn.Parameter(torch.randn(self.d_model) * 0.02),
+            'mask_position': nn.Parameter(torch.randn(self.d_model) * 0.02),
+            'global_position': nn.Parameter(torch.randn(self.d_model) * 0.02),
+            'boundary_position': nn.Parameter(torch.randn(self.d_model) * 0.02)
+        }
+        
+        for name, param in special_positions.items():
+            self.special_position_embeddings[name] = param
+            
+    def encode_positions(self, input_ids, position_strategy='adaptive'):
+        """Encode positions for input sequence with special token handling."""
+        batch_size, seq_len = input_ids.shape
+        
+        if position_strategy == 'adaptive':
+            return self._adaptive_position_encoding(input_ids)
+        elif position_strategy == 'fixed_special':
+            return self._fixed_special_encoding(input_ids)
+        elif position_strategy == 'relative':
+            return self._relative_position_encoding(input_ids)
+        elif position_strategy == 'learned':
+            return self._learned_position_encoding(input_ids)
+        else:
+            return self._standard_encoding(input_ids)
+            
+    def _adaptive_position_encoding(self, input_ids):
+        """Adaptive position encoding that adjusts for special tokens."""
+        batch_size, seq_len = input_ids.shape
+        position_encodings = torch.zeros(batch_size, seq_len, self.d_model)
+        
+        for batch_idx in range(batch_size):
+            sequence = input_ids[batch_idx]
+            positions = self._compute_adaptive_positions(sequence)
+            
+            for pos_idx, position_type in enumerate(positions):
+                if position_type == 'standard':
+                    # Use regular sinusoidal encoding
+                    actual_pos = self._get_content_position(sequence, pos_idx)
+                    position_encodings[batch_idx, pos_idx] = self.pe_matrix[actual_pos]
+                elif position_type in self.special_position_embeddings:
+                    # Use special position encoding
+                    position_encodings[batch_idx, pos_idx] = self.special_position_embeddings[position_type]
+                    
+        return position_encodings
+        
+    def _compute_adaptive_positions(self, sequence):
+        """Compute position types for each token in sequence."""
+        positions = []
+        content_position = 0
+        
+        for token_id in sequence:
+            if self._is_cls_token(token_id):
+                positions.append('cls_position')
+            elif self._is_sep_token(token_id):
+                positions.append('sep_position')
+            elif self._is_mask_token(token_id):
+                positions.append('mask_position')
+            elif self._is_special_token(token_id):
+                positions.append('global_position')
+            else:
+                positions.append('standard')
+                content_position += 1
+                
+        return positions
+        
+    def _get_content_position(self, sequence, current_idx):
+        """Get the content position for regular tokens."""
+        content_pos = 0
+        for i in range(current_idx):
+            if not self._is_special_token(sequence[i]):
+                content_pos += 1
+        return min(content_pos, self.max_length - 1)
+\end{lstlisting}
+
+\subsection{Relative Position Encoding for Special Tokens}
+
+Relative position encoding can be particularly effective for special tokens as it focuses on relationships rather than absolute positions.
+
+\begin{lstlisting}[language=Python, caption=Relative position encoding with special token awareness]
+class RelativePositionEncoding(nn.Module):
+    def __init__(self, d_model=768, max_relative_distance=128):
+        super().__init__()
+        self.d_model = d_model
+        self.max_relative_distance = max_relative_distance
+        
+        # Relative position embeddings
+        self.relative_position_embeddings = nn.Embedding(
+            2 * max_relative_distance + 1, d_model
+        )
+        
+        # Special token relation embeddings
+        self.special_relations = nn.ParameterDict({
+            'cls_to_content': nn.Parameter(torch.randn(d_model) * 0.02),
+            'content_to_cls': nn.Parameter(torch.randn(d_model) * 0.02),
+            'sep_to_content': nn.Parameter(torch.randn(d_model) * 0.02),
+            'content_to_sep': nn.Parameter(torch.randn(d_model) * 0.02),
+            'special_to_special': nn.Parameter(torch.randn(d_model) * 0.02),
+            'mask_to_content': nn.Parameter(torch.randn(d_model) * 0.02),
+            'content_to_mask': nn.Parameter(torch.randn(d_model) * 0.02)
+        })
+        
+    def forward(self, input_ids, query_pos, key_pos):
+        """Compute relative position encodings."""
+        batch_size, seq_len = input_ids.shape
+        
+        # Compute standard relative distances
+        relative_distances = query_pos.unsqueeze(-1) - key_pos.unsqueeze(-2)
+        
+        # Clamp distances
+        clamped_distances = torch.clamp(
+            relative_distances,
+            -self.max_relative_distance,
+            self.max_relative_distance
+        )
+        
+        # Convert to embedding indices
+        embedding_indices = clamped_distances + self.max_relative_distance
+        
+        # Get base relative embeddings
+        relative_embeddings = self.relative_position_embeddings(embedding_indices)
+        
+        # Apply special token modifications
+        special_embeddings = self._apply_special_relations(
+            input_ids, query_pos, key_pos, relative_embeddings
+        )
+        
+        return special_embeddings
+        
+    def _apply_special_relations(self, input_ids, query_pos, key_pos, base_embeddings):
+        """Apply special token relation modifications."""
+        batch_size, seq_len_q, seq_len_k, d_model = base_embeddings.shape
+        
+        for batch_idx in range(batch_size):
+            sequence = input_ids[batch_idx]
+            
+            for q_idx in range(seq_len_q):
+                for k_idx in range(seq_len_k):
+                    query_token = sequence[query_pos[batch_idx, q_idx]]
+                    key_token = sequence[key_pos[batch_idx, k_idx]]
+                    
+                    # Determine relation type
+                    relation_type = self._get_relation_type(query_token, key_token)
+                    
+                    if relation_type in self.special_relations:
+                        # Modify embedding based on special relation
+                        special_embedding = self.special_relations[relation_type]
+                        base_embeddings[batch_idx, q_idx, k_idx] += special_embedding
+                        
+        return base_embeddings
+        
+    def _get_relation_type(self, query_token, key_token):
+        """Determine the type of relation between two tokens."""
+        query_is_cls = self._is_cls_token(query_token)
+        key_is_cls = self._is_cls_token(key_token)
+        query_is_sep = self._is_sep_token(query_token)
+        key_is_sep = self._is_sep_token(key_token)
+        query_is_mask = self._is_mask_token(query_token)
+        key_is_mask = self._is_mask_token(key_token)
+        
+        query_is_special = query_is_cls or query_is_sep or query_is_mask
+        key_is_special = key_is_cls or key_is_sep or key_is_mask
+        
+        if query_is_cls and not key_is_special:
+            return 'cls_to_content'
+        elif not query_is_special and key_is_cls:
+            return 'content_to_cls'
+        elif query_is_sep and not key_is_special:
+            return 'sep_to_content'
+        elif not query_is_special and key_is_sep:
+            return 'content_to_sep'
+        elif query_is_mask and not key_is_special:
+            return 'mask_to_content'
+        elif not query_is_special and key_is_mask:
+            return 'content_to_mask'
+        elif query_is_special and key_is_special:
+            return 'special_to_special'
+        else:
+            return None  # Use base embedding
+\end{lstlisting}
+
+\subsection{Learned Position Embeddings}
+
+Learned position embeddings provide maximum flexibility for special token positioning but require careful initialization and training.
+
+\begin{lstlisting}[language=Python, caption=Learned position embeddings with special token support]
+class LearnedPositionEmbedding(nn.Module):
+    def __init__(self, max_length=512, d_model=768, special_token_ids=None):
+        super().__init__()
+        self.max_length = max_length
+        self.d_model = d_model
+        self.special_token_ids = set(special_token_ids or [])
+        
+        # Standard position embeddings
+        self.position_embeddings = nn.Embedding(max_length, d_model)
+        
+        # Virtual positions for special tokens
+        self.virtual_positions = nn.ParameterDict()
+        self._initialize_virtual_positions()
+        
+        # Position adaptation networks
+        self.position_adapters = nn.ModuleDict({
+            'content_adapter': nn.Linear(d_model, d_model),
+            'special_adapter': nn.Linear(d_model, d_model),
+            'boundary_adapter': nn.Linear(d_model, d_model)
+        })
+        
+    def _initialize_virtual_positions(self):
+        """Initialize virtual positions for special tokens."""
+        # Create virtual position embeddings that don't correspond to sequence positions
+        virtual_positions = {
+            'global_context': nn.Parameter(torch.randn(self.d_model) * 0.02),
+            'sequence_start': nn.Parameter(torch.randn(self.d_model) * 0.02),
+            'sequence_end': nn.Parameter(torch.randn(self.d_model) * 0.02),
+            'segment_boundary': nn.Parameter(torch.randn(self.d_model) * 0.02),
+            'meta_information': nn.Parameter(torch.randn(self.d_model) * 0.02)
+        }
+        
+        for name, param in virtual_positions.items():
+            self.virtual_positions[name] = param
+            
+    def forward(self, input_ids, position_ids=None):
+        """Forward pass with special position handling."""
+        batch_size, seq_len = input_ids.shape
+        
+        if position_ids is None:
+            position_ids = torch.arange(seq_len, device=input_ids.device).expand(batch_size, -1)
+            
+        # Get base position embeddings
+        base_positions = self.position_embeddings(position_ids)
+        
+        # Apply special token positioning
+        enhanced_positions = self._apply_special_positioning(
+            input_ids, position_ids, base_positions
+        )
+        
+        return enhanced_positions
+        
+    def _apply_special_positioning(self, input_ids, position_ids, base_positions):
+        """Apply special positioning for special tokens."""
+        batch_size, seq_len, d_model = base_positions.shape
+        enhanced_positions = base_positions.clone()
+        
+        for batch_idx in range(batch_size):
+            sequence = input_ids[batch_idx]
+            
+            for pos_idx in range(seq_len):
+                token_id = sequence[pos_idx].item()
+                
+                if token_id in self.special_token_ids:
+                    # Determine virtual position type
+                    virtual_type = self._get_virtual_position_type(
+                        token_id, pos_idx, seq_len, sequence
+                    )
+                    
+                    if virtual_type in self.virtual_positions:
+                        # Replace with virtual position
+                        virtual_pos = self.virtual_positions[virtual_type]
+                        
+                        # Adapt virtual position based on context
+                        adapter = self._get_position_adapter(virtual_type)
+                        adapted_pos = adapter(virtual_pos.unsqueeze(0)).squeeze(0)
+                        
+                        enhanced_positions[batch_idx, pos_idx] = adapted_pos
+                        
+        return enhanced_positions
+        
+    def _get_virtual_position_type(self, token_id, position, seq_len, sequence):
+        """Determine the virtual position type for a special token."""
+        if self._is_cls_token(token_id):
+            return 'global_context'
+        elif self._is_sep_token(token_id):
+            if position < seq_len // 2:
+                return 'segment_boundary'
+            else:
+                return 'sequence_end'
+        elif position == 0:
+            return 'sequence_start'
+        elif position == seq_len - 1:
+            return 'sequence_end'
+        else:
+            return 'meta_information'
+            
+    def _get_position_adapter(self, virtual_type):
+        """Get the appropriate adapter for virtual position type."""
+        if virtual_type in ['global_context', 'meta_information']:
+            return self.position_adapters['special_adapter']
+        elif virtual_type in ['segment_boundary', 'sequence_start', 'sequence_end']:
+            return self.position_adapters['boundary_adapter']
+        else:
+            return self.position_adapters['content_adapter']
+
+class ContextualPositionEncoding(nn.Module):
+    def __init__(self, d_model=768, max_length=512):
+        super().__init__()
+        self.d_model = d_model
+        self.max_length = max_length
+        
+        # Context-dependent position encoding
+        self.context_projector = nn.Linear(d_model, d_model)
+        self.position_generator = nn.Linear(d_model * 2, d_model)
+        
+        # Base position embeddings
+        self.base_positions = nn.Embedding(max_length, d_model)
+        
+    def forward(self, token_embeddings, input_ids, position_ids=None):
+        """Generate context-dependent position encodings."""
+        batch_size, seq_len, d_model = token_embeddings.shape
+        
+        if position_ids is None:
+            position_ids = torch.arange(seq_len, device=input_ids.device).expand(batch_size, -1)
+            
+        # Get base positions
+        base_pos = self.base_positions(position_ids)
+        
+        # Project token embeddings to position space
+        context_features = self.context_projector(token_embeddings)
+        
+        # Combine context with base positions
+        combined_features = torch.cat([context_features, base_pos], dim=-1)
+        
+        # Generate contextual positions
+        contextual_positions = self.position_generator(combined_features)
+        
+        # Apply special token modifications
+        modified_positions = self._modify_special_positions(
+            contextual_positions, input_ids, token_embeddings
+        )
+        
+        return modified_positions
+        
+    def _modify_special_positions(self, positions, input_ids, token_embeddings):
+        """Modify positions for special tokens based on their semantic role."""
+        batch_size, seq_len, d_model = positions.shape
+        modified_positions = positions.clone()
+        
+        # Find special tokens and modify their positions
+        for batch_idx in range(batch_size):
+            sequence = input_ids[batch_idx]
+            
+            # CLS tokens get global context-aware positions
+            cls_mask = self._create_cls_mask(sequence)
+            if cls_mask.any():
+                # Aggregate information from entire sequence
+                sequence_context = token_embeddings[batch_idx].mean(dim=0, keepdim=True)
+                global_position = self.context_projector(sequence_context)
+                modified_positions[batch_idx, cls_mask] = global_position
+                
+            # SEP tokens get boundary-aware positions
+            sep_mask = self._create_sep_mask(sequence)
+            if sep_mask.any():
+                # Use local context around separator
+                for sep_idx in sep_mask.nonzero(as_tuple=True)[0]:
+                    start_idx = max(0, sep_idx - 2)
+                    end_idx = min(seq_len, sep_idx + 3)
+                    local_context = token_embeddings[batch_idx, start_idx:end_idx].mean(dim=0)
+                    boundary_position = self.context_projector(local_context)
+                    modified_positions[batch_idx, sep_idx] = boundary_position
+                    
+        return modified_positions
+\end{lstlisting}
+
+\subsection{Multi-Scale Position Encoding}
+
+Multi-scale position encoding allows special tokens to operate at different temporal scales within the sequence.
+
+\begin{lstlisting}[language=Python, caption=Multi-scale position encoding for hierarchical processing]
+class MultiScalePositionEncoding(nn.Module):
+    def __init__(self, d_model=768, scales=[1, 4, 16, 64]):
+        super().__init__()
+        self.d_model = d_model
+        self.scales = scales
+        self.num_scales = len(scales)
+        
+        # Position encodings at different scales
+        self.scale_encodings = nn.ModuleList([
+            self._create_scale_encoding(scale) for scale in scales
+        ])
+        
+        # Scale combination weights
+        self.scale_weights = nn.Parameter(torch.ones(self.num_scales) / self.num_scales)
+        
+        # Special token scale preferences
+        self.special_scale_preferences = nn.ParameterDict({
+            'cls_scales': nn.Parameter(torch.softmax(torch.randn(self.num_scales), dim=0)),
+            'sep_scales': nn.Parameter(torch.softmax(torch.randn(self.num_scales), dim=0)),
+            'mask_scales': nn.Parameter(torch.softmax(torch.randn(self.num_scales), dim=0))
+        })
+        
+    def _create_scale_encoding(self, scale):
+        """Create position encoding for a specific scale."""
+        return nn.Sequential(
+            nn.Linear(self.d_model, self.d_model),
+            nn.ReLU(),
+            nn.Linear(self.d_model, self.d_model)
+        )
+        
+    def forward(self, input_ids, base_positions):
+        """Generate multi-scale position encodings."""
+        batch_size, seq_len, d_model = base_positions.shape
+        
+        # Compute position encodings at each scale
+        scale_encodings = []
+        for scale_idx, scale in enumerate(self.scales):
+            # Downsample positions for this scale
+            downsampled_positions = self._downsample_positions(base_positions, scale)
+            
+            # Apply scale-specific encoding
+            scale_encoding = self.scale_encodings[scale_idx](downsampled_positions)
+            
+            # Upsample back to original resolution
+            upsampled_encoding = self._upsample_positions(scale_encoding, scale, seq_len)
+            scale_encodings.append(upsampled_encoding)
+            
+        # Combine scales with learned weights
+        combined_encoding = self._combine_scales(scale_encodings, input_ids)
+        
+        return combined_encoding
+        
+    def _downsample_positions(self, positions, scale):
+        """Downsample position encodings by averaging."""
+        batch_size, seq_len, d_model = positions.shape
+        
+        if scale == 1:
+            return positions
+            
+        # Reshape for downsampling
+        pad_len = (scale - seq_len % scale) % scale
+        if pad_len > 0:
+            padding = torch.zeros(batch_size, pad_len, d_model, device=positions.device)
+            padded_positions = torch.cat([positions, padding], dim=1)
+        else:
+            padded_positions = positions
+            
+        # Average pool with scale as kernel size
+        downsampled = padded_positions.view(
+            batch_size, -1, scale, d_model
+        ).mean(dim=2)
+        
+        return downsampled
+        
+    def _upsample_positions(self, scale_encoding, scale, target_length):
+        """Upsample position encodings to target length."""
+        if scale == 1:
+            return scale_encoding[:, :target_length]
+            
+        # Repeat each encoding 'scale' times
+        batch_size, downsampled_len, d_model = scale_encoding.shape
+        upsampled = scale_encoding.unsqueeze(2).expand(-1, -1, scale, -1)
+        upsampled = upsampled.contiguous().view(batch_size, -1, d_model)
+        
+        return upsampled[:, :target_length]
+        
+    def _combine_scales(self, scale_encodings, input_ids):
+        """Combine multi-scale encodings with token-specific preferences."""
+        batch_size, seq_len = input_ids.shape
+        
+        # Stack scale encodings
+        stacked_encodings = torch.stack(scale_encodings, dim=-1)  # [B, L, D, S]
+        
+        # Default combination weights
+        default_weights = self.scale_weights.unsqueeze(0).unsqueeze(0).unsqueeze(0)
+        combined_weights = default_weights.expand(batch_size, seq_len, 1, -1)
+        
+        # Apply special token preferences
+        for batch_idx in range(batch_size):
+            sequence = input_ids[batch_idx]
+            
+            for pos_idx in range(seq_len):
+                token_id = sequence[pos_idx].item()
+                
+                if self._is_cls_token(token_id):
+                    combined_weights[batch_idx, pos_idx, 0] = self.special_scale_preferences['cls_scales']
+                elif self._is_sep_token(token_id):
+                    combined_weights[batch_idx, pos_idx, 0] = self.special_scale_preferences['sep_scales']
+                elif self._is_mask_token(token_id):
+                    combined_weights[batch_idx, pos_idx, 0] = self.special_scale_preferences['mask_scales']
+                    
+        # Weighted combination
+        combined_encoding = (stacked_encodings * combined_weights).sum(dim=-1)
+        
+        return combined_encoding
+\end{lstlisting}
+
+\subsection{Best Practices for Position Encoding}
+
+When implementing position encoding for special tokens, consider these best practices:
+
+\begin{itemize}
+\item \textbf{Semantic Alignment}: Ensure position encodings align with the semantic roles of special tokens
+\item \textbf{Flexibility}: Use learnable components that can adapt to different sequence structures
+\item \textbf{Scale Awareness}: Consider multi-scale encodings for tokens that operate at different temporal scales
+\item \textbf{Context Sensitivity}: Allow position encodings to be influenced by sequence content when appropriate
+\item \textbf{Initialization}: Carefully initialize position parameters to avoid training instabilities
+\item \textbf{Regularization}: Apply appropriate regularization to prevent overfitting in position embeddings
+\item \textbf{Evaluation}: Test position encoding strategies across different sequence lengths and structures
+\item \textbf{Compatibility}: Ensure position encodings work well with existing pre-trained models when fine-tuning
+\end{itemize}
