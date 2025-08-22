@@ -1,9 +1,9 @@
 # Makefile for Special Token Magic in Transformers book
 
 # Main LaTeX compiler
-LATEX = lualatex
+LATEX = pdflatex
 BIBER = biber
-LATEX_FLAGS = -shell-escape -interaction=nonstopmode
+LATEX_FLAGS = -interaction=nonstopmode -halt-on-error
 
 # Main document
 MAIN = main
@@ -47,12 +47,17 @@ clean:
 	rm -f $(MAIN).aux $(MAIN).log $(MAIN).out $(MAIN).toc $(MAIN).lof $(MAIN).lot
 	rm -f $(MAIN).bbl $(MAIN).blg $(MAIN).bcf $(MAIN).run.xml
 	rm -f $(MAIN).fdb_latexmk $(MAIN).fls $(MAIN).synctex.gz
+	rm -f $(MAIN).nav $(MAIN).snm $(MAIN).vrb $(MAIN).idx $(MAIN).ilg $(MAIN).ind
 	rm -f */*.aux */*/*.aux
 	find . -name "*.aux" -type f -delete
 	find . -name "*.log" -type f -delete
 	find . -name "*.out" -type f -delete
+	find . -name "*.synctex.gz" -type f -delete
+	find . -name "*.fdb_latexmk" -type f -delete
+	find . -name "*.fls" -type f -delete
 	find . -name "fig_*.aux" -type f -delete
 	find . -name "fig_*.log" -type f -delete
+	@echo "Auxiliary files cleaned."
 
 # Clean everything including PDFs
 cleanall: clean
