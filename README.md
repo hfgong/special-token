@@ -93,7 +93,9 @@ This project showcases:
 
 ## 📝 AGENTS.md Framework
 
-This book was created using an AGENTS.md framework that defines specialized roles for different aspects of technical writing:
+This book was created using an AGENTS.md framework that defines specialized roles for different aspects of technical writing. The agent definitions are available at: **https://github.com/hfgong/book-writer-agent**
+
+The framework includes specialized agents for:
 
 - **Content Structuring Agent**: Chapter organization and flow
 - **Technical Writing Agent**: Deep technical explanations and examples
