@@ -17,8 +17,7 @@
     title/.style={font=\large\bfseries}
 ]
 
-% Title
-\node[title] at (6, 8) {SOS Token Attention Patterns in Autoregressive Generation};
+% Title removed - using figure caption instead
 
 % Input sequence with SOS
 \node[label] at (6, 7.2) {\textbf{Generation Sequence:}};
@@ -62,9 +61,9 @@
     \foreach \j in {0,...,5} {
         \pgfmathsetmacro{\opacity}{0.8 - 0.1*\j}
         \ifnum\j=0
-            \pgfmathsetmacro{\color}{soscolor}
+            \def\color{soscolor}
         \else
-            \pgfmathsetmacro{\color}{tokencolor}
+            \def\color{tokencolor}
         \fi
         \ifnum\i=0
             \fill[\color!\opacity!white] (\j*0.6-1.5, -\i*0.4) rectangle ++(0.5, 0.35);
