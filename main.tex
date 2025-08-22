@@ -1,0 +1,151 @@
+\documentclass[11pt,oneside]{book}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{geometry}
+\geometry{
+    paperwidth=7in,
+    paperheight=10in,
+    margin=1in
+}
+
+% Essential packages
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{tikz}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+\usepackage{listings}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{hyperref}
+\usepackage{cleveref}
+\usepackage{booktabs}
+\usepackage{subcaption}
+\usepackage{enumitem}
+\usepackage[backend=biber,style=authoryear,natbib=true]{biblatex}
+\addbibresource{references.bib}
+
+% TikZ libraries
+\usetikzlibrary{shapes,arrows,positioning,calc,patterns,decorations.pathreplacing,chains,shadows}
+\usetikzlibrary{shapes.geometric,shapes.symbols,shapes.misc}
+\usetikzlibrary{matrix,fit,backgrounds}
+\usetikzlibrary{arrows.meta}
+
+% Custom colors
+\definecolor{bertblue}{RGB}{66,133,244}
+\definecolor{gptgreen}{RGB}{52,168,83}
+\definecolor{vitpurple}{RGB}{142,36,245}
+\definecolor{maskred}{RGB}{234,67,53}
+\definecolor{clsorange}{RGB}{251,188,5}
+\definecolor{darkgray}{RGB}{50,50,50}
+
+% Code listing settings
+\lstset{
+    basicstyle=\ttfamily\small,
+    keywordstyle=\color{bertblue}\bfseries,
+    commentstyle=\color{gray}\itshape,
+    stringstyle=\color{gptgreen},
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    breaklines=true,
+    frame=single,
+    backgroundcolor=\color{gray!5},
+    tabsize=2,
+    captionpos=b
+}
+
+% Theorem environments
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}[chapter]
+\newtheorem{example}{Example}[chapter]
+\newtheorem{principle}{Principle}[chapter]
+
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}[chapter]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+
+\theoremstyle{remark}
+\newtheorem{remark}{Remark}[chapter]
+\newtheorem{note}{Note}[chapter]
+
+% Custom commands
+\newcommand{\specialtoken}[1]{\texttt{[#1]}}
+\newcommand{\cls}{\specialtoken{CLS}}
+\newcommand{\sep}{\specialtoken{SEP}}
+\newcommand{\mask}{\specialtoken{MASK}}
+\newcommand{\pad}{\specialtoken{PAD}}
+\newcommand{\unk}{\specialtoken{UNK}}
+\newcommand{\sos}{\specialtoken{SOS}}
+\newcommand{\eos}{\specialtoken{EOS}}
+\newcommand{\img}{\specialtoken{IMG}}
+
+% Title page information
+\title{{\Huge \textbf{Special Token Magic\\in Transformers}}\\[0.5cm]
+{\Large A Comprehensive Guide for AI Practitioners}\\[1cm]
+{\large From Fundamentals to Advanced Applications}}
+\author{{\Large An AI-Assisted Technical Book}\\[0.5cm]
+{\normalsize Exploring the Hidden Power of Special Tokens}}
+\date{\today}
+
+\begin{document}
+
+\frontmatter
+\maketitle
+
+\tableofcontents
+
+\chapter{Preface}
+\input{preface/preface}
+
+\mainmatter
+
+% Part I: Foundations of Special Tokens
+\part{Foundations of Special Tokens}
+
+\chapter{Introduction to Special Tokens}
+\input{part1/chapter01/introduction}
+\input{part1/chapter01/what_are_special_tokens}
+\input{part1/chapter01/historical_evolution}
+\input{part1/chapter01/role_in_attention}
+\input{part1/chapter01/tokenization_and_insertion}
+
+\chapter{Core Special Tokens in NLP}
+\input{part1/chapter02/classification_token}
+\input{part1/chapter02/separator_token}
+\input{part1/chapter02/padding_token}
+\input{part1/chapter02/unknown_token}
+
+\chapter{Sequence Control Tokens}
+\input{part1/chapter03/introduction}
+\input{part1/chapter03/start_of_sequence}
+\input{part1/chapter03/end_of_sequence}
+\input{part1/chapter03/mask_token}
+
+% Part II: Special Tokens in Different Domains
+\part{Special Tokens in Different Domains}
+
+\chapter{Vision Transformers and Special Tokens}
+\input{part2/chapter04/introduction}
+\input{part2/chapter04/cls_in_vit}
+\input{part2/chapter04/position_embeddings}
+\input{part2/chapter04/masked_image_modeling}
+\input{part2/chapter04/register_tokens}
+
+\chapter{Multimodal Special Tokens}
+\input{part2/chapter05/introduction}
+\input{part2/chapter05/image_tokens}
+\input{part2/chapter05/audio_tokens}
+\input{part2/chapter05/video_tokens}
+\input{part2/chapter05/cross_modal_alignment}
+\input{part2/chapter05/modality_switching}
+
+% Part III-V and appendices commented out for initial compilation
+% TODO: Uncomment as content is added
+
+\printbibliography[heading=bibintoc,title={References}]
+
+\end{document}

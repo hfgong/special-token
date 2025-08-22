@@ -1,0 +1,63 @@
+% Chapter 4 Introduction: Vision Transformers and Special Tokens
+
+The success of transformers in natural language processing naturally led to their adaptation for computer vision tasks. Vision Transformers (ViTs) introduced a paradigm shift by treating images as sequences of patches, enabling the direct application of transformer architectures to visual data. This transition brought with it the need for specialized tokens that handle the unique challenges of visual representation learning.
+
+Unlike text, which comes naturally segmented into discrete tokens, images require artificial segmentation into patches that serve as visual tokens. This fundamental difference necessitates new approaches to special token design, leading to innovations in classification tokens, position embeddings, masking strategies, and auxiliary tokens that enhance visual understanding.
+
+\section{The Vision Transformer Revolution}
+
+Vision Transformers, introduced by \citet{dosovitskiy2020image}, demonstrated that pure transformer architectures could achieve state-of-the-art performance on image classification tasks without the inductive biases traditionally provided by convolutional neural networks. This breakthrough opened new avenues for special token research in the visual domain.
+
+The key innovation of ViTs lies in their treatment of images as sequences of patches. An image of size $H \times W \times C$ is divided into non-overlapping patches of size $P \times P$, resulting in a sequence of $N = \frac{HW}{P^2}$ patches. Each patch is linearly projected to create patch embeddings that serve as the visual equivalent of word embeddings in NLP.
+
+\section{Unique Challenges in Visual Special Tokens}
+
+The adaptation of special tokens to computer vision introduces several unique challenges:
+
+\begin{enumerate}
+\item \textbf{Spatial Relationships}: Unlike text sequences, images have inherent 2D spatial structure that must be preserved through position embeddings
+\item \textbf{Scale Invariance}: Objects can appear at different scales, requiring tokens that can handle multi-scale representations
+\item \textbf{Dense Prediction Tasks}: Vision models often need to perform dense prediction tasks (segmentation, detection) requiring different token strategies
+\item \textbf{Cross-Modal Alignment}: Integration with text requires specialized tokens for image-text alignment
+\end{enumerate}
+
+\section{Evolution of Visual Special Tokens}
+
+The development of special tokens in vision transformers has followed several key trajectories:
+
+\subsection{First Generation: Direct Adaptation}
+Early vision transformers directly adopted NLP special tokens:
+\begin{itemize}
+\item \cls{} tokens for image classification
+\item Simple position embeddings adapted from positional encodings
+\item Basic masking strategies borrowed from BERT
+\end{itemize}
+
+\subsection{Second Generation: Vision-Specific Innovations}
+As understanding deepened, vision-specific innovations emerged:
+\begin{itemize}
+\item 2D position embeddings for spatial awareness
+\item Specialized masking strategies for visual structure
+\item Register tokens for improved representation learning
+\end{itemize}
+
+\subsection{Third Generation: Multimodal Integration}
+Recent developments focus on multimodal capabilities:
+\begin{itemize}
+\item Cross-modal alignment tokens
+\item Image-text fusion mechanisms
+\item Unified representation learning across modalities
+\end{itemize}
+
+\section{Chapter Organization}
+
+This chapter systematically explores the evolution and application of special tokens in vision transformers:
+
+\begin{itemize}
+\item \textbf{CLS Tokens in Vision}: Adaptation and optimization of classification tokens for visual tasks
+\item \textbf{Position Embeddings}: From 1D sequences to 2D spatial understanding
+\item \textbf{Masked Image Modeling}: Visual masking strategies and their effectiveness
+\item \textbf{Register Tokens}: Novel auxiliary tokens for improved visual representation
+\end{itemize}
+
+Each section provides theoretical foundations, implementation details, empirical results, and practical guidance for leveraging these tokens effectively in vision transformer architectures.

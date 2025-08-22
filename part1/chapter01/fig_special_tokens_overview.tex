@@ -1,0 +1,110 @@
+\documentclass[tikz,border=10pt]{standalone}
+\usepackage{tikz}
+\usepackage{luacode}
+\usetikzlibrary{shapes,arrows,positioning,calc,patterns,shadows}
+\usetikzlibrary{shapes.geometric,shapes.symbols,shapes.misc}
+\usetikzlibrary{matrix,fit,backgrounds,arrows.meta}
+
+\definecolor{bertblue}{RGB}{66,133,244}
+\definecolor{gptgreen}{RGB}{52,168,83}
+\definecolor{maskred}{RGB}{234,67,53}
+\definecolor{clsorange}{RGB}{251,188,5}
+\definecolor{sepviolet}{RGB}{142,36,245}
+\definecolor{padgray}{RGB}{200,200,200}
+
+\begin{document}
+\begin{tikzpicture}[
+    token/.style={rectangle, rounded corners=3pt, minimum width=1.2cm, minimum height=0.8cm, font=\small\ttfamily},
+    special/.style={token, thick, draw=black!80},
+    regular/.style={token, draw=black!40, fill=white},
+    embedding/.style={circle, fill=black, inner sep=1.5pt},
+    arrow/.style={->, >=stealth, thick},
+    label/.style={font=\footnotesize\sffamily}
+]
+
+% Title
+\node[font=\large\bfseries] at (5, 6) {Special Tokens in Transformer Input Sequence};
+
+% Input sequence tokens
+\node[special, fill=clsorange!20, draw=clsorange!80] (cls) at (0, 4) {[CLS]};
+\node[regular] (tok1) at (1.5, 4) {The};
+\node[regular] (tok2) at (2.8, 4) {cat};
+\node[special, fill=maskred!20, draw=maskred!80] (mask) at (4.1, 4) {[MASK]};
+\node[regular] (tok3) at (5.4, 4) {on};
+\node[regular] (tok4) at (6.5, 4) {the};
+\node[regular] (tok5) at (7.6, 4) {mat};
+\node[special, fill=sepviolet!20, draw=sepviolet!80] (sep) at (8.9, 4) {[SEP]};
+\node[special, fill=padgray!40, draw=padgray!80] (pad) at (10.2, 4) {[PAD]};
+
+% Token type indicators
+\node[label, clsorange!80] at (0, 3.3) {Aggregation};
+\node[label, maskred!80] at (4.1, 3.3) {Placeholder};
+\node[label, sepviolet!80] at (8.9, 3.3) {Boundary};
+\node[label, padgray!80] at (10.2, 3.3) {Padding};
+
+% Embeddings representation
+\node[embedding] (emb-0) at (0, 2.5) {};
+\node[embedding] (emb-1) at (1.5, 2.5) {};
+\node[embedding] (emb-2) at (2.8, 2.5) {};
+\node[embedding] (emb-3) at (4.1, 2.5) {};
+\node[embedding] (emb-4) at (5.4, 2.5) {};
+\node[embedding] (emb-5) at (6.5, 2.5) {};
+\node[embedding] (emb-6) at (7.6, 2.5) {};
+\node[embedding] (emb-7) at (8.9, 2.5) {};
+\node[embedding] (emb-8) at (10.2, 2.5) {};
+
+\draw[arrow, black!40] (0, 3.5) -- (emb-0);
+\draw[arrow, black!40] (1.5, 3.5) -- (emb-1);
+\draw[arrow, black!40] (2.8, 3.5) -- (emb-2);
+\draw[arrow, black!40] (4.1, 3.5) -- (emb-3);
+\draw[arrow, black!40] (5.4, 3.5) -- (emb-4);
+\draw[arrow, black!40] (6.5, 3.5) -- (emb-5);
+\draw[arrow, black!40] (7.6, 3.5) -- (emb-6);
+\draw[arrow, black!40] (8.9, 3.5) -- (emb-7);
+\draw[arrow, black!40] (10.2, 3.5) -- (emb-8);
+
+% Embedding layer
+\node[rectangle, draw=black!60, fill=bertblue!10, minimum width=11cm, minimum height=0.6cm] at (5.1, 2.5) {};
+\node[label] at (5.1, 2.5) {Embedding Layer};
+
+% Self-attention connections (simplified)
+\draw[arrow, bertblue!40, densely dotted] (emb-1) to[bend left=20] (emb-0);
+\draw[arrow, bertblue!40, densely dotted] (emb-2) to[bend left=20] (emb-0);
+\draw[arrow, bertblue!40, densely dotted] (emb-3) to[bend left=20] (emb-0);
+\draw[arrow, bertblue!40, densely dotted] (emb-4) to[bend left=20] (emb-0);
+\draw[arrow, bertblue!40, densely dotted] (emb-5) to[bend left=20] (emb-0);
+\draw[arrow, bertblue!40, densely dotted] (emb-6) to[bend left=20] (emb-0);
+\draw[arrow, bertblue!40, densely dotted] (emb-7) to[bend left=20] (emb-0);
+
+% Attention flow to CLS
+\node[label, bertblue!80] at (0, 1.5) {Aggregates};
+\node[label, bertblue!80] at (0, 1.2) {Information};
+
+% Position embeddings
+\node[rectangle, draw=black!40, fill=gptgreen!10, minimum width=11cm, minimum height=0.3cm] at (5.1, 1.0) {};
+\node[label, font=\footnotesize\sffamily] at (5.1, 1.0) {+ Position Embeddings};
+
+% Legend box
+\node[rectangle, draw=black!50, fill=gray!5, minimum width=4cm, minimum height=2cm] at (12.5, 2.5) {};
+\node[font=\small\bfseries] at (12.5, 3.3) {Token Types};
+\node[special, fill=clsorange!20, draw=clsorange!80, scale=0.7] at (11.8, 2.8) {[CLS]};
+\node[label, align=left] at (13.2, 2.8) {Classification};
+\node[special, fill=maskred!20, draw=maskred!80, scale=0.7] at (11.8, 2.3) {[MASK]};
+\node[label, align=left] at (13.2, 2.3) {Masked};
+\node[special, fill=sepviolet!20, draw=sepviolet!80, scale=0.7] at (11.8, 1.8) {[SEP]};
+\node[label, align=left] at (13.2, 1.8) {Separator};
+\node[regular, scale=0.7] at (11.8, 1.3) {word};
+\node[label, align=left] at (13.2, 1.3) {Regular};
+
+% Annotations
+\draw[arrow, black!60] (0, 0.5) -- (0, 1.3);
+\node[label, align=center] at (0, 0) {Used for\\Classification};
+
+\draw[arrow, black!60] (4.1, 0.5) -- (4.1, 2.2);
+\node[label, align=center] at (4.1, 0) {Predicted\\During MLM};
+
+\draw[arrow, black!60] (10.2, 0.5) -- (10.2, 2.2);
+\node[label, align=center] at (10.2, 0) {Ignored in\\Attention};
+
+\end{tikzpicture}
+\end{document}

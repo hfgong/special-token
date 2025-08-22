@@ -1,0 +1,252 @@
+% Image Tokens Section
+
+\section{Image Tokens [IMG]}
+
+Image tokens represent one of the most successful and widely adopted forms of multimodal special tokens, serving as the bridge between visual content and textual understanding in modern AI systems. The \img{} token has evolved from simple placeholder markers to sophisticated learnable representations that encode rich visual semantics and facilitate complex cross-modal interactions.
+
+The development of image tokens has been driven by the need to integrate visual understanding into primarily text-based transformer architectures, enabling applications ranging from image captioning and visual question answering to cross-modal retrieval and generation.
+
+\subsection{Fundamental Concepts and Design Principles}
+
+Image tokens must address the fundamental challenge of representing high-dimensional visual information in a format compatible with text-based transformer architectures while preserving essential visual semantics.
+
+\begin{definition}[Image Token]
+An Image token (\img{}) is a learnable special token that represents visual content within a multimodal sequence. It serves as a compressed visual representation that can participate in attention mechanisms alongside textual tokens, enabling cross-modal understanding and generation tasks.
+\end{definition}
+
+The design of effective image tokens requires careful consideration of several key principles:
+
+\begin{enumerate}
+\item \textbf{Dimensional Compatibility}: Image tokens must match the embedding dimension of text tokens for unified processing
+\item \textbf{Semantic Richness}: Sufficient representational capacity to encode complex visual concepts
+\item \textbf{Attention Compatibility}: Ability to participate meaningfully in attention mechanisms
+\item \textbf{Scalability}: Efficient handling of multiple images or high-resolution visual content
+\item \textbf{Interpretability}: Alignment with human-understandable visual concepts
+\end{enumerate}
+
+\subsection{Architectural Integration Strategies}
+
+Modern multimodal architectures employ various strategies for integrating image tokens with textual sequences.
+
+\subsubsection{Single Image Token Approach}
+
+The simplest approach uses a single token to represent entire images:
+
+\begin{lstlisting}[language=Python, caption=Single image token integration in multimodal transformer]
+class MultimodalTransformer(nn.Module):
+    def __init__(self, vocab_size, embed_dim=768, image_encoder_dim=2048):
+        super().__init__()
+        
+        # Text embeddings
+        self.text_embeddings = nn.Embedding(vocab_size, embed_dim)
+        
+        # Image encoder (e.g., ResNet, ViT)
+        self.image_encoder = ImageEncoder(output_dim=image_encoder_dim)
+        
+        # Project image features to text embedding space
+        self.image_projection = nn.Linear(image_encoder_dim, embed_dim)
+        
+        # Special token embeddings
+        self.img_token = nn.Parameter(torch.randn(1, embed_dim))
+        
+        # Transformer layers
+        self.transformer = TransformerEncoder(embed_dim, num_layers=12)
+        
+        # Output heads
+        self.lm_head = nn.Linear(embed_dim, vocab_size)
+    
+    def forward(self, text_ids, images=None, image_positions=None):
+        batch_size = text_ids.shape[0]
+        
+        # Get text embeddings
+        text_embeds = self.text_embeddings(text_ids)
+        
+        if images is not None:
+            # Encode images
+            image_features = self.image_encoder(images)  # [B, image_encoder_dim]
+            image_embeds = self.image_projection(image_features)  # [B, embed_dim]
+            
+            # Insert image tokens at specified positions
+            for b in range(batch_size):
+                if image_positions[b] is not None:
+                    pos = image_positions[b]
+                    # Replace IMG token with actual image embedding
+                    text_embeds[b, pos] = image_embeds[b] + self.img_token.squeeze(0)
+        
+        # Transformer processing
+        output = self.transformer(text_embeds)
+        
+        # Language modeling head
+        logits = self.lm_head(output)
+        
+        return logits
+\end{lstlisting}
+
+\subsubsection{Multi-Token Image Representation}
+
+More sophisticated approaches use multiple tokens to represent different aspects of images:
+
+\begin{lstlisting}[language=Python, caption=Multi-token image representation]
+class MultiTokenImageEncoder(nn.Module):
+    def __init__(self, embed_dim=768, num_image_tokens=32):
+        super().__init__()
+        
+        self.num_image_tokens = num_image_tokens
+        
+        # Vision Transformer for patch-level features
+        self.vision_transformer = VisionTransformer(
+            patch_size=16,
+            embed_dim=embed_dim,
+            num_layers=12
+        )
+        
+        # Learnable query tokens for image representation
+        self.image_query_tokens = nn.Parameter(
+            torch.randn(num_image_tokens, embed_dim)
+        )
+        
+        # Cross-attention to extract image tokens
+        self.cross_attention = nn.MultiheadAttention(
+            embed_dim=embed_dim,
+            num_heads=12,
+            batch_first=True
+        )
+        
+        # Layer normalization
+        self.layer_norm = nn.LayerNorm(embed_dim)
+    
+    def forward(self, images):
+        batch_size = images.shape[0]
+        
+        # Extract patch features using ViT
+        patch_features = self.vision_transformer(images)  # [B, num_patches, embed_dim]
+        
+        # Expand query tokens for batch
+        query_tokens = self.image_query_tokens.unsqueeze(0).expand(
+            batch_size, -1, -1
+        )  # [B, num_image_tokens, embed_dim]
+        
+        # Cross-attention to extract image representations
+        image_tokens, attention_weights = self.cross_attention(
+            query=query_tokens,
+            key=patch_features,
+            value=patch_features
+        )
+        
+        # Normalize and return
+        image_tokens = self.layer_norm(image_tokens)
+        
+        return image_tokens, attention_weights
+\end{lstlisting}
+
+\subsection{Cross-Modal Attention Mechanisms}
+
+Effective image tokens must facilitate meaningful attention interactions between visual and textual content.
+
+\subsubsection{Training Strategies for Image Tokens}
+
+Effective training of image tokens requires specialized objectives that align visual and textual representations.
+
+\begin{lstlisting}[language=Python, caption=Contrastive learning for image-text alignment]
+class ImageTextContrastiveLoss(nn.Module):
+    def __init__(self, temperature=0.07):
+        super().__init__()
+        self.temperature = temperature
+        self.cosine_similarity = nn.CosineSimilarity(dim=-1)
+    
+    def forward(self, image_features, text_features):
+        # Normalize features
+        image_features = F.normalize(image_features, dim=-1)
+        text_features = F.normalize(text_features, dim=-1)
+        
+        # Compute similarity matrix
+        similarity_matrix = torch.matmul(image_features, text_features.t()) / self.temperature
+        
+        # Labels for contrastive learning (diagonal elements are positive pairs)
+        batch_size = image_features.shape[0]
+        labels = torch.arange(batch_size, device=image_features.device)
+        
+        # Compute contrastive loss
+        loss_i2t = F.cross_entropy(similarity_matrix, labels)
+        loss_t2i = F.cross_entropy(similarity_matrix.t(), labels)
+        
+        return (loss_i2t + loss_t2i) / 2
+\end{lstlisting}
+
+\subsection{Applications and Use Cases}
+
+Image tokens enable a wide range of multimodal applications that require sophisticated vision-language understanding.
+
+\subsubsection{Image Captioning}
+
+\begin{lstlisting}[language=Python, caption=Image captioning with image tokens]
+class ImageCaptioningModel(nn.Module):
+    def __init__(self, vocab_size, embed_dim=768, max_length=50):
+        super().__init__()
+        
+        self.max_length = max_length
+        self.vocab_size = vocab_size
+        
+        # Image encoder
+        self.image_encoder = ImageEncoder(embed_dim)
+        
+        # Text decoder with image conditioning
+        self.text_decoder = TransformerDecoder(
+            vocab_size=vocab_size,
+            embed_dim=embed_dim,
+            num_layers=6
+        )
+        
+        # Special tokens
+        self.bos_token_id = 1  # Beginning of sequence
+        self.eos_token_id = 2  # End of sequence
+    
+    def generate(self, image_features):
+        batch_size = image_features.shape[0]
+        device = image_features.device
+        
+        # Initialize with BOS token
+        generated = torch.full(
+            (batch_size, 1), 
+            self.bos_token_id, 
+            device=device, 
+            dtype=torch.long
+        )
+        
+        for _ in range(self.max_length - 1):
+            # Decode next token
+            outputs = self.text_decoder(
+                input_ids=generated,
+                encoder_hidden_states=image_features.unsqueeze(1)
+            )
+            
+            # Get next token probabilities
+            next_token_logits = outputs.logits[:, -1, :]
+            next_tokens = torch.argmax(next_token_logits, dim=-1, keepdim=True)
+            
+            # Append to generated sequence
+            generated = torch.cat([generated, next_tokens], dim=1)
+            
+            # Check for EOS token
+            if (next_tokens == self.eos_token_id).all():
+                break
+        
+        return generated
+\end{lstlisting}
+
+\subsection{Best Practices and Guidelines}
+
+Based on extensive research and practical experience, several best practices emerge for effective image token implementation:
+
+\begin{enumerate}
+\item \textbf{Appropriate Token Count}: Balance representation richness with computational efficiency (typically 1-32 tokens per image)
+\item \textbf{Feature Alignment}: Ensure image and text features operate in compatible embedding spaces
+\item \textbf{Position Encoding}: Include appropriate positional information for image tokens in sequences
+\item \textbf{Attention Regularization}: Monitor and guide attention patterns between modalities
+\item \textbf{Multi-Scale Training}: Train on images of varying resolutions and aspect ratios
+\item \textbf{Contrastive Objectives}: Use contrastive learning to align image and text representations
+\item \textbf{Data Augmentation}: Apply both visual and textual augmentation strategies
+\item \textbf{Evaluation Diversity}: Test on diverse cross-modal tasks to ensure robust performance
+\end{enumerate}
+
+Image tokens represent a cornerstone of modern multimodal AI systems, enabling sophisticated interactions between visual and textual information. Their continued development and refinement will be crucial for advancing the field of multimodal artificial intelligence.

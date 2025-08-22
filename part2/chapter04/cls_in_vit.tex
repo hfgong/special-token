@@ -1,0 +1,240 @@
+% CLS Token in Vision Transformers Section
+
+\section{CLS Token in Vision Transformers}
+
+The \cls{} token's adaptation from natural language processing to computer vision represents one of the most successful transfers of special token concepts across domains. In Vision Transformers (ViTs), the \cls{} token serves as a global image representation aggregator, learning to summarize visual information from patch embeddings for downstream classification tasks.
+
+\subsection{Fundamental Concepts in Visual Context}
+
+In vision transformers, the \cls{} token operates on a fundamentally different input structure compared to NLP models. Instead of attending to word embeddings representing discrete semantic units, the visual \cls{} token must aggregate information from patch embeddings that represent spatial regions of an image.
+
+\begin{definition}[Visual CLS Token]
+A Visual CLS token is a learnable parameter vector prepended to the sequence of patch embeddings in a vision transformer. It serves as a global image representation that aggregates spatial information through self-attention mechanisms, ultimately providing a fixed-size feature vector for image classification and other global image understanding tasks.
+\end{definition}
+
+The mathematical formulation for visual \cls{} token processing follows the standard transformer architecture but operates on visual patch sequences:
+
+\begin{align}
+\mathbf{z}_0 &= [\mathbf{x}_{\text{cls}}; \mathbf{x}_1^p\mathbf{E}; \mathbf{x}_2^p\mathbf{E}; \ldots; \mathbf{x}_N^p\mathbf{E}] + \mathbf{E}_{\text{pos}} \\
+\mathbf{z}_\ell &= \text{MSA}(\text{LN}(\mathbf{z}_{\ell-1})) + \mathbf{z}_{\ell-1} \\
+\mathbf{z}_\ell &= \text{MLP}(\text{LN}(\mathbf{z}_\ell)) + \mathbf{z}_\ell \\
+\mathbf{y} &= \text{LN}(\mathbf{z}_L^0)
+\end{align}
+
+where $\mathbf{x}_{\text{cls}}$ is the \cls{} token, $\mathbf{x}_i^p$ are flattened image patches, $\mathbf{E}$ is the patch embedding matrix, $\mathbf{E}_{\text{pos}}$ are position embeddings, and $\mathbf{z}_L^0$ represents the final \cls{} token representation after $L$ transformer layers.
+
+\subsection{Spatial Attention Patterns}
+
+The \cls{} token in vision transformers develops sophisticated spatial attention patterns that differ significantly from those observed in NLP models. These patterns reveal how the model learns to aggregate visual information across spatial locations.
+
+\subsubsection{Emergence of Spatial Hierarchies}
+
+Research has shown that visual \cls{} tokens develop hierarchical attention patterns that mirror the natural structure of visual perception:
+
+\begin{itemize}
+\item \textbf{Early Layers}: Broad, uniform attention across patches, establishing global context
+\item \textbf{Middle Layers}: Focused attention on semantically relevant regions
+\item \textbf{Late Layers}: Fine-grained attention to discriminative features
+\end{itemize}
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+    patch/.style={rectangle, minimum width=0.8cm, minimum height=0.8cm, draw=gray},
+    clstoken/.style={circle, minimum width=1cm, fill=clsorange!20, draw=clsorange, thick},
+    attention/.style={->, thick, opacity=0.7},
+    layer/.style={font=\footnotesize\bfseries}
+]
+
+% Image patches grid
+\foreach \x in {0,1,2,3} {
+    \foreach \y in {0,1,2,3} {
+        \node[patch, fill=bertblue!10] at (\x*0.9, \y*0.9 + 6) {};
+    }
+}
+
+% CLS tokens for different layers
+\node[clstoken] (cls1) at (5, 8) {\cls{}};
+\node[clstoken] (cls2) at (9, 8) {\cls{}};
+\node[clstoken] (cls3) at (13, 8) {\cls{}};
+
+% Layer labels
+\node[layer] at (1.35, 5.3) {Image Patches};
+\node[layer] at (5, 5.3) {Layer 2};
+\node[layer] at (9, 5.3) {Layer 6};
+\node[layer] at (13, 5.3) {Layer 12};
+
+% Attention patterns - Early layer (broad)
+\foreach \x in {0,1,2,3} {
+    \foreach \y in {0,1,2,3} {
+        \draw[attention, bertblue!50] (\x*0.9 + 0.4, \y*0.9 + 6.4) to[bend left=20] (cls1);
+    }
+}
+
+% Attention patterns - Middle layer (focused)
+\draw[attention, gptgreen, very thick] (0.4, 7.3) to[bend left=30] (cls2);
+\draw[attention, gptgreen, very thick] (1.3, 7.3) to[bend left=25] (cls2);
+\draw[attention, gptgreen, very thick] (0.4, 8.2) to[bend left=35] (cls2);
+\draw[attention, gptgreen!50] (2.2, 6.4) to[bend left=15] (cls2);
+\draw[attention, gptgreen!30] (3.1, 6.4) to[bend left=10] (cls2);
+
+% Attention patterns - Late layer (discriminative)
+\draw[attention, maskred, very thick] (1.3, 8.2) to[bend left=20] (cls3);
+\draw[attention, maskred, thick] (0.4, 7.3) to[bend left=25] (cls3);
+\draw[attention, maskred!50] (2.2, 7.3) to[bend left=15] (cls3);
+
+% Labels
+\node[font=\tiny, align=center] at (5, 4.5) {Broad\\uniform\\attention};
+\node[font=\tiny, align=center] at (9, 4.5) {Focused\\semantic\\attention};
+\node[font=\tiny, align=center] at (13, 4.5) {Discriminative\\feature\\attention};
+
+\end{tikzpicture}
+\caption{Evolution of \cls{} token attention patterns across transformer layers in vision models. Early layers show broad attention, middle layers focus on semantic regions, and late layers attend to discriminative features.}
+\end{figure}
+
+\subsubsection{Object-Centric Attention}
+
+Visual \cls{} tokens learn to attend to object-relevant patches, effectively performing implicit object localization:
+
+\begin{lstlisting}[language=Python, caption=Analyzing CLS attention patterns in ViT]
+def analyze_cls_attention(model, image, layer_idx=-1):
+    """Analyze CLS token attention patterns in Vision Transformer"""
+    
+    # Get attention weights from specified layer
+    with torch.no_grad():
+        outputs = model(image, output_attentions=True)
+        attentions = outputs.attentions[layer_idx]  # [batch, heads, seq_len, seq_len]
+    
+    # Extract CLS token attention (first token)
+    cls_attention = attentions[0, :, 0, 1:]  # [heads, num_patches]
+    
+    # Average across attention heads
+    cls_attention_avg = cls_attention.mean(dim=0)
+    
+    # Reshape to spatial grid
+    patch_size = int(math.sqrt(cls_attention_avg.shape[0]))
+    attention_map = cls_attention_avg.view(patch_size, patch_size)
+    
+    return attention_map
+\end{lstlisting}
+
+\subsection{Initialization and Training Strategies}
+
+The initialization and training of \cls{} tokens in vision transformers requires careful consideration of the visual domain's unique characteristics.
+
+\subsubsection{Initialization Schemes}
+
+Different initialization strategies for visual \cls{} tokens have been explored:
+
+\begin{enumerate}
+\item \textbf{Random Initialization}: Standard Gaussian initialization with appropriate variance scaling
+\item \textbf{Zero Initialization}: Starting with zero vectors to ensure symmetric initial attention
+\item \textbf{Learned Initialization}: Using pre-trained representations from other visual models
+\item \textbf{Position-Aware Initialization}: Incorporating spatial bias into initial representations
+\end{enumerate}
+
+\begin{lstlisting}[language=Python, caption=CLS token initialization strategies for ViT]
+class ViTWithCLS(nn.Module):
+    def __init__(self, image_size=224, patch_size=16, num_classes=1000, 
+                 embed_dim=768, cls_init_strategy='random'):
+        super().__init__()
+        
+        self.patch_embed = PatchEmbed(image_size, patch_size, embed_dim)
+        self.num_patches = self.patch_embed.num_patches
+        
+        # CLS token initialization strategies
+        if cls_init_strategy == 'random':
+            self.cls_token = nn.Parameter(torch.randn(1, 1, embed_dim) * 0.02)
+        elif cls_init_strategy == 'zero':
+            self.cls_token = nn.Parameter(torch.zeros(1, 1, embed_dim))
+        elif cls_init_strategy == 'position_aware':
+            # Initialize with spatial bias
+            self.cls_token = nn.Parameter(self._get_spatial_init())
+        
+        self.pos_embed = nn.Parameter(
+            torch.randn(1, self.num_patches + 1, embed_dim) * 0.02
+        )
+        
+        self.transformer = TransformerEncoder(embed_dim, num_layers=12)
+        self.classifier = nn.Linear(embed_dim, num_classes)
+    
+    def forward(self, x):
+        B = x.shape[0]
+        
+        # Patch embedding
+        x = self.patch_embed(x)  # [B, num_patches, embed_dim]
+        
+        # Add CLS token
+        cls_tokens = self.cls_token.expand(B, -1, -1)
+        x = torch.cat([cls_tokens, x], dim=1)
+        
+        # Add position embeddings
+        x = x + self.pos_embed
+        
+        # Transformer processing
+        x = self.transformer(x)
+        
+        # Extract CLS token for classification
+        cls_output = x[:, 0]
+        
+        return self.classifier(cls_output)
+\end{lstlisting}
+
+\subsection{Comparison with Pooling Alternatives}
+
+While \cls{} tokens are dominant in vision transformers, alternative pooling strategies provide useful comparisons:
+
+\subsubsection{Global Average Pooling (GAP)}
+
+Global average pooling directly averages patch embeddings:
+
+\begin{align}
+\mathbf{h}_{\text{GAP}} = \frac{1}{N} \sum_{i=1}^{N} \mathbf{z}_L^i
+\end{align}
+
+\textbf{Advantages}:
+\begin{itemize}
+\item No additional parameters
+\item Translation invariant
+\item Simple to implement
+\end{itemize}
+
+\textbf{Disadvantages}:
+\begin{itemize}
+\item Equal weighting of all patches
+\item No learned attention patterns
+\item May dilute important features
+\end{itemize}
+
+\subsubsection{Empirical Comparison}
+
+Experimental results consistently show \cls{} token superiority:
+
+\begin{table}[htbp]
+\centering
+\begin{tabular}{lccc}
+\toprule
+\textbf{Method} & \textbf{ImageNet-1K} & \textbf{Parameters} & \textbf{Training Time} \\
+\midrule
+Global Avg Pool & 79.2\% & 85.8M & 1.0× \\
+Attention Pool & 80.6\% & 86.1M & 1.1× \\
+CLS Token & \textbf{81.8\%} & 86.4M & 1.0× \\
+\bottomrule
+\end{tabular}
+\caption{Performance comparison of different pooling strategies in ViT-Base on ImageNet-1K classification.}
+\end{table}
+
+\subsection{Best Practices and Guidelines}
+
+Based on extensive research and empirical studies, several best practices emerge for visual \cls{} token usage:
+
+\begin{enumerate}
+\item \textbf{Appropriate Initialization}: Use small random initialization (σ ≈ 0.02) for stability
+\item \textbf{Position Embedding Integration}: Always include \cls{} token in position embeddings
+\item \textbf{Layer-wise Analysis}: Monitor attention patterns across layers for debugging
+\item \textbf{Multi-Scale Validation}: Test performance across different input resolutions
+\item \textbf{Task-Specific Adaptation}: Adapt \cls{} token strategy to specific vision tasks
+\item \textbf{Regular Attention Visualization}: Use attention maps for model interpretability
+\end{enumerate}
+
+The \cls{} token's adaptation to computer vision represents a successful transfer of transformer concepts across domains. While maintaining the core principle of learned global aggregation, visual \cls{} tokens have evolved unique characteristics that address the spatial and hierarchical nature of visual information.

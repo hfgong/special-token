@@ -1,0 +1,44 @@
+# Compiled LaTeX files
+*.aux
+*.bbl
+*.blg
+*.brf
+*.log
+*.lof
+*.lot
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+*.toc
+*.out
+*.dvi
+*.ps
+*.bak
+*.idx
+*.ilg
+*.ind
+*.nlo
+*.nls
+*.thm
+*.nav
+*.snm
+*.vrb
+*.pyg
+*.xdv
+
+# Editor specific files (optional, but often useful)
+*~
+*.bak
+*.swp
+.DS_Store
+Thumbs.db
+*.vscode/ # VS Code settings, if you don't want to share
+.idea/ # IntelliJ/JetBrains IDE settings
+
+# Biber/BibTeX related (if you use them)
+*.bcf
+*.run.xml
+
+# If you generate PDFs in a specific output directory
+# output/
+# *.pdf # If you want to ignore all PDFs

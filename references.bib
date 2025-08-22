@@ -1,0 +1,227 @@
+% Foundational Papers
+
+@article{vaswani2017attention,
+  title={Attention is all you need},
+  author={Vaswani, Ashish and Shazeer, Noam and Parmar, Niki and Uszkoreit, Jakob and Jones, Llion and Gomez, Aidan N and Kaiser, {\L}ukasz and Polosukhin, Illia},
+  journal={Advances in neural information processing systems},
+  volume={30},
+  year={2017},
+  note={Introduced the transformer architecture and positional encodings}
+}
+
+@article{devlin2018bert,
+  title={Bert: Pre-training of deep bidirectional transformers for language understanding},
+  author={Devlin, Jacob and Chang, Ming-Wei and Lee, Kenton and Toutanova, Kristina},
+  journal={arXiv preprint arXiv:1810.04805},
+  year={2018},
+  note={Introduced [CLS], [SEP], and [MASK] tokens for bidirectional pre-training}
+}
+
+@article{radford2019language,
+  title={Language models are unsupervised multitask learners},
+  author={Radford, Alec and Wu, Jeffrey and Child, Rewon and Luan, David and Amodei, Dario and Sutskever, Ilya and others},
+  journal={OpenAI blog},
+  volume={1},
+  number={8},
+  pages={9},
+  year={2019},
+  note={GPT-2: Demonstrated the power of autoregressive modeling with special tokens}
+}
+
+% Vision Transformers
+
+@article{dosovitskiy2020image,
+  title={An image is worth 16x16 words: Transformers for image recognition at scale},
+  author={Dosovitskiy, Alexey and Beyer, Lucas and Kolesnikov, Alexander and Weissenborn, Dirk and Zhai, Xiaohua and Unterthiner, Thomas and Dehghani, Mostafa and Minderer, Matthias and Heigold, Georg and Gelly, Sylvain and others},
+  journal={arXiv preprint arXiv:2010.11929},
+  year={2020},
+  note={Vision Transformer (ViT): Adapted [CLS] token for image classification}
+}
+
+@article{he2022masked,
+  title={Masked autoencoders are scalable vision learners},
+  author={He, Kaiming and Chen, Xinlei and Xie, Saining and Li, Yanghao and Doll{\'a}r, Piotr and Girshick, Ross},
+  journal={Proceedings of the IEEE/CVF conference on computer vision and pattern recognition},
+  pages={16000--16009},
+  year={2022},
+  note={MAE: Introduced masked patch modeling with special mask tokens}
+}
+
+@article{darcet2023vision,
+  title={Vision transformers need registers},
+  author={Darcet, Timoth{\'e}e and Oquab, Maxime and Mairal, Julien and Bojanowski, Piotr},
+  journal={arXiv preprint arXiv:2309.16588},
+  year={2023},
+  note={Introduced register tokens to improve ViT performance}
+}
+
+% Multimodal Models
+
+@inproceedings{radford2021learning,
+  title={Learning transferable visual models from natural language supervision},
+  author={Radford, Alec and Kim, Jong Wook and Hallacy, Chris and Ramesh, Aditya and Goh, Gabriel and Agarwal, Sandhini and Sastry, Girish and Askell, Amanda and Mishkin, Pamela and Clark, Jack and others},
+  booktitle={International conference on machine learning},
+  pages={8748--8763},
+  year={2021},
+  organization={PMLR},
+  note={CLIP: Cross-modal alignment with special tokens}
+}
+
+@article{alayrac2022flamingo,
+  title={Flamingo: a visual language model for few-shot learning},
+  author={Alayrac, Jean-Baptiste and Donahue, Jeff and Luc, Pauline and Miech, Antoine and Barr, Iain and Hasson, Yana and Lenc, Karel and Mensch, Arthur and Millican, Katherine and Reynolds, Malcolm and others},
+  journal={Advances in Neural Information Processing Systems},
+  volume={35},
+  pages={23716--23736},
+  year={2022},
+  note={Multimodal model with interleaved image and text tokens}
+}
+
+% Prompt Tuning and Soft Tokens
+
+@article{lester2021power,
+  title={The power of scale for parameter-efficient prompt tuning},
+  author={Lester, Brian and Al-Rfou, Rami and Constant, Noah},
+  journal={arXiv preprint arXiv:2104.08691},
+  year={2021},
+  note={Introduced learnable soft prompt tokens}
+}
+
+@article{li2021prefix,
+  title={Prefix-tuning: Optimizing continuous prompts for generation},
+  author={Li, Xiang Lisa and Liang, Percy},
+  journal={arXiv preprint arXiv:2101.00190},
+  year={2021},
+  note={Continuous prefix tokens for efficient fine-tuning}
+}
+
+% Masked Language Modeling Variants
+
+@article{liu2019roberta,
+  title={Roberta: A robustly optimized bert pretraining approach},
+  author={Liu, Yinhan and Ott, Myle and Goyal, Naman and Du, Jingfei and Joshi, Mandar and Chen, Danqi and Levy, Omer and Lewis, Mike and Zettlemoyer, Luke and Stoyanov, Veselin},
+  journal={arXiv preprint arXiv:1907.11692},
+  year={2019},
+  note={Dynamic masking strategies for [MASK] token}
+}
+
+@article{joshi2020spanbert,
+  title={Spanbert: Improving pre-training by representing and predicting spans},
+  author={Joshi, Mandar and Chen, Danqi and Liu, Yinhan and Weld, Daniel S and Zettlemoyer, Luke and Levy, Omer},
+  journal={Transactions of the Association for Computational Linguistics},
+  volume={8},
+  pages={64--77},
+  year={2020},
+  note={Span-based masking with special tokens}
+}
+
+% Memory and Retrieval Tokens
+
+@article{wu2022memorizing,
+  title={Memorizing transformers},
+  author={Wu, Yuhuai and Rabe, Markus N and Hutchins, DeLesley and Szegedy, Christian},
+  journal={arXiv preprint arXiv:2203.08913},
+  year={2022},
+  note={Memory tokens for long-range dependencies}
+}
+
+@article{borgeaud2022improving,
+  title={Improving language models by retrieving from trillions of tokens},
+  author={Borgeaud, Sebastian and Mensch, Arthur and Hoffmann, Jordan and Cai, Trevor and Rutherford, Eliza and Millican, Katie and Van Den Driessche, George Bm and Lespiau, Jean-Baptiste and Damoc, Bogdan and Clark, Aidan and others},
+  journal={International conference on machine learning},
+  pages={2206--2240},
+  year={2022},
+  organization={PMLR},
+  note={RETRO: Retrieval-enhanced transformers with special tokens}
+}
+
+% Code Generation
+
+@article{chen2021evaluating,
+  title={Evaluating large language models trained on code},
+  author={Chen, Mark and Tworek, Jerry and Jun, Heewoo and Yuan, Qiming and Pinto, Henrique Ponde de Oliveira and Kaplan, Jared and Edwards, Harri and Burda, Yuri and Joseph, Nicholas and Brockman, Greg and others},
+  journal={arXiv preprint arXiv:2107.03374},
+  year={2021},
+  note={Codex: Special tokens for code generation}
+}
+
+@article{nijkamp2022codegen,
+  title={Codegen: An open large language model for code with multi-turn program synthesis},
+  author={Nijkamp, Erik and Pang, Bo and Hayashi, Hiroaki and Tu, Lifu and Wang, Huan and Zhou, Yingbo and Savarese, Silvio and Xiong, Caiming},
+  journal={arXiv preprint arXiv:2203.13474},
+  year={2022},
+  note={Multi-language code generation with language-specific tokens}
+}
+
+% Efficiency and Token Reduction
+
+@article{rao2021dynamicvit,
+  title={Dynamicvit: Efficient vision transformers with dynamic token sparsification},
+  author={Rao, Yongming and Zhao, Wenliang and Liu, Benlin and Lu, Jiwen and Zhou, Jie and Hsieh, Cho-Jui},
+  journal={Advances in neural information processing systems},
+  volume={34},
+  pages={13937--13949},
+  year={2021},
+  note={Dynamic token pruning in vision transformers}
+}
+
+@article{bolya2022token,
+  title={Token merging: Your vit but faster},
+  author={Bolya, Daniel and Fu, Cheng-Yang and Dai, Xiaoliang and Zhang, Peizhao and Feichtenhofer, Christoph and Hoffman, Judy},
+  journal={arXiv preprint arXiv:2210.09461},
+  year={2022},
+  note={Token merging strategies for efficiency}
+}
+
+% Chain of Thought
+
+@article{wei2022chain,
+  title={Chain-of-thought prompting elicits reasoning in large language models},
+  author={Wei, Jason and Wang, Xuezhi and Schuurmans, Dale and Bosma, Maarten and Xia, Fei and Chi, Ed and Le, Quoc V and Zhou, Denny and others},
+  journal={Advances in Neural Information Processing Systems},
+  volume={35},
+  pages={24824--24837},
+  year={2022},
+  note={Special tokens for reasoning chains}
+}
+
+% Tool Use
+
+@article{schick2023toolformer,
+  title={Toolformer: Language models can teach themselves to use tools},
+  author={Schick, Timo and Dwivedi-Yu, Jane and Dess{\`\i}, Roberto and Raileanu, Roberta and Lomeli, Maria and Zettlemoyer, Luke and Cancedda, Nicola and Scialom, Thomas},
+  journal={Advances in Neural Information Processing Systems},
+  volume={36},
+  year={2023},
+  note={Special tokens for tool invocation}
+}
+
+% Position Encodings
+
+@article{su2024roformer,
+  title={Roformer: Enhanced transformer with rotary position embedding},
+  author={Su, Jianlin and Lu, Yu and Pan, Shengfeng and Murtadha, Ahmed and Wen, Bo and Liu, Yunfeng},
+  journal={Neurocomputing},
+  volume={568},
+  pages={127063},
+  year={2024},
+  note={Alternative position encoding strategies}
+}
+
+% Recent Advances
+
+@article{touvron2023llama,
+  title={Llama 2: Open foundation and fine-tuned chat models},
+  author={Touvron, Hugo and Martin, Louis and Stone, Kevin and Albert, Peter and Almahairi, Amjad and Babaei, Yasmine and Bashlykov, Nikolay and Batra, Soumya and Bhargava, Prajjwal and Bhosale, Shruti and others},
+  journal={arXiv preprint arXiv:2307.09288},
+  year={2023},
+  note={Modern special token usage in large language models}
+}
+
+@article{jiang2023mistral,
+  title={Mistral 7B},
+  author={Jiang, Albert Q and Sablayrolles, Alexandre and Mensch, Arthur and Bamford, Chris and Chaplot, Devendra Singh and Casas, Diego de las and Bressand, Florian and Lengyel, Gianna and Lample, Guillaume and Saulnier, Lucile and others},
+  journal={arXiv preprint arXiv:2310.06825},
+  year={2023},
+  note={Efficient transformer architectures with special tokens}
+}

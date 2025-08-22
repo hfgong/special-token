@@ -1,0 +1,13 @@
+In the summer of 2017, a team of researchers at Google published a paper that would fundamentally reshape artificial intelligence: ``Attention Is All You Need'' \citep{vaswani2017attention}. The transformer architecture they introduced dispensed with the recurrent and convolutional layers that had dominated sequence modeling, replacing them with a deceptively simple mechanism: self-attention. Within this revolutionary architecture lay an often-overlooked innovation---the systematic use of special tokens to encode positional information, segment boundaries, and task-specific signals.
+
+Today, special tokens permeate every aspect of transformer-based AI systems. When ChatGPT generates text, it relies on \sos{} and \eos{} tokens to manage generation boundaries. When BERT classifies sentiment, it pools representations from the \cls{} token. When Vision Transformers recognize images, they prepend a learnable \cls{} token to patch embeddings. These tokens are not mere technical artifacts; they are fundamental to how transformers perceive, process, and produce information.
+
+This chapter lays the foundation for understanding special tokens by addressing four key questions:
+\begin{enumerate}
+\item What exactly are special tokens, and how do they differ from regular tokens?
+\item How did special tokens evolve from simple markers to sophisticated architectural components?
+\item What role do special tokens play in the attention mechanism that powers transformers?
+\item How are special tokens integrated during tokenization and preprocessing?
+\end{enumerate}
+
+By the end of this chapter, you will understand why special tokens are not just implementation details but rather essential components that enable transformers to achieve their remarkable capabilities. This foundation will prepare you for the deeper explorations in subsequent chapters, where we examine specific token types, their applications across domains, and advanced techniques for optimizing their use.
