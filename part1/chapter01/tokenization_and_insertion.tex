@@ -49,75 +49,22 @@ Different transformer architectures employ distinct strategies for inserting spe
 
 BERT and its variants use a structured approach to special token insertion:
 
-\begin{lstlisting}[language=Python, caption=BERT-style special token insertion]
-class BERTTokenizer:
-    def __init__(self, vocab, special_tokens):
-        self.vocab = vocab
-        self.cls_token = special_tokens['CLS']
-        self.sep_token = special_tokens['SEP']
-        self.pad_token = special_tokens['PAD']
-        self.unk_token = special_tokens['UNK']
-        self.mask_token = special_tokens['MASK']
-        
-    def encode_single_sequence(self, text, max_length=512):
-        """Encode single sequence with BERT special token pattern"""
-        # Step 1: Subword tokenization
-        tokens = self.subword_tokenize(text)
-        
-        # Step 2: Truncate if necessary (reserve space for special tokens)
-        if len(tokens) > max_length - 2:
-            tokens = tokens[:max_length - 2]
-        
-        # Step 3: Insert special tokens
-        sequence = [self.cls_token] + tokens + [self.sep_token]
-        
-        # Step 4: Pad to max_length if needed
-        while len(sequence) < max_length:
-            sequence.append(self.pad_token)
-            
-        return self.convert_tokens_to_ids(sequence)
+\begin{lstlisting}[language=Python, caption={BERT-style special token insertion}]
+# Complete implementation available at:
+# https://github.com/hfgong/special-token/blob/main/code/part1/chapter01/tokenization_and_insertion_bert-style_special_token_inser.py
+
+# See the external file for the complete implementation
+# File: code/part1/chapter01/tokenization_and_insertion_bert-style_special_token_inser.py
+# Lines: 55
+
+class ImplementationReference:
+    """BERT-style special token insertion
     
-    def encode_pair_sequence(self, text_a, text_b, max_length=512):
-        """Encode sentence pair with BERT special token pattern"""
-        tokens_a = self.subword_tokenize(text_a)
-        tokens_b = self.subword_tokenize(text_b)
-        
-        # Reserve space for 3 special tokens: [CLS] text_a [SEP] text_b [SEP]
-        max_tokens = max_length - 3
-        
-        # Truncate sequences proportionally
-        if len(tokens_a) + len(tokens_b) > max_tokens:
-            tokens_a, tokens_b = self.truncate_sequences(
-                tokens_a, tokens_b, max_tokens
-            )
-        
-        # Construct sequence with special tokens
-        sequence = ([self.cls_token] + tokens_a + [self.sep_token] + 
-                   tokens_b + [self.sep_token])
-        
-        # Create segment IDs (token type embeddings)
-        segment_ids = ([0] * (len(tokens_a) + 2) +  # CLS + text_a + SEP
-                      [1] * (len(tokens_b) + 1))       # text_b + SEP
-        
-        # Pad sequences
-        while len(sequence) < max_length:
-            sequence.append(self.pad_token)
-            segment_ids.append(0)
-            
-        return {
-            'input_ids': self.convert_tokens_to_ids(sequence),
-            'token_type_ids': segment_ids,
-            'attention_mask': [1 if tok != self.pad_token else 0 for tok in sequence]
-        }
-    
-    def truncate_sequences(self, tokens_a, tokens_b, max_length):
-        """Proportionally truncate two sequences to fit max_length"""
-        while len(tokens_a) + len(tokens_b) > max_length:
-            if len(tokens_a) > len(tokens_b):
-                tokens_a.pop()
-            else:
-                tokens_b.pop()
-        return tokens_a, tokens_b
+    The complete implementation is available in the external code file.
+    This placeholder reduces the book's verbosity while maintaining
+    access to all implementation details.
+    """
+    pass
 \end{lstlisting}
 
 \subsubsection{GPT-Style Insertion}
@@ -348,72 +295,22 @@ The positioning of special tokens within sequences significantly impacts model p
 
 For variable-length sequences, special token positioning must account for truncation strategies:
 
-\begin{lstlisting}[language=Python, caption=Length-aware special token positioning]
-def optimize_token_positioning(texts, max_length, special_tokens):
-    """Optimize special token positioning for variable-length inputs"""
+\begin{lstlisting}[language=Python, caption={Length-aware special token positioning}]
+# Complete implementation available at:
+# https://github.com/hfgong/special-token/blob/main/code/part1/chapter01/tokenization_and_insertion_length-aware_special_token_pos.py
+
+# See the external file for the complete implementation
+# File: code/part1/chapter01/tokenization_and_insertion_length-aware_special_token_pos.py
+# Lines: 52
+
+class ImplementationReference:
+    """Length-aware special token positioning
     
-    def calculate_information_density(tokens):
-        """Estimate information density of token segments"""
-        # Simple heuristic: shorter, less common tokens have higher density
-        density_scores = []
-        for token in tokens:
-            freq = token_frequency.get(token, 1)  # From pre-computed statistics
-            density = 1.0 / (len(token) * math.log(freq + 1))
-            density_scores.append(density)
-        return density_scores
-    
-    def intelligent_truncation(tokens, target_length, special_token_count):
-        """Truncate tokens while preserving high-information segments"""
-        if len(tokens) <= target_length - special_token_count:
-            return tokens
-        
-        densities = calculate_information_density(tokens)
-        
-        # Create segments and compute average density
-        segment_size = 50  # Adjust based on typical sentence length
-        segments = []
-        for i in range(0, len(tokens), segment_size):
-            segment_tokens = tokens[i:i + segment_size]
-            segment_densities = densities[i:i + segment_size]
-            avg_density = sum(segment_densities) / len(segment_densities)
-            segments.append({
-                'tokens': segment_tokens,
-                'start': i,
-                'density': avg_density
-            })
-        
-        # Sort by density and keep highest-density segments
-        segments.sort(key=lambda x: x['density'], reverse=True)
-        
-        selected_tokens = []
-        remaining_length = target_length - special_token_count
-        
-        for segment in segments:
-            if len(selected_tokens) + len(segment['tokens']) <= remaining_length:
-                selected_tokens.extend(segment['tokens'])
-            else:
-                # Partial segment inclusion
-                remaining_space = remaining_length - len(selected_tokens)
-                selected_tokens.extend(segment['tokens'][:remaining_space])
-                break
-        
-        return selected_tokens
-    
-    optimized_sequences = []
-    for text in texts:
-        tokens = tokenize(text)  # Basic tokenization
-        
-        # Apply intelligent truncation
-        optimal_tokens = intelligent_truncation(
-            tokens, max_length, len(special_tokens)
-        )
-        
-        # Insert special tokens
-        final_sequence = insert_special_tokens(optimal_tokens, special_tokens)
-        
-        optimized_sequences.append(final_sequence)
-    
-    return optimized_sequences
+    The complete implementation is available in the external code file.
+    This placeholder reduces the book's verbosity while maintaining
+    access to all implementation details.
+    """
+    pass
 \end{lstlisting}
 
 \subsection{Special Token Vocabulary Management}
@@ -422,70 +319,22 @@ Managing special tokens within the model vocabulary requires careful considerati
 
 \subsubsection{Vocabulary Extension Strategies}
 
-\begin{lstlisting}[language=Python, caption=Special token vocabulary management]
-class SpecialTokenVocabularyManager:
-    def __init__(self, base_vocab_size=30000):
-        self.base_vocab_size = base_vocab_size
-        self.special_tokens = {}
-        self.reserved_ids = set()
-        
-    def reserve_special_token_space(self, num_special_tokens=100):
-        """Reserve space at the end of vocabulary for special tokens"""
-        start_id = self.base_vocab_size
-        end_id = start_id + num_special_tokens
-        self.reserved_ids = set(range(start_id, end_id))
-        return start_id, end_id
+\begin{lstlisting}[language=Python, caption={Special token vocabulary management}]
+# Complete implementation available at:
+# https://github.com/hfgong/special-token/blob/main/code/part1/chapter01/tokenization_and_insertion_special_token_vocabulary_manag.py
+
+# See the external file for the complete implementation
+# File: code/part1/chapter01/tokenization_and_insertion_special_token_vocabulary_manag.py
+# Lines: 51
+
+class ImplementationReference:
+    """Special token vocabulary management
     
-    def add_special_token(self, token_str, token_id=None):
-        """Add a special token to the vocabulary"""
-        if token_id is None:
-            # Find next available ID in reserved space
-            available_ids = self.reserved_ids - set(self.special_tokens.values())
-            if not available_ids:
-                raise ValueError("No available special token IDs")
-            token_id = min(available_ids)
-        
-        if token_id not in self.reserved_ids:
-            raise ValueError(f"Token ID {token_id} not in reserved space")
-        
-        self.special_tokens[token_str] = token_id
-        return token_id
-    
-    def batch_add_special_tokens(self, token_list):
-        """Add multiple special tokens efficiently"""
-        available_ids = sorted(self.reserved_ids - set(self.special_tokens.values()))
-        
-        if len(token_list) > len(available_ids):
-            raise ValueError("Not enough reserved space for all tokens")
-        
-        for i, token_str in enumerate(token_list):
-            self.special_tokens[token_str] = available_ids[i]
-        
-        return {token: available_ids[i] for i, token in enumerate(token_list)}
-    
-    def export_vocabulary_config(self):
-        """Export special token configuration for model serialization"""
-        return {
-            'base_vocab_size': self.base_vocab_size,
-            'special_tokens': self.special_tokens,
-            'reserved_space': list(self.reserved_ids)
-        }
-    
-    def validate_token_consistency(self, other_vocab_config):
-        """Validate consistency with another vocabulary configuration"""
-        conflicts = []
-        
-        for token, token_id in self.special_tokens.items():
-            if token in other_vocab_config['special_tokens']:
-                other_id = other_vocab_config['special_tokens'][token]
-                if token_id != other_id:
-                    conflicts.append({
-                        'token': token,
-                        'current_id': token_id,
-                        'other_id': other_id
-                    })
-        
-        return conflicts
+    The complete implementation is available in the external code file.
+    This placeholder reduces the book's verbosity while maintaining
+    access to all implementation details.
+    """
+    pass
 \end{lstlisting}
 
 \subsection{Implementation Best Practices}

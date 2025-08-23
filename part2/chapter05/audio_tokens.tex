@@ -30,106 +30,22 @@ Before integration into multimodal transformers, audio signals require sophistic
 
 \subsubsection{Spectral Feature Extraction}
 
-\begin{lstlisting}[language=Python, caption=Audio feature extraction for token generation]
-import torch
-import torchaudio
-import torchaudio.transforms as T
-import torch.nn.functional as F
+\begin{lstlisting}[language=Python, caption={Audio feature extraction for token generation}]
+# Complete implementation available at:
+# https://github.com/hfgong/special-token/blob/main/code/part2/chapter05/audio_tokens_audio_feature_extraction_for_t.py
 
-class AudioFeatureExtractor(nn.Module):
-    def __init__(self, sample_rate=16000, n_mels=80, n_fft=1024, hop_length=160):
-        super().__init__()
-        
-        self.sample_rate = sample_rate
-        self.n_mels = n_mels
-        
-        # Mel-spectrogram transform
-        self.mel_spectrogram = T.MelSpectrogram(
-            sample_rate=sample_rate,
-            n_fft=n_fft,
-            hop_length=hop_length,
-            n_mels=n_mels,
-            power=2.0
-        )
-        
-        # MFCC transform for speech
-        self.mfcc = T.MFCC(
-            sample_rate=sample_rate,
-            n_mfcc=13,
-            melkwargs={
-                'n_fft': n_fft,
-                'hop_length': hop_length,
-                'n_mels': n_mels
-            }
-        )
-        
-        # Chroma features for music
-        self.chroma = T.ChromaScale(
-            sample_rate=sample_rate,
-            n_chroma=12
-        )
-        
-    def forward(self, waveform, feature_type='mel'):
-        """Extract audio features based on specified type."""
-        
-        if feature_type == 'mel':
-            # Mel-spectrogram (general audio)
-            mel_spec = self.mel_spectrogram(waveform)
-            features = torch.log(mel_spec + 1e-8)  # Log-mel features
-            
-        elif feature_type == 'mfcc':
-            # MFCC (speech processing)
-            features = self.mfcc(waveform)
-            
-        elif feature_type == 'chroma':
-            # Chroma (music analysis)
-            features = self.chroma(waveform)
-            
-        elif feature_type == 'combined':
-            # Multi-feature representation
-            mel_spec = torch.log(self.mel_spectrogram(waveform) + 1e-8)
-            mfcc_features = self.mfcc(waveform)
-            chroma_features = self.chroma(waveform)
-            
-            # Concatenate features along frequency dimension
-            features = torch.cat([mel_spec, mfcc_features, chroma_features], dim=1)
-        
-        # Transpose to (batch, time, frequency) for transformer processing
-        features = features.transpose(-2, -1)
-        
-        return features
+# See the external file for the complete implementation
+# File: code/part2/chapter05/audio_tokens_audio_feature_extraction_for_t.py
+# Lines: 78
 
-def preprocess_audio_batch(audio_files, target_length=1000):
-    """Preprocess batch of audio files for token generation."""
+class ImplementationReference:
+    """Audio feature extraction for token generation
     
-    feature_extractor = AudioFeatureExtractor()
-    processed_features = []
-    
-    for audio_file in audio_files:
-        # Load audio
-        waveform, sample_rate = torchaudio.load(audio_file)
-        
-        # Resample if necessary
-        if sample_rate != 16000:
-            resampler = T.Resample(sample_rate, 16000)
-            waveform = resampler(waveform)
-        
-        # Extract features
-        features = feature_extractor(waveform, feature_type='combined')
-        
-        # Pad or truncate to target length
-        current_length = features.shape[1]
-        if current_length < target_length:
-            # Pad with zeros
-            padding = target_length - current_length
-            features = F.pad(features, (0, 0, 0, padding))
-        elif current_length > target_length:
-            # Truncate
-            features = features[:, :target_length, :]
-        
-        processed_features.append(features)
-    
-    return torch.stack(processed_features)
+    The complete implementation is available in the external code file.
+    This placeholder reduces the book's verbosity while maintaining
+    access to all implementation details.
+    """
+    pass
 \end{lstlisting}
 
 \subsection{Audio Token Architecture}
@@ -200,146 +116,22 @@ class PositionalEncoding(nn.Module):
 
 \subsubsection{Multi-Modal Integration with Audio}
 
-\begin{lstlisting}[language=Python, caption=Multimodal transformer with audio token integration]
-class AudioVisualTextTransformer(nn.Module):
-    def __init__(self, vocab_size, embed_dim=768, audio_input_dim=105):
-        super().__init__()
-        
-        # Modality-specific encoders
-        self.text_embeddings = nn.Embedding(vocab_size, embed_dim)
-        self.audio_encoder = AudioEncoder(audio_input_dim, embed_dim)
-        self.image_encoder = ImageEncoder(embed_dim)
-        
-        # Special token embeddings
-        self.audio_token = nn.Parameter(torch.randn(1, embed_dim))
-        self.img_token = nn.Parameter(torch.randn(1, embed_dim))
-        
-        # Cross-modal attention layers
-        self.cross_modal_layers = nn.ModuleList([
-            CrossModalAttentionLayer(embed_dim) for _ in range(6)
-        ])
-        
-        # Final transformer layers
-        self.final_transformer = nn.TransformerEncoder(
-            nn.TransformerEncoderLayer(
-                d_model=embed_dim,
-                nhead=12,
-                batch_first=True
-            ),
-            num_layers=6
-        )
-        
-        # Output heads
-        self.classification_head = nn.Linear(embed_dim, vocab_size)
-    
-    def forward(self, text_ids, audio_features=None, images=None, 
-                attention_mask=None):
-        batch_size = text_ids.shape[0]
-        
-        # Process text
-        text_embeds = self.text_embeddings(text_ids)
-        
-        # Initialize multimodal sequence with text
-        multimodal_sequence = [text_embeds]
-        modality_types = [torch.zeros(text_embeds.shape[:2], dtype=torch.long)]
-        
-        # Add audio if provided
-        if audio_features is not None:
-            audio_embeds = self.audio_encoder(audio_features)
-            
-            # Add audio token markers
-            audio_markers = self.audio_token.expand(
-                batch_size, audio_embeds.shape[1], -1
-            )
-            audio_embeds = audio_embeds + audio_markers
-            
-            multimodal_sequence.append(audio_embeds)
-            modality_types.append(torch.ones(audio_embeds.shape[:2], dtype=torch.long))
-        
-        # Add images if provided
-        if images is not None:
-            image_embeds = self.image_encoder(images)
-            
-            # Add image token markers
-            image_markers = self.img_token.expand(
-                batch_size, image_embeds.shape[1], -1
-            )
-            image_embeds = image_embeds + image_markers
-            
-            multimodal_sequence.append(image_embeds)
-            modality_types.append(torch.full(image_embeds.shape[:2], 2, dtype=torch.long))
-        
-        # Concatenate all modalities
-        full_sequence = torch.cat(multimodal_sequence, dim=1)
-        modality_labels = torch.cat(modality_types, dim=1)
-        
-        # Cross-modal processing
-        for layer in self.cross_modal_layers:
-            full_sequence = layer(full_sequence, modality_labels)
-        
-        # Final transformer processing
-        output = self.final_transformer(full_sequence)
-        
-        # Classification
-        logits = self.classification_head(output)
-        
-        return {
-            'logits': logits,
-            'hidden_states': output,
-            'modality_labels': modality_labels
-        }
+\begin{lstlisting}[language=Python, caption={Multimodal transformer with audio token integration}]
+# Complete implementation available at:
+# https://github.com/hfgong/special-token/blob/main/code/part2/chapter05/audio_tokens_multimodal_transformer_with_au.py
 
-class CrossModalAttentionLayer(nn.Module):
-    def __init__(self, embed_dim):
-        super().__init__()
-        
-        self.self_attention = nn.MultiheadAttention(
-            embed_dim, num_heads=12, batch_first=True
-        )
-        
-        self.cross_attention = nn.MultiheadAttention(
-            embed_dim, num_heads=12, batch_first=True
-        )
-        
-        self.feed_forward = nn.Sequential(
-            nn.Linear(embed_dim, embed_dim * 4),
-            nn.GELU(),
-            nn.Linear(embed_dim * 4, embed_dim)
-        )
-        
-        self.layer_norm1 = nn.LayerNorm(embed_dim)
-        self.layer_norm2 = nn.LayerNorm(embed_dim)
-        self.layer_norm3 = nn.LayerNorm(embed_dim)
-        
-    def forward(self, x, modality_labels):
-        # Self-attention
-        attn_output, _ = self.self_attention(x, x, x)
-        x = self.layer_norm1(x + attn_output)
-        
-        # Cross-modal attention (audio attending to text/image)
-        audio_mask = (modality_labels == 1)
-        if audio_mask.any():
-            audio_tokens = x[audio_mask.unsqueeze(-1).expand_as(x)].view(
-                x.shape[0], -1, x.shape[-1]
-            )
-            other_tokens = x[~audio_mask.unsqueeze(-1).expand_as(x)].view(
-                x.shape[0], -1, x.shape[-1]
-            )
-            
-            if other_tokens.shape[1] > 0:
-                cross_attn_output, _ = self.cross_attention(
-                    audio_tokens, other_tokens, other_tokens
-                )
-                # Update audio tokens with cross-modal information
-                x[audio_mask.unsqueeze(-1).expand_as(x)] = cross_attn_output.flatten()
-        
-        x = self.layer_norm2(x)
-        
-        # Feed-forward
-        ff_output = self.feed_forward(x)
-        x = self.layer_norm3(x + ff_output)
-        
-        return x
+# See the external file for the complete implementation
+# File: code/part2/chapter05/audio_tokens_multimodal_transformer_with_au.py
+# Lines: 109
+
+class ImplementationReference:
+    """Multimodal transformer with audio token integration
+    
+    The complete implementation is available in the external code file.
+    This placeholder reduces the book's verbosity while maintaining
+    access to all implementation details.
+    """
+    pass
 \end{lstlisting}
 
 \subsection{Audio-Specific Training Objectives}
@@ -467,78 +259,22 @@ class VisualSpeechRecognition(nn.Module):
 
 \subsubsection{Audio-Visual Scene Understanding}
 
-\begin{lstlisting}[language=Python, caption=Audio-visual scene analysis]
-class AudioVisualSceneAnalyzer(nn.Module):
-    def __init__(self, num_audio_classes=50, num_visual_classes=100, 
-                 num_scene_classes=25, embed_dim=768):
-        super().__init__()
-        
-        self.multimodal_transformer = AudioVisualTextTransformer(
-            vocab_size=10000, embed_dim=embed_dim
-        )
-        
-        # Classification heads
-        self.audio_classifier = nn.Linear(embed_dim, num_audio_classes)
-        self.visual_classifier = nn.Linear(embed_dim, num_visual_classes)
-        self.scene_classifier = nn.Linear(embed_dim * 2, num_scene_classes)
-        
-        # Feature aggregation
-        self.audio_pool = nn.AdaptiveAvgPool1d(1)
-        self.visual_pool = nn.AdaptiveAvgPool1d(1)
-        
-    def forward(self, audio_features, images, audio_labels=None, 
-                visual_labels=None, scene_labels=None):
-        # Process multimodal input
-        outputs = self.multimodal_transformer(
-            text_ids=torch.zeros(audio_features.shape[0], 1, dtype=torch.long),
-            audio_features=audio_features,
-            images=images
-        )
-        
-        hidden_states = outputs['hidden_states']
-        modality_labels = outputs['modality_labels']
-        
-        # Separate audio and visual representations
-        audio_mask = (modality_labels == 1)
-        visual_mask = (modality_labels == 2)
-        
-        # Pool audio features
-        audio_features_pooled = None
-        if audio_mask.any():
-            audio_hidden = hidden_states[audio_mask.unsqueeze(-1).expand_as(hidden_states)]
-            audio_hidden = audio_hidden.view(hidden_states.shape[0], -1, hidden_states.shape[-1])
-            audio_features_pooled = self.audio_pool(audio_hidden.transpose(1, 2)).squeeze(-1)
-        
-        # Pool visual features
-        visual_features_pooled = None
-        if visual_mask.any():
-            visual_hidden = hidden_states[visual_mask.unsqueeze(-1).expand_as(hidden_states)]
-            visual_hidden = visual_hidden.view(hidden_states.shape[0], -1, hidden_states.shape[-1])
-            visual_features_pooled = self.visual_pool(visual_hidden.transpose(1, 2)).squeeze(-1)
-        
-        # Classify individual modalities
-        audio_logits = self.audio_classifier(audio_features_pooled) if audio_features_pooled is not None else None
-        visual_logits = self.visual_classifier(visual_features_pooled) if visual_features_pooled is not None else None
-        
-        # Joint scene classification
-        joint_features = torch.cat([audio_features_pooled, visual_features_pooled], dim=-1)
-        scene_logits = self.scene_classifier(joint_features)
-        
-        # Compute losses if labels provided
-        losses = {}
-        if audio_labels is not None and audio_logits is not None:
-            losses['audio_loss'] = F.cross_entropy(audio_logits, audio_labels)
-        if visual_labels is not None and visual_logits is not None:
-            losses['visual_loss'] = F.cross_entropy(visual_logits, visual_labels)
-        if scene_labels is not None:
-            losses['scene_loss'] = F.cross_entropy(scene_logits, scene_labels)
-        
-        return {
-            'audio_logits': audio_logits,
-            'visual_logits': visual_logits,
-            'scene_logits': scene_logits,
-            'losses': losses
-        }
+\begin{lstlisting}[language=Python, caption={Audio-visual scene analysis}]
+# Complete implementation available at:
+# https://github.com/hfgong/special-token/blob/main/code/part2/chapter05/audio_tokens_audio-visual_scene_analysis.py
+
+# See the external file for the complete implementation
+# File: code/part2/chapter05/audio_tokens_audio-visual_scene_analysis.py
+# Lines: 59
+
+class ImplementationReference:
+    """Audio-visual scene analysis
+    
+    The complete implementation is available in the external code file.
+    This placeholder reduces the book's verbosity while maintaining
+    access to all implementation details.
+    """
+    pass
 \end{lstlisting}
 
 \subsection{Evaluation and Performance Analysis}
@@ -547,75 +283,22 @@ Evaluating audio token performance requires metrics that assess both audio-speci
 
 \subsubsection{Audio-Text Retrieval Evaluation}
 
-\begin{lstlisting}[language=Python, caption=Audio-text retrieval evaluation]
-def evaluate_audio_text_retrieval(model, dataloader, device):
-    """Evaluate audio-text retrieval performance."""
+\begin{lstlisting}[language=Python, caption={Audio-text retrieval evaluation}]
+# Complete implementation available at:
+# https://github.com/hfgong/special-token/blob/main/code/part2/chapter05/audio_tokens_audio-text_retrieval_evaluatio.py
+
+# See the external file for the complete implementation
+# File: code/part2/chapter05/audio_tokens_audio-text_retrieval_evaluatio.py
+# Lines: 53
+
+class ImplementationReference:
+    """Audio-text retrieval evaluation
     
-    model.eval()
-    
-    all_audio_features = []
-    all_text_features = []
-    
-    with torch.no_grad():
-        for batch in dataloader:
-            audio_features = batch['audio_features'].to(device)
-            text_ids = batch['text_ids'].to(device)
-            attention_mask = batch['attention_mask'].to(device)
-            
-            # Extract features through multimodal model
-            outputs = model(
-                text_ids=text_ids,
-                audio_features=audio_features,
-                attention_mask=attention_mask
-            )
-            
-            # Extract modality-specific representations
-            hidden_states = outputs['hidden_states']
-            modality_labels = outputs['modality_labels']
-            
-            # Pool audio and text features
-            audio_mask = (modality_labels == 1)
-            text_mask = (modality_labels == 0)
-            
-            audio_pooled = hidden_states[audio_mask.unsqueeze(-1).expand_as(hidden_states)].mean()
-            text_pooled = hidden_states[text_mask.unsqueeze(-1).expand_as(hidden_states)].mean()
-            
-            all_audio_features.append(audio_pooled)
-            all_text_features.append(text_pooled)
-    
-    # Compute retrieval metrics
-    audio_features = torch.stack(all_audio_features)
-    text_features = torch.stack(all_text_features)
-    
-    similarity_matrix = torch.matmul(audio_features, text_features.t())
-    
-    # Audio-to-text retrieval
-    a2t_ranks = []
-    for i in range(len(audio_features)):
-        similarities = similarity_matrix[i]
-        rank = (similarities >= similarities[i]).sum().item()
-        a2t_ranks.append(rank)
-    
-    # Text-to-audio retrieval
-    t2a_ranks = []
-    for i in range(len(text_features)):
-        similarities = similarity_matrix[:, i]
-        rank = (similarities >= similarities[i]).sum().item()
-        t2a_ranks.append(rank)
-    
-    # Compute recall metrics
-    a2t_r1 = sum(1 for rank in a2t_ranks if rank == 1) / len(a2t_ranks)
-    a2t_r5 = sum(1 for rank in a2t_ranks if rank <= 5) / len(a2t_ranks)
-    a2t_r10 = sum(1 for rank in a2t_ranks if rank <= 10) / len(a2t_ranks)
-    
-    t2a_r1 = sum(1 for rank in t2a_ranks if rank == 1) / len(t2a_ranks)
-    t2a_r5 = sum(1 for rank in t2a_ranks if rank <= 5) / len(t2a_ranks)
-    t2a_r10 = sum(1 for rank in t2a_ranks if rank <= 10) / len(t2a_ranks)
-    
-    return {
-        'audio_to_text': {'R@1': a2t_r1, 'R@5': a2t_r5, 'R@10': a2t_r10},
-        'text_to_audio': {'R@1': t2a_r1, 'R@5': t2a_r5, 'R@10': t2a_r10}
-    }
+    The complete implementation is available in the external code file.
+    This placeholder reduces the book's verbosity while maintaining
+    access to all implementation details.
+    """
+    pass
 \end{lstlisting}
 
 \subsection{Best Practices and Guidelines}

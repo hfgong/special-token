@@ -12,362 +12,44 @@ Custom special tokens must be designed with careful consideration of the mathema
 
 Custom tokens should occupy meaningful positions within the existing embedding space, maintaining geometric relationships that support effective attention computation.
 
-\begin{lstlisting}[language=Python, caption=Embedding space analysis for custom token design]
-class CustomTokenEmbeddingAnalyzer:
-    def __init__(self, base_model, vocab_size, embed_dim=768):
-        self.base_model = base_model
-        self.vocab_size = vocab_size
-        self.embed_dim = embed_dim
-        
-        # Existing token embeddings
-        self.existing_embeddings = base_model.get_input_embeddings().weight
-        
-        # Analysis tools
-        self.similarity_analyzer = EmbeddingSimilarityAnalyzer()
-        self.geometric_analyzer = EmbeddingGeometryAnalyzer()
-        
-    def analyze_embedding_space(self):
-        """Analyze the structure of existing embedding space."""
-        # Compute pairwise similarities
-        similarities = torch.cosine_similarity(
-            self.existing_embeddings.unsqueeze(1),
-            self.existing_embeddings.unsqueeze(0),
-            dim=2
-        )
-        
-        # Analyze geometric structure
-        geometry_stats = self.geometric_analyzer.analyze_structure(
-            self.existing_embeddings
-        )
-        
-        return {
-            'similarity_distribution': similarities,
-            'geometric_properties': geometry_stats,
-            'embedding_norms': torch.norm(self.existing_embeddings, dim=1),
-            'dimension_utilization': self.analyze_dimension_usage()
-        }
-    
-    def design_custom_token_embedding(self, token_purpose, constraints=None):
-        """Design embedding for custom token based on purpose and constraints."""
-        space_analysis = self.analyze_embedding_space()
-        
-        if token_purpose == 'routing':
-            # Design routing token to be equidistant from content tokens
-            return self.design_routing_token(space_analysis)
-        elif token_purpose == 'hierarchical':
-            # Design hierarchical token with structured relationships
-            return self.design_hierarchical_token(space_analysis)
-        elif token_purpose == 'control':
-            # Design control token with minimal interference
-            return self.design_control_token(space_analysis)
-        
-    def design_routing_token(self, space_analysis):
-        """Design routing token embedding."""
-        # Find centroid of content tokens
-        content_mask = self.identify_content_tokens()
-        content_embeddings = self.existing_embeddings[content_mask]
-        centroid = torch.mean(content_embeddings, dim=0)
-        
-        # Position routing token at controlled distance from centroid
-        target_distance = space_analysis['geometric_properties']['mean_distance'] * 1.5
-        
-        # Generate orthogonal direction
-        random_direction = torch.randn(self.embed_dim)
-        random_direction = random_direction / torch.norm(random_direction)
-        
-        routing_embedding = centroid + target_distance * random_direction
-        
-        return routing_embedding
-    
-    def design_hierarchical_token(self, space_analysis):
-        """Design hierarchical organization token."""
-        # Create embedding that preserves hierarchical relationships
-        base_embedding = torch.zeros(self.embed_dim)
-        
-        # Use structured approach based on hierarchy level
-        hierarchy_level = 0  # Root level
-        level_magnitude = space_analysis['embedding_norms'].mean() * (1.2 ** hierarchy_level)
-        
-        # Create structured pattern
-        pattern_indices = torch.arange(0, self.embed_dim, 4)  # Every 4th dimension
-        base_embedding[pattern_indices] = level_magnitude / len(pattern_indices)
-        
-        return base_embedding
-    
-    def design_control_token(self, space_analysis):
-        """Design control token with minimal content interference."""
-        # Position in low-density region of embedding space
-        density_map = self.compute_embedding_density()
-        low_density_region = self.find_low_density_region(density_map)
-        
-        control_embedding = low_density_region
-        
-        # Ensure minimal similarity to existing tokens
-        max_similarity = 0.1
-        while True:
-            similarities = torch.cosine_similarity(
-                control_embedding.unsqueeze(0),
-                self.existing_embeddings,
-                dim=1
-            )
-            
-            if similarities.max() < max_similarity:
-                break
-                
-            # Adjust embedding to reduce similarity
-            control_embedding = self.adjust_for_low_similarity(
-                control_embedding, similarities
-            )
-        
-        return control_embedding
-    
-    def validate_custom_embedding(self, custom_embedding, token_purpose):
-        """Validate that custom embedding meets design requirements."""
-        validations = {}
-        
-        # Check embedding norm
-        embedding_norm = torch.norm(custom_embedding)
-        expected_norm_range = self.get_expected_norm_range()
-        validations['norm_check'] = (
-            expected_norm_range[0] <= embedding_norm <= expected_norm_range[1]
-        )
-        
-        # Check similarity to existing tokens
-        similarities = torch.cosine_similarity(
-            custom_embedding.unsqueeze(0),
-            self.existing_embeddings,
-            dim=1
-        )
-        validations['similarity_check'] = similarities.max() < 0.3
-        
-        # Purpose-specific validations
-        if token_purpose == 'routing':
-            validations.update(self.validate_routing_token(custom_embedding))
-        elif token_purpose == 'hierarchical':
-            validations.update(self.validate_hierarchical_token(custom_embedding))
-        
-        return validations
+\begin{lstlisting}[language=Python, caption={Embedding space analysis for custom token design}]
+# Complete implementation available at:
+# https://github.com/hfgong/special-token/blob/main/code/part3/chapter07/design_principles_embedding_space_analysis_for_c.py
 
-class EmbeddingSimilarityAnalyzer:
-    def compute_similarity_clusters(self, embeddings):
-        """Identify clusters of similar embeddings."""
-        similarities = torch.cosine_similarity(
-            embeddings.unsqueeze(1),
-            embeddings.unsqueeze(0),
-            dim=2
-        )
-        
-        # Use clustering to identify groups
-        from sklearn.cluster import SpectralClustering
-        clustering = SpectralClustering(n_clusters=10, affinity='precomputed')
-        clusters = clustering.fit_predict(similarities.numpy())
-        
-        return clusters
-    
-    def analyze_special_token_positions(self, embeddings, special_token_ids):
-        """Analyze positioning of existing special tokens."""
-        special_embeddings = embeddings[special_token_ids]
-        content_embeddings = embeddings[~torch.isin(
-            torch.arange(len(embeddings)), 
-            torch.tensor(special_token_ids)
-        )]
-        
-        # Compute distances between special and content tokens
-        distances = torch.cdist(special_embeddings, content_embeddings)
-        
-        return {
-            'mean_distances': distances.mean(dim=1),
-            'min_distances': distances.min(dim=1),
-            'isolation_scores': self.compute_isolation_scores(distances)
-        }
+# See the external file for the complete implementation
+# File: code/part3/chapter07/design_principles_embedding_space_analysis_for_c.py
+# Lines: 154
 
-class EmbeddingGeometryAnalyzer:
-    def analyze_structure(self, embeddings):
-        """Analyze geometric structure of embedding space."""
-        # Compute principal components
-        centered_embeddings = embeddings - embeddings.mean(dim=0)
-        U, S, V = torch.svd(centered_embeddings)
-        
-        # Analyze dimension utilization
-        explained_variance = S ** 2 / (S ** 2).sum()
-        effective_dimensions = (explained_variance > 0.01).sum()
-        
-        # Compute local neighborhood structure
-        k = min(50, len(embeddings) // 10)
-        distances = torch.cdist(embeddings, embeddings)
-        knn_distances = torch.topk(distances, k + 1, largest=False, sorted=True)
-        
-        return {
-            'explained_variance': explained_variance,
-            'effective_dimensions': effective_dimensions,
-            'mean_distance': distances.mean(),
-            'local_density': knn_distances.values[:, -1].mean(),
-            'dimension_spread': embeddings.std(dim=0),
-        }
+class ImplementationReference:
+    """Embedding space analysis for custom token design
+    
+    The complete implementation is available in the external code file.
+    This placeholder reduces the book's verbosity while maintaining
+    access to all implementation details.
+    """
+    pass
 \end{lstlisting}
 
 \subsubsection{Attention Pattern Compatibility}
 
 Custom tokens must be designed to support rather than interfere with effective attention pattern formation.
 
-\begin{lstlisting}[language=Python, caption=Attention pattern analysis for custom token design]
-class AttentionPatternAnalyzer:
-    def __init__(self, model, custom_token_positions):
-        self.model = model
-        self.custom_token_positions = custom_token_positions
-        self.attention_hooks = []
-        
-    def analyze_attention_effects(self, input_sequences):
-        """Analyze how custom tokens affect attention patterns."""
-        # Register hooks to capture attention weights
-        self.register_attention_hooks()
-        
-        attention_data = {}
-        
-        for seq_idx, sequence in enumerate(input_sequences):
-            # Process sequence with custom tokens
-            outputs = self.model(sequence)
-            
-            # Extract attention patterns
-            attention_patterns = self.extract_attention_patterns()
-            
-            attention_data[seq_idx] = {
-                'custom_token_attention': self.analyze_custom_token_attention(
-                    attention_patterns
-                ),
-                'content_attention_changes': self.analyze_content_attention_changes(
-                    attention_patterns
-                ),
-                'attention_entropy': self.compute_attention_entropy(
-                    attention_patterns
-                )
-            }
-        
-        return attention_data
-    
-    def analyze_custom_token_attention(self, attention_patterns):
-        """Analyze attention patterns involving custom tokens."""
-        custom_attention_stats = {}
-        
-        for layer_idx, layer_attention in enumerate(attention_patterns):
-            # Attention TO custom tokens
-            to_custom = layer_attention[:, :, :, self.custom_token_positions]
-            
-            # Attention FROM custom tokens
-            from_custom = layer_attention[:, :, self.custom_token_positions, :]
-            
-            custom_attention_stats[layer_idx] = {
-                'incoming_attention': {
-                    'mean': to_custom.mean(),
-                    'std': to_custom.std(),
-                    'max': to_custom.max(),
-                    'distribution': to_custom.flatten()
-                },
-                'outgoing_attention': {
-                    'mean': from_custom.mean(),
-                    'std': from_custom.std(),
-                    'max': from_custom.max(),
-                    'distribution': from_custom.flatten()
-                },
-                'self_attention': layer_attention[
-                    :, :, self.custom_token_positions, self.custom_token_positions
-                ],
-                'attention_concentration': self.compute_attention_concentration(
-                    to_custom, from_custom
-                )
-            }
-        
-        return custom_attention_stats
-    
-    def compute_attention_concentration(self, to_custom, from_custom):
-        """Compute attention concentration metrics."""
-        # Gini coefficient for attention distribution
-        def gini_coefficient(x):
-            sorted_x = torch.sort(x.flatten())[0]
-            n = len(sorted_x)
-            cumsum = torch.cumsum(sorted_x, dim=0)
-            return (n + 1 - 2 * torch.sum(cumsum) / cumsum[-1]) / n
-        
-        return {
-            'incoming_gini': gini_coefficient(to_custom),
-            'outgoing_gini': gini_coefficient(from_custom),
-            'entropy': -torch.sum(to_custom * torch.log(to_custom + 1e-8))
-        }
-    
-    def validate_attention_properties(self, attention_patterns):
-        """Validate that attention patterns meet design requirements."""
-        validations = {}
-        
-        for layer_idx, layer_attention in enumerate(attention_patterns):
-            layer_validations = {}
-            
-            # Check attention mass conservation
-            attention_sums = layer_attention.sum(dim=-1)
-            layer_validations['mass_conservation'] = torch.allclose(
-                attention_sums, torch.ones_like(attention_sums), atol=1e-6
-            )
-            
-            # Check for attention collapse
-            max_attention = layer_attention.max(dim=-1)[0]
-            layer_validations['no_collapse'] = (max_attention < 0.9).all()
-            
-            # Check for reasonable entropy
-            attention_entropy = -torch.sum(
-                layer_attention * torch.log(layer_attention + 1e-8), dim=-1
-            )
-            layer_validations['reasonable_entropy'] = (
-                attention_entropy > 1.0
-            ).float().mean() > 0.8
-            
-            validations[f'layer_{layer_idx}'] = layer_validations
-        
-        return validations
+\begin{lstlisting}[language=Python, caption={Attention pattern analysis for custom token design}]
+# Complete implementation available at:
+# https://github.com/hfgong/special-token/blob/main/code/part3/chapter07/design_principles_attention_pattern_analysis_for.py
 
-class CustomTokenDesignValidator:
-    def __init__(self, base_model, validation_dataset):
-        self.base_model = base_model
-        self.validation_dataset = validation_dataset
-        
-    def comprehensive_validation(self, custom_token_design):
-        """Perform comprehensive validation of custom token design."""
-        validation_results = {}
-        
-        # Embedding space validation
-        embedding_validator = EmbeddingSpaceValidator()
-        validation_results['embedding_space'] = embedding_validator.validate(
-            custom_token_design.embeddings
-        )
-        
-        # Attention pattern validation
-        attention_validator = AttentionPatternValidator()
-        validation_results['attention_patterns'] = attention_validator.validate(
-            self.base_model, custom_token_design
-        )
-        
-        # Performance validation
-        performance_validator = PerformanceValidator()
-        validation_results['performance'] = performance_validator.validate(
-            self.base_model, custom_token_design, self.validation_dataset
-        )
-        
-        # Integration validation
-        integration_validator = IntegrationValidator()
-        validation_results['integration'] = integration_validator.validate(
-            self.base_model, custom_token_design
-        )
-        
-        return validation_results
+# See the external file for the complete implementation
+# File: code/part3/chapter07/design_principles_attention_pattern_analysis_for.py
+# Lines: 128
+
+class ImplementationReference:
+    """Attention pattern analysis for custom token design
     
-    def generate_design_report(self, validation_results):
-        """Generate comprehensive design validation report."""
-        report = {
-            'overall_score': self.compute_overall_score(validation_results),
-            'critical_issues': self.identify_critical_issues(validation_results),
-            'recommendations': self.generate_recommendations(validation_results),
-            'detailed_results': validation_results
-        }
-        
-        return report
+    The complete implementation is available in the external code file.
+    This placeholder reduces the book's verbosity while maintaining
+    access to all implementation details.
+    """
+    pass
 \end{lstlisting}
 
 \subsection{Functional Specialization Principles}

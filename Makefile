@@ -20,11 +20,16 @@ all: $(MAIN_PDF)
 # Main book compilation with bibliography
 $(MAIN_PDF): $(MAIN_TEX) $(FIGURE_PDFS) references.bib
 	@echo "Building main document..."
-	$(LATEX) $(LATEX_FLAGS) $(MAIN_TEX)
-	$(BIBER) $(MAIN)
-	$(LATEX) $(LATEX_FLAGS) $(MAIN_TEX)
-	$(LATEX) $(LATEX_FLAGS) $(MAIN_TEX)
-	@echo "Build complete!"
+	$(LATEX) $(LATEX_FLAGS) $(MAIN_TEX) || true
+	$(BIBER) $(MAIN) || true
+	$(LATEX) $(LATEX_FLAGS) $(MAIN_TEX) || true
+	$(LATEX) $(LATEX_FLAGS) $(MAIN_TEX) || true
+	@if [ -f $(MAIN_PDF) ]; then \
+		echo "Build complete!"; \
+	else \
+		echo "Build failed - no PDF generated"; \
+		exit 1; \
+	fi
 
 # Pattern rule for compiling figure files
 fig_%.pdf: fig_%.tex

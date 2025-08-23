@@ -14,208 +14,22 @@ Modality switching tokens implement intelligent selection mechanisms that determ
 A Modality Switching token is a learnable control mechanism that dynamically selects, weights, and routes information between different modalities within a multimodal transformer. It enables adaptive processing based on modality availability, task requirements, and learned importance patterns.
 \end{definition}
 
-\begin{lstlisting}[language=Python, caption=Dynamic modality switching architecture]
-class ModalitySwitchingLayer(nn.Module):
-    def __init__(self, embed_dim=768, num_modalities=3):
-        super().__init__()
-        
-        self.embed_dim = embed_dim
-        self.num_modalities = num_modalities
-        
-        # Modality importance predictor
-        self.modality_importance = nn.Sequential(
-            nn.Linear(embed_dim, embed_dim // 2),
-            nn.ReLU(),
-            nn.Linear(embed_dim // 2, num_modalities),
-            nn.Sigmoid()
-        )
-        
-        # Modality-specific gates
-        self.modality_gates = nn.ModuleList([
-            nn.Sequential(
-                nn.Linear(embed_dim, embed_dim),
-                nn.Sigmoid()
-            ) for _ in range(num_modalities)
-        ])
-        
-        # Cross-modality routing
-        self.routing_attention = nn.MultiheadAttention(
-            embed_dim, num_heads=8, batch_first=True
-        )
-        
-        # Switching control tokens
-        self.switching_tokens = nn.Parameter(
-            torch.randn(num_modalities, embed_dim)
-        )
-        
-        # Fusion mechanisms
-        self.adaptive_fusion = nn.Sequential(
-            nn.Linear(embed_dim * num_modalities, embed_dim),
-            nn.LayerNorm(embed_dim)
-        )
-        
-    def forward(self, modality_inputs, modality_masks=None):
-        """
-        Args:
-            modality_inputs: List of [B, seq_len, embed_dim] tensors for each modality
-            modality_masks: List of boolean masks indicating available modalities
-        """
-        batch_size = modality_inputs[0].shape[0]
-        device = modality_inputs[0].device
-        
-        # Global context for switching decisions
-        global_context = torch.stack([
-            modal_input.mean(dim=1) for modal_input in modality_inputs
-        ], dim=1)  # [B, num_modalities, embed_dim]
-        
-        # Predict modality importance
-        importance_context = global_context.mean(dim=1)  # [B, embed_dim]
-        modality_importance = self.modality_importance(importance_context)  # [B, num_modalities]
-        
-        # Apply availability masks
-        if modality_masks is not None:
-            for i, mask in enumerate(modality_masks):
-                modality_importance[:, i] *= mask.float()
-        
-        # Normalize importance scores
-        modality_importance = F.softmax(modality_importance, dim=-1)
-        
-        # Apply modality-specific gates
-        gated_outputs = []
-        for i, (modal_input, gate) in enumerate(zip(modality_inputs, self.modality_gates)):
-            # Compute gate values
-            gate_values = gate(modal_input)  # [B, seq_len, embed_dim]
-            
-            # Apply importance weighting
-            importance_weight = modality_importance[:, i].unsqueeze(-1).unsqueeze(-1)
-            gated_output = modal_input * gate_values * importance_weight
-            
-            gated_outputs.append(gated_output)
-        
-        # Cross-modality routing with switching tokens
-        switching_tokens = self.switching_tokens.unsqueeze(0).expand(batch_size, -1, -1)
-        
-        # Concatenate all gated modality outputs
-        all_modal_tokens = torch.cat(gated_outputs, dim=1)  # [B, total_seq_len, embed_dim]
-        
-        # Route information through switching tokens
-        routed_output, routing_attention = self.routing_attention(
-            query=switching_tokens,
-            key=all_modal_tokens,
-            value=all_modal_tokens
-        )
-        
-        # Adaptive fusion
-        routed_flat = routed_output.view(batch_size, -1)  # [B, num_modalities * embed_dim]
-        fused_output = self.adaptive_fusion(routed_flat)  # [B, embed_dim]
-        
-        return {
-            'fused_output': fused_output,
-            'modality_importance': modality_importance,
-            'routing_attention': routing_attention,
-            'gated_outputs': gated_outputs
-        }
+\begin{lstlisting}[language=Python, caption={Dynamic modality switching architecture}]
+# Complete implementation available at:
+# https://github.com/hfgong/special-token/blob/main/code/part2/chapter05/modality_switching_dynamic_modality_switching_arc.py
 
-class AdaptiveMultimodalTransformer(nn.Module):
-    def __init__(self, vocab_size, embed_dim=768, num_modalities=3):
-        super().__init__()
-        
-        # Modality encoders
-        self.text_encoder = nn.Embedding(vocab_size, embed_dim)
-        self.visual_encoder = VisionTransformer(embed_dim=embed_dim)
-        self.audio_encoder = AudioEncoder(embed_dim=embed_dim)
-        
-        # Modality switching layers
-        self.switching_layers = nn.ModuleList([
-            ModalitySwitchingLayer(embed_dim, num_modalities) for _ in range(4)
-        ])
-        
-        # Task-specific adapters
-        self.task_adapters = nn.ModuleDict({
-            'classification': nn.Linear(embed_dim, vocab_size),
-            'retrieval': nn.Linear(embed_dim, embed_dim),
-            'generation': nn.Linear(embed_dim, vocab_size)
-        })
-        
-        # Modality availability detector
-        self.availability_detector = nn.Sequential(
-            nn.Linear(embed_dim, embed_dim // 4),
-            nn.ReLU(),
-            nn.Linear(embed_dim // 4, num_modalities),
-            nn.Sigmoid()
-        )
+# See the external file for the complete implementation
+# File: code/part2/chapter05/modality_switching_dynamic_modality_switching_arc.py
+# Lines: 165
+
+class ImplementationReference:
+    """Dynamic modality switching architecture
     
-    def forward(self, text_ids=None, images=None, audio_features=None, 
-                task='classification', modality_preferences=None):
-        
-        # Encode available modalities
-        modality_inputs = []
-        modality_masks = []
-        
-        # Text modality
-        if text_ids is not None:
-            text_tokens = self.text_encoder(text_ids)
-            modality_inputs.append(text_tokens)
-            modality_masks.append(torch.ones(text_tokens.shape[0], device=text_tokens.device))
-        else:
-            # Create dummy input
-            batch_size = images.shape[0] if images is not None else audio_features.shape[0]
-            dummy_text = torch.zeros(batch_size, 1, self.embed_dim, device=self.get_device())
-            modality_inputs.append(dummy_text)
-            modality_masks.append(torch.zeros(batch_size, device=self.get_device()))
-        
-        # Visual modality
-        if images is not None:
-            visual_tokens = self.visual_encoder(images)
-            modality_inputs.append(visual_tokens)
-            modality_masks.append(torch.ones(visual_tokens.shape[0], device=visual_tokens.device))
-        else:
-            batch_size = len(modality_inputs[0])
-            dummy_visual = torch.zeros(batch_size, 1, self.embed_dim, device=self.get_device())
-            modality_inputs.append(dummy_visual)
-            modality_masks.append(torch.zeros(batch_size, device=self.get_device()))
-        
-        # Audio modality
-        if audio_features is not None:
-            audio_tokens = self.audio_encoder(audio_features)
-            modality_inputs.append(audio_tokens)
-            modality_masks.append(torch.ones(audio_tokens.shape[0], device=audio_tokens.device))
-        else:
-            batch_size = len(modality_inputs[0])
-            dummy_audio = torch.zeros(batch_size, 1, self.embed_dim, device=self.get_device())
-            modality_inputs.append(dummy_audio)
-            modality_masks.append(torch.zeros(batch_size, device=self.get_device()))
-        
-        # Progressive modality switching
-        switching_outputs = []
-        current_inputs = modality_inputs
-        
-        for switching_layer in self.switching_layers:
-            switch_output = switching_layer(current_inputs, modality_masks)
-            switching_outputs.append(switch_output)
-            
-            # Update inputs for next layer
-            fused_repr = switch_output['fused_output'].unsqueeze(1)  # [B, 1, embed_dim]
-            current_inputs = [fused_repr] * len(modality_inputs)
-        
-        # Final representation
-        final_representation = switching_outputs[-1]['fused_output']
-        
-        # Task-specific processing
-        if task in self.task_adapters:
-            output = self.task_adapters[task](final_representation)
-        else:
-            output = final_representation
-        
-        return {
-            'output': output,
-            'switching_outputs': switching_outputs,
-            'modality_importance': switching_outputs[-1]['modality_importance'],
-            'final_representation': final_representation
-        }
-    
-    def get_device(self):
-        return next(self.parameters()).device
+    The complete implementation is available in the external code file.
+    This placeholder reduces the book's verbosity while maintaining
+    access to all implementation details.
+    """
+    pass
 \end{lstlisting}
 
 \subsection{Applications and Use Cases}
@@ -224,86 +38,22 @@ Modality switching tokens enable robust multimodal systems that can adapt to var
 
 \subsubsection{Robust Multimodal Classification}
 
-\begin{lstlisting}[language=Python, caption=Robust classification with modality switching]
-class RobustMultimodalClassifier(nn.Module):
-    def __init__(self, num_classes, embed_dim=768):
-        super().__init__()
-        
-        self.adaptive_model = AdaptiveMultimodalTransformer(
-            vocab_size=30000, embed_dim=embed_dim
-        )
-        
-        self.classifier = nn.Sequential(
-            nn.Linear(embed_dim, embed_dim // 2),
-            nn.ReLU(),
-            nn.Dropout(0.1),
-            nn.Linear(embed_dim // 2, num_classes)
-        )
-        
-        # Confidence estimation
-        self.confidence_estimator = nn.Sequential(
-            nn.Linear(embed_dim, embed_dim // 4),
-            nn.ReLU(),
-            nn.Linear(embed_dim // 4, 1),
-            nn.Sigmoid()
-        )
+\begin{lstlisting}[language=Python, caption={Robust classification with modality switching}]
+# Complete implementation available at:
+# https://github.com/hfgong/special-token/blob/main/code/part2/chapter05/modality_switching_robust_classification_with_mod.py
+
+# See the external file for the complete implementation
+# File: code/part2/chapter05/modality_switching_robust_classification_with_mod.py
+# Lines: 63
+
+class ImplementationReference:
+    """Robust classification with modality switching
     
-    def forward(self, text_ids=None, images=None, audio_features=None):
-        # Adaptive multimodal processing
-        outputs = self.adaptive_model(
-            text_ids=text_ids,
-            images=images,
-            audio_features=audio_features,
-            task='classification'
-        )
-        
-        # Classification
-        logits = self.classifier(outputs['final_representation'])
-        
-        # Confidence estimation
-        confidence = self.confidence_estimator(outputs['final_representation'])
-        
-        return {
-            'logits': logits,
-            'confidence': confidence,
-            'modality_importance': outputs['modality_importance'],
-            'predictions': torch.softmax(logits, dim=-1)
-        }
-    
-    def predict_with_fallback(self, text_ids=None, images=None, audio_features=None, 
-                            confidence_threshold=0.7):
-        """Predict with automatic fallback to available modalities."""
-        
-        # Try with all available modalities
-        result = self.forward(text_ids, images, audio_features)
-        
-        if result['confidence'].item() >= confidence_threshold:
-            return result
-        
-        # Fallback strategies
-        fallback_results = []
-        
-        # Try text + visual
-        if text_ids is not None and images is not None:
-            result_tv = self.forward(text_ids, images, None)
-            fallback_results.append(('text+visual', result_tv))
-        
-        # Try text only
-        if text_ids is not None:
-            result_t = self.forward(text_ids, None, None)
-            fallback_results.append(('text', result_t))
-        
-        # Try visual only
-        if images is not None:
-            result_v = self.forward(None, images, None)
-            fallback_results.append(('visual', result_v))
-        
-        # Select best fallback
-        if fallback_results:
-            best_result = max(fallback_results, key=lambda x: x[1]['confidence'].item())
-            return {**best_result[1], 'fallback_strategy': best_result[0]}
-        
-        return result  # Return original if no fallback available
+    The complete implementation is available in the external code file.
+    This placeholder reduces the book's verbosity while maintaining
+    access to all implementation details.
+    """
+    pass
 \end{lstlisting}
 
 \subsection{Training Strategies for Switching Tokens}

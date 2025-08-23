@@ -132,15 +132,17 @@ $$\{\cls{}, \text{sentence}_1, \sep{}, \text{sentence}_2, \sep{}\}$$
 
 The \cls{} token aggregates information from both sentences for tasks like:
 - Natural language inference
-- Semantic textual similarity
+- Semantic textual similarity  
 - Question answering
 - Paraphrase detection
+
+These tasks are commonly evaluated on benchmark suites like GLUE \citep{wang2018glue} and SuperGLUE \citep{wang2019superglue}.
 
 \subsubsection{Vision Transformers}
 Vision Transformers \citep{dosovitskiy2020image} adapted the \cls{} token for image classification:
 $$\{\cls{}, \text{patch}_1, \text{patch}_2, \ldots, \text{patch}_N\}$$
 
-The \cls{} token aggregates spatial information from image patches to produce global image representations.
+The \cls{} token aggregates spatial information from image patches to produce global image representations. ViTs achieve competitive performance on ImageNet \citep{russakovsky2015imagenet, deng2009imagenet} and other vision benchmarks while maintaining computational efficiency \citep{strubell2019energy}.
 
 \subsection{Training and Optimization}
 
