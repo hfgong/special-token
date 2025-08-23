@@ -1,12 +1,21 @@
 The transformer architecture has revolutionized artificial intelligence, powering breakthroughs in natural language processing, computer vision, and multimodal understanding. At the heart of these models lies a seemingly simple yet profoundly powerful concept: special tokens. These discrete symbols, inserted strategically into input sequences, serve as anchors, boundaries, and control mechanisms that enable transformers to perform complex reasoning, maintain context, and bridge modalities.
+\begin{comment}
+Feedback: This is a strong opening. To make it even better, consider adding a very specific, impressive example of what a special token enables. For instance, "...enable transformers to distinguish between a question and its context, or even to generate computer code." This could make the abstract concepts more concrete for the reader from the very beginning.
+\end{comment}
 
 This book emerged from a recognition that while special tokens are ubiquitous in modern AI systems, their design principles, implementation details, and optimization strategies remain scattered across research papers, codebases, and engineering blogs. Our goal is to provide a comprehensive guide that demystifies special tokens for AI practitioners---from those implementing their first BERT model to researchers pushing the boundaries of multimodal AI.
 
 \section*{Why Special Tokens Matter}
 
 Special tokens are not mere implementation details; they are fundamental to how transformers understand and process information. The \cls{} token aggregates sequence-level representations for classification. The \mask{} token enables bidirectional pre-training through masked language modeling. The \sep{} token delineates boundaries between different segments of input. Each special token serves a specific architectural purpose, and understanding these purposes is crucial for effective model design and deployment.
+\begin{comment}
+Feedback: This paragraph is good at defining the "what." To avoid it feeling like a list of definitions, you could add a sentence or two about the "why." For example, after explaining the tokens, you could add something like: "Without these explicit markers, a transformer would face a much harder task of inferring structure from a flat sequence of data, leading to slower training and less accurate models." This emphasizes the problem they solve.
+\end{comment}
 
 As transformer models have evolved from purely textual systems to handle images, audio, video, and structured data, special tokens have adapted and proliferated. Vision transformers repurpose the \cls{} token for image classification. Multimodal models introduce \img{} tokens to align visual and textual representations. Code generation models employ language-specific tokens to switch contexts. This explosion of special token types reflects the growing sophistication of transformer applications.
+\begin{comment}
+Feedback: The term "explosion" is a bit cliché in technical writing. Consider a more precise alternative like "This proliferation of special tokens..." or "This diversification...". Also, the examples are great. Could you perhaps hint at the challenges this proliferation creates? E.g., "This proliferation... reflects the growing sophistication... but also introduces new challenges in vocabulary management and cross-modal alignment that this book will address."
+\end{comment}
 
 \section*{Who Should Read This Book}
 
@@ -21,6 +30,9 @@ This book is designed for several audiences:
 
 \item \textbf{Graduate Students} will find a structured curriculum covering both fundamental concepts and cutting-edge research directions.
 \end{itemize}
+\begin{comment}
+Feedback: This section is clear, but a little boilerplate. To make it more compelling, you could frame each point around a problem that audience faces. For example, for ML Engineers: "For Machine Learning Engineers struggling with tokenizer errors or mysterious performance drops, this book provides practical guidance..." For Researchers: "For Researchers looking to move beyond existing architectures, this book will...". This connects the book's content directly to the reader's pain points.
+\end{comment}
 
 \section*{How This Book Is Organized}
 
@@ -31,6 +43,9 @@ The book follows a logical progression from foundations to frontiers:
 \textbf{Part II} explores domain-specific applications, examining how special tokens enable vision transformers, multimodal models, and specialized systems for code generation and scientific computing.
 
 \textbf{Part III} delves into advanced techniques, including learnable soft tokens, generation control mechanisms, and efficiency optimizations through token pruning and merging.
+\begin{comment}
+Feedback: The description for Part III is a bit vague with "learnable soft tokens, generation control mechanisms". Can you be more specific? For example: "...delves into advanced techniques, such as using special tokens to steer text generation, implementing learnable 'soft prompts' for parameter-efficient fine-tuning, and optimizing inference speed through token pruning and merging."
+\end{comment}
 
 \textbf{Part IV} provides practical implementation guidance, covering custom token design, fine-tuning strategies, and debugging methodologies with real-world code examples.
 
@@ -39,6 +54,9 @@ The book follows a logical progression from foundations to frontiers:
 \section*{A Living Document}
 
 The field of transformer architectures evolves rapidly. New special token types emerge regularly as researchers tackle novel problems and push architectural boundaries. While this book captures the state of the art at the time of writing, we encourage readers to view it as a foundation for continued exploration rather than a definitive endpoint.
+\begin{comment}
+Feedback: This is a standard disclaimer. To make it more engaging, you could invite the reader to participate. For example: "We invite readers to join the conversation on the book's accompanying GitHub repository, where we will post updates and discuss new developments in the field." This turns a static statement into an active invitation.
+\end{comment}
 
 \section*{Acknowledgments}
 
@@ -49,3 +67,6 @@ This book represents a collaboration between human expertise and AI assistance, 
 Each chapter includes practical examples, visual diagrams, and implementation notes. Code examples are provided in Python using popular frameworks like PyTorch and Hugging Face Transformers. We recommend having a basic understanding of deep learning and transformer architectures, though we review key concepts where necessary.
 
 Welcome to the fascinating world of special tokens---the small symbols that enable transformers to perform their magic.
+\begin{comment}
+Feedback: The final sentence is a bit generic. A more specific and exciting closing could be: "Welcome to the world of special tokens—the small but mighty components that unlock the true potential of the transformer architecture."
+\end{comment}

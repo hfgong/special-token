@@ -3,6 +3,9 @@
 \section{Fine-tuning}
 
 Fine-tuning transformer models with special tokens for downstream tasks requires specialized strategies that preserve the functional capabilities developed during pretraining while adapting to new domains and task requirements. Unlike standard fine-tuning that primarily focuses on adapting content representations, fine-tuning with special tokens must carefully balance the preservation of specialized functions with the need for task-specific adaptation. This section presents comprehensive approaches for fine-tuning models with special tokens.
+\begin{comment}
+Feedback: Before diving into the specifics, it's helpful to frame the core challenge. For example: "The central dilemma of fine-tuning with special tokens is this: how do we adapt the model to a new task without making it 'forget' the crucial functions that the special tokens learned during pretraining? If we fine-tune the entire model aggressively on a new task, the [CLS] token might lose its ability to summarize, or the [SEP] token might no longer effectively separate segments. The strategies in this section are designed to navigate this trade-off between adaptation and preservation."
+\end{comment}
 
 \subsection{Function-Preserving Fine-tuning}
 
@@ -11,6 +14,9 @@ The primary challenge in fine-tuning models with special tokens is maintaining t
 \subsubsection{Selective Parameter Fine-tuning}
 
 Not all model parameters should be fine-tuned equally when special tokens are involved. Selective fine-tuning strategies can preserve critical special token functions while enabling task adaptation.
+\begin{comment}
+Feedback: A concrete example would make this concept much clearer. For instance: "A common and effective strategy is to use **differential learning rates**. You can set a much smaller learning rate for the embeddings of the special tokens (e.g., [CLS], [SEP]) and the lower layers of the transformer, while using a larger learning rate for the task-specific classification head and the top layers. This allows the task-specific parts of the model to adapt quickly while only making small, careful adjustments to the core, pre-trained functional components."
+\end{comment}
 
 \begin{lstlisting}[language=Python, caption={Function-preserving fine-tuning framework}]
 # Complete implementation available at:

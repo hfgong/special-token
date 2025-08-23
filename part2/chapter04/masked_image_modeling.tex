@@ -3,6 +3,9 @@
 \section{Masked Image Modeling}
 
 Masked Image Modeling (MIM) represents a fundamental adaptation of the masked language modeling paradigm from NLP to computer vision. Unlike text, where masking individual tokens (words or subwords) creates natural prediction tasks, masking image patches requires careful consideration of spatial structure and visual semantics.
+\begin{comment}
+Feedback: This is a good introduction. To make the core challenge clearer, you could add: "The central challenge of MIM is that image data is dense and spatially continuous, unlike the sparse, discrete nature of text. A missing word in a sentence has a clear semantic gap, but a missing patch in an image can often be easily 'cheated' by interpolating from its immediate neighbors. Therefore, effective visual masking strategies must be designed to create a genuinely difficult and meaningful reconstruction task for the model."
+\end{comment}
 
 The \mask{} token in vision transformers serves as a learnable placeholder that encourages the model to understand spatial relationships and visual context through reconstruction objectives. This approach has proven instrumental in self-supervised pre-training of vision transformers, leading to robust visual representations.
 
@@ -215,6 +218,9 @@ Effective masked image modeling requires careful architectural design to balance
 \subsubsection{Asymmetric Encoder-Decoder Design}
 
 The MAE architecture employs an asymmetric design with a heavy encoder and lightweight decoder:
+\begin{comment}
+Feedback: This is a critical architectural insight that deserves more explanation. Before the code, it would be great to explain the "why". For example: "The key insight of the Masked Autoencoder (MAE) is that the encoder only needs to process the small subset of *visible* patches, while the lightweight decoder is responsible for reconstructing the full image from the encoded representation plus the [MASK] tokens. Since a high masking ratio is used (e.g., 75%), this makes pre-training significantly faster and more memory-efficient than processing the full set of patches in the encoder."
+\end{comment}
 
 \begin{lstlisting}[language=Python, caption={Asymmetric MAE architecture implementation}]
 # Complete implementation available at:
@@ -379,5 +385,11 @@ Based on extensive research and empirical studies, several best practices emerge
 \item \textbf{Multi-Scale Robustness}: Train on various input resolutions
 \item \textbf{Careful Target Selection}: Choose reconstruction targets aligned with downstream tasks
 \end{enumerate}
+\begin{comment}
+Feedback: This is a great summary. To make it more actionable:
+1.  **High Masking Ratios**: "Don't be afraid to use very high masking ratios like 75% or even 80%. Unlike in NLP, the high spatial redundancy in images means the model needs a very challenging task to learn meaningful, non-local representations."
+2.  **Asymmetric Architecture**: "For efficient pre-training, ensure your encoder *only* processes the visible patches. Passing the full sequence of visible and masked tokens through a deep encoder is computationally wasteful and misses the key optimization of MAE."
+3.  **Careful Target Selection**: "If your downstream task is semantic (like classification), pre-training with a feature-level reconstruction target (like DINO features) can often lead to better fine-tuning performance than simple pixel-level reconstruction, even if the reconstructed images look less visually appealing."
+\end{comment}
 
 Masked Image Modeling has revolutionized self-supervised learning in computer vision by adapting the powerful masking paradigm from NLP. The careful design of mask tokens and reconstruction objectives enables vision transformers to learn rich visual representations without requiring labeled data, making it a cornerstone technique for modern visual understanding systems.

@@ -1,6 +1,9 @@
 \section{Separator Token [SEP]}
 
-The separator token, denoted as \sep{}, serves as a critical boundary marker in transformer models, enabling them to process multiple text segments within a single input sequence. Introduced alongside the \cls{} token in BERT \citep{devlin2018bert}, the \sep{} token revolutionized how transformers handle tasks requiring understanding of relationships between different text segments.
+The separator token, denoted as \sep{}, serves as a critical boundary marker in transformer models, enabling them to process multiple text segments within a single input sequence. Introduced alongside the \cls{} token in BERT \citep{devlin2018bert}, the \sep{} token was a key enabler for how transformers handle tasks requiring understanding of relationships between different text segments.
+\begin{comment}
+Feedback: Similar to the [CLS] token section, "revolutionized" is a strong word. Consider "was a key enabler for" or "significantly advanced" to maintain a more measured tone.
+\end{comment}
 
 \subsection{Design Rationale and Functionality}
 
@@ -14,6 +17,9 @@ The \sep{} token addresses a fundamental challenge in NLP: how to process multip
 \end{itemize}
 
 Before the \sep{} token, these tasks typically required separate encoding of each segment followed by complex fusion mechanisms. The \sep{} token enables joint encoding while preserving segment boundaries.
+\begin{comment}
+Feedback: This is a great summary of the problem. To make the solution sound even more impactful, you could add a sentence about the efficiency gain. For example: "By enabling joint encoding in a single forward pass, the [SEP] token offered a much more computationally efficient and elegant solution than complex, multi-stage fusion networks."
+\end{comment}
 
 \subsection{Architectural Integration}
 
@@ -21,9 +27,12 @@ The \sep{} token operates at multiple levels of the transformer architecture:
 
 \subsubsection{Input Segmentation}
 For processing two text segments, BERT uses the canonical format:
-$$\{\cls{}, \text{segment}_1, \sep{}, \text{segment}_2, \sep{}\}$$
+$\{\cls{}, \text{segment}_1, \sep{}, \text{segment}_2, \sep{}\}$
 
 Note that the final \sep{} token is often optional but commonly included for consistency.
+\begin{comment}
+Feedback: The purpose of the *final* [SEP] token can be confusing to readers. It's worth adding a brief explanation of its role. For example: "The final [SEP] token serves as an end-of-sequence marker for the second segment, providing a consistent structure for the model to learn from."
+\end{comment}
 
 \subsubsection{Segment Embeddings}
 In addition to the \sep{} token, BERT uses segment embeddings to distinguish between different parts:
@@ -31,6 +40,9 @@ In addition to the \sep{} token, BERT uses segment embeddings to distinguish bet
 \item Segment A embedding for \cls{} and the first segment
 \item Segment B embedding for the second segment (including its \sep{})
 \end{itemize}
+\begin{comment}
+Feedback: The relationship between [SEP] and segment embeddings is crucial. It would be helpful to clarify that they are two *distinct* mechanisms working together. You could add: "It's important to note that the [SEP] token and segment embeddings are complementary: the [SEP] token provides an explicit boundary marker, while the segment embeddings provide a continuous signal to the model about which segment each token belongs to."
+\end{comment}
 
 \subsubsection{Attention Patterns}
 The \sep{} token participates in self-attention, allowing it to:
@@ -315,6 +327,9 @@ Based on extensive research and practical experience:
 \item \textbf{Ablation Studies}: Compare performance with and without \sep{} tokens
 \end{enumerate}
 \end{principle}
+\begin{comment}
+Feedback: This is another good but generic list. To make it more actionable: For "Balanced Segments," you could add: "When dealing with imbalanced segments (e.g., a short question and a long context), consider a truncation strategy that favors the longer, more informative segment to avoid losing critical information." For "Ablation Studies," you could suggest: "For tasks that don't obviously require segmentation, run an ablation study where you concatenate the text without a [SEP] token. This can sometimes simplify the model's task and improve performance."
+\end{comment}
 
 \subsection{Future Directions}
 

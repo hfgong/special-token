@@ -3,6 +3,9 @@
 \section{Pretraining Strategies}
 
 Pretraining forms the foundation for effective special token development, establishing the basic representations and functional capabilities that will be refined during subsequent training phases. Unlike standard language model pretraining that focuses primarily on next-token prediction, pretraining with special tokens requires carefully designed strategies that facilitate the emergence of specialized functions while maintaining broad language understanding capabilities. This section presents comprehensive approaches for pretraining transformer models with special tokens.
+\begin{comment}
+Feedback: Before diving into the specifics, it's helpful to frame the core challenge. For example: "The main challenge in pretraining special tokens is that they are often 'meta-level' instructions that are not naturally present in raw text. A standard pretraining objective like next-token prediction doesn't explicitly teach a [CLS] token how to summarize, or a [SEP] token how to separate concepts. Therefore, specialized pretraining strategies are needed to create learning signals that directly encourage these desired functions."
+\end{comment}
 
 \subsection{Curriculum Design for Special Token Development}
 
@@ -11,6 +14,12 @@ The design of pretraining curricula significantly impacts the quality of special
 \subsubsection{Progressive Complexity Curricula}
 
 Progressive complexity curricula introduce special token functions gradually, starting with simple tasks and progressively increasing complexity as training proceeds.
+\begin{comment}
+Feedback: A concrete example would make this concept much clearer. For instance: "A progressive curriculum for a model with [CLS] and [SEP] tokens might look like this:
+1.  **Phase 1 (Language Modeling)**: Train the model on a standard masked language modeling (MLM) objective *without* the Next Sentence Prediction (NSP) task. This allows the content embeddings to stabilize and learn basic language.
+2.  **Phase 2 (Introduce NSP)**: After the MLM loss has started to converge, introduce the NSP task, which specifically trains the [CLS] and [SEP] tokens to understand relationships between sentences.
+This two-phase approach is often more stable than trying to learn everything simultaneously from scratch."
+\end{comment}
 
 \begin{lstlisting}[language=Python, caption={Progressive curriculum framework for special token pretraining}]
 # Complete implementation available at:

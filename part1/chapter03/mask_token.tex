@@ -3,6 +3,9 @@
 \section{Mask (\mask{}) Token}
 
 The Mask token, denoted as \mask{}, represents one of the most revolutionary innovations in transformer-based language modeling. Unlike the sequential control tokens \sos{} and \eos{}, the \mask{} token enables bidirectional context modeling through masked language modeling (MLM), fundamentally changing how models learn language representations. Understanding the \mask{} token is essential for practitioners working with BERT-family models and other masked language models, as it forms the foundation of their self-supervised learning paradigm.
+\begin{comment}
+Feedback: "Revolutionary" is a strong but perhaps justified word here. To make the opening even more impactful, you could use an analogy to explain the paradigm shift. For example: "If traditional language modeling was like reading a book one word at a time, masked language modeling is like giving the model a page with holes in it and asking it to fill in the blanks. This simple change forces the model to look both forwards and backwards, developing a much deeper, bidirectional understanding of the text."
+\end{comment}
 
 \subsection{Fundamental Concepts}
 
@@ -75,12 +78,20 @@ def compute_mlm_loss(model, input_ids, labels):
 The original BERT paper established the 15\% masking ratio through empirical experimentation, finding it provides optimal balance between learning signal and computational efficiency. This ratio ensures sufficient training signal while maintaining enough context for meaningful predictions.
 
 The three-way masking strategy (80\%/10\%/10\%) addresses several important considerations:
-
+\begin{comment}
+Feedback: The "why" behind the 80/10/10 split is one of the most important and often confusing parts of MLM. It's worth explaining the reasoning more explicitly.
+\end{comment}
 \begin{itemize}
-\item \textbf{80\% \mask{} tokens}: Provides clear training signal for prediction task
-\item \textbf{10\% random tokens}: Encourages robust representations against noise
-\item \textbf{10\% unchanged}: Prevents over-reliance on \mask{} token presence
+\item \textbf{80\% \mask{} tokens}: Provides clear training signal for prediction task.
+\item \textbf{10\% random tokens}: Encourages robust representations against noise.
+\item \textbf{10\% unchanged}: Prevents over-reliance on \mask{} token presence.
 \end{itemize}
+\begin{comment}
+Feedback on the above items:
+- 80% MASK tokens: This is the main task: see a blank, fill it in.
+- 10% random tokens: This forces the model to learn not just the context, but also to recognize when a word is "wrong" in a given context. It acts as a form of regularization.
+- 10% unchanged: This is the most subtle but crucial part. If the model *only* ever sees [MASK] tokens during training, it might not learn good representations for the *actual* words during fine-tuning, as there's a mismatch between pre-training (seeing [MASK]) and fine-tuning (seeing real words). This 10% forces the model to learn rich representations for every token, not just the masked ones.
+\end{comment}
 
 \subsection{Bidirectional Context Modeling}
 
@@ -422,6 +433,12 @@ Effective \mask{} token usage requires adherence to several established best pra
 \item \textbf{Curriculum Learning}: Consider gradual increase in masking difficulty
 \item \textbf{Evaluation Diversity}: Use multiple metrics to assess MLM effectiveness
 \end{enumerate}
+\begin{comment}
+Feedback: This is a good list. To make it more actionable:
+1.  **Appropriate Masking Ratio**: "Start with the standard 15% ratio. If your task involves very long sequences with sparse information, you might experiment with slightly higher ratios (e.g., 20%), but be aware this can slow down training."
+2.  **Dynamic Masking**: "For any non-trivial dataset, dynamic masking is essential. Static masking, where each training instance is masked the same way every time, can lead to overfitting on the specific masked patterns."
+3.  **Domain Adaptation**: "When pre-training on a new domain (e.g., legal or medical text), consider implementing span masking or entity masking to force the model to learn the relationships between multi-word technical terms, which is often more valuable than predicting random individual tokens."
+\end{comment}
 
 \subsection{Advanced Applications and Extensions}
 

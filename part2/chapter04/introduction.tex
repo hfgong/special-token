@@ -1,6 +1,9 @@
 % Chapter 4 Introduction: Vision Transformers and Special Tokens
 
 The success of transformers in natural language processing naturally led to their adaptation for computer vision tasks. Vision Transformers (ViTs) introduced a paradigm shift by treating images as sequences of patches, enabling the direct application of transformer architectures to visual data. This transition brought with it the need for specialized tokens that handle the unique challenges of visual representation learning.
+\begin{comment}
+Feedback: This is a strong start. To make the core challenge more vivid, you could add a sentence like: "This chapter explores how the discrete, symbolic world of language tokens was translated into the continuous, spatial domain of images, a translation that required both clever adaptations of old ideas and the invention of entirely new ones."
+\end{comment}
 
 Unlike text, which comes naturally segmented into discrete tokens, images require artificial segmentation into patches that serve as visual tokens. This fundamental difference necessitates new approaches to special token design, leading to innovations in classification tokens, position embeddings, masking strategies, and auxiliary tokens that enhance visual understanding.
 
@@ -20,6 +23,9 @@ The adaptation of special tokens to computer vision introduces several unique ch
 \item \textbf{Dense Prediction Tasks}: Vision models often need to perform dense prediction tasks (segmentation, detection) requiring different token strategies
 \item \textbf{Cross-Modal Alignment}: Integration with text requires specialized tokens for image-text alignment
 \end{enumerate}
+\begin{comment}
+Feedback: This is a great list of challenges. To make it more concrete for the reader, you could add a brief, specific example for one or two points. For "Spatial Relationships," you could add: "(e.g., ensuring the model knows that the patch representing an 'ear' is located above the patch representing a 'shoulder')." For "Dense Prediction Tasks," you could add: "(e.g., moving beyond a single [CLS] token to produce a representation for every single pixel in an image for segmentation)."
+\end{comment}
 
 \section{Evolution of Visual Special Tokens}
 

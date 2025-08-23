@@ -7,6 +7,9 @@ Modifying tokenizers to accommodate special tokens is a fundamental step in impl
 \subsection{Extending Tokenizer Vocabularies}
 
 The first step in tokenizer modification involves extending the vocabulary to include new special tokens while maintaining compatibility with existing tokens.
+\begin{comment}
+Feedback: Before the code, it's helpful to explain the core task. For example: "When you add a new special token like `<USER>`, you need to perform two key actions: 1) Add the token string to the tokenizer's vocabulary, and 2) Resize the model's token embedding matrix to create a new row for the token's vector representation. The `transformers` library provides a convenient `add_special_tokens` method that handles both of these steps, ensuring the tokenizer and model stay synchronized."
+\end{comment}
 
 \begin{lstlisting}[language=Python, caption=Safe vocabulary extension for special tokens]
 class ExtendedTokenizer:
@@ -113,8 +116,8 @@ class SpecialTokenEncoder:
             # Handle with separator tokens between sequences
             # Assumes tokens is a list of two sequences
             if isinstance(tokens[0], list):
-                tokens = ([self.tokenizer.cls_token] + tokens[0] + 
-                         [self.tokenizer.sep_token] + tokens[1] + 
+                tokens = ([self.tokenizer.cls_token] + tokens[0] +
+                         [self.tokenizer.sep_token] + tokens[1] +
                          [self.tokenizer.sep_token])
         
         return tokens
@@ -123,6 +126,9 @@ class SpecialTokenEncoder:
 \subsection{Handling Special Token Collisions}
 
 When working with pre-trained models and custom special tokens, collision handling becomes critical to avoid vocabulary conflicts.
+\begin{comment}
+Feedback: It's helpful to explain the problem before showing the solution. For example: "A common issue arises when a special token you want to add (e.g., `<USER>`) already exists as a regular token in the pre-trained tokenizer's vocabulary. Simply adding it again can cause ambiguity. A robust implementation should detect these collisions and either force an override (if intended) or automatically generate a non-colliding alternative (e.g., `<USER_>`)."
+\end{comment}
 
 \begin{lstlisting}[language=Python, caption=Collision detection and resolution]
 class CollisionAwareTokenizer:
@@ -230,3 +236,10 @@ When modifying tokenizers for special tokens, consider these best practices:
 \item \textbf{Performance Monitoring}: Track tokenization speed and memory usage, especially for large batches
 \item \textbf{Error Handling}: Implement robust error handling for invalid token configurations
 \end{itemize}
+\begin{comment}
+Feedback: This is a good list. To make it more actionable:
+1.  **Preserve Backward Compatibility**: "When adding new special tokens, save the new tokenizer configuration to a *new* directory. Do not overwrite the original. This allows you to load both the old and new versions of the model and tokenizer, which is crucial for testing and deployment."
+2.  **Version Control**: "Store your `special_tokens_map.json` and `tokenizer_config.json` files in your version control system (like Git) alongside your model code. This ensures that changes to the tokenizer are tracked and reproducible."
+3.  **Test Edge Cases**: "Create a small suite of unit tests for your tokenizer that includes tricky cases: strings that look like your special tokens, empty strings, strings with mixed special and normal tokens, etc. This can prevent many common bugs."
+\end{comment}
+

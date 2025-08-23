@@ -3,6 +3,9 @@
 \section{Cross-Modal Alignment Tokens}
 
 Cross-modal alignment tokens represent specialized mechanisms for establishing correspondences and relationships between different modalities within multimodal transformer architectures. These tokens serve as bridges that enable models to understand how information expressed in one modality relates to information in another, facilitating tasks such as cross-modal retrieval, multimodal reasoning, and aligned generation.
+\begin{comment}
+Feedback: This is a good definition. To make it more intuitive, you could use an analogy: "If modality-specific tokens ([IMG], [AUDIO]) are like nouns representing 'what' is in the input, alignment tokens are like verbs and prepositions, representing the relationships 'between' them. They learn to answer questions like 'Is this sound *coming from* that object?' or 'Does this text *describe* that image?'"
+\end{comment}
 
 Unlike modality-specific tokens that represent content within a single domain, alignment tokens explicitly encode relationships, correspondences, and semantic mappings across modalities, making them essential for sophisticated multimodal understanding.
 
@@ -26,6 +29,12 @@ class CrossModalAlignmentLayer(nn.Module):
 \subsection{Alignment Training Objectives}
 
 Training cross-modal alignment tokens requires specialized objectives that encourage meaningful correspondences between modalities.
+\begin{comment}
+Feedback: Before linking to the code, it's helpful to briefly explain the *goal* of these objectives in plain language. For example: "The primary goal of alignment objectives is to force the model to create a shared 'meaning space' where different modalities can be compared. The most common training objectives for this are:
+1.  **Contrastive Loss**: Teaches the model to pull representations of corresponding inputs (e.g., a photo of a dog and the text 'a dog') together, while pushing non-corresponding inputs apart.
+2.  **Matching Loss**: A binary classification task where the model is given a pair of inputs from different modalities and must predict whether they match or not.
+3.  **Cross-Modal Generation**: Forcing the model to generate the representation of one modality from another (e.g., generating a text caption from an image)."
+\end{comment}
 
 \begin{lstlisting}[language=Python, caption={Cross-modal alignment training objectives}]
 # Complete implementation available at:
@@ -107,5 +116,11 @@ Implementing effective cross-modal alignment tokens requires careful considerati
 \item \textbf{Regularization}: Prevent over-alignment that reduces modality-specific information
 \item \textbf{Interpretability}: Monitor alignment patterns for debugging and analysis
 \end{enumerate}
+\begin{comment}
+Feedback: This is a good list. To make it more actionable:
+1.  **Progressive Alignment**: "Don't try to force alignment in the very first layer. Allow modality-specific encoders to build up rich representations first, then introduce cross-attention and alignment objectives in the middle or later layers of the model."
+2.  **Symmetric Design**: "Your training objectives should be symmetric. If you have a contrastive loss for image-to-text matching, you should also have one for text-to-image matching. This prevents the model from developing a bias towards one modality."
+3.  **Regularization**: "Be careful not to force the representations to be *too* similar. Modalities contain unique information that can be lost if the alignment objective is too strong. Use a small weight for the alignment loss relative to other objectives, or use techniques that only align a subset of the features."
+\end{comment}
 
 Cross-modal alignment tokens represent a critical advancement in multimodal AI, enabling models to establish meaningful correspondences between different types of information and facilitating sophisticated cross-modal understanding and generation capabilities.

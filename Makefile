@@ -3,7 +3,7 @@
 # Main LaTeX compiler
 LATEX = lualatex
 BIBER = biber
-LATEX_FLAGS = -shell-escape -interaction=nonstopmode
+LATEX_FLAGS = -interaction=nonstopmode -halt-on-error
 
 # Main document
 MAIN = main
@@ -19,13 +19,27 @@ all: $(MAIN_PDF)
 
 # Main book compilation with bibliography
 $(MAIN_PDF): $(MAIN_TEX) $(FIGURE_PDFS) references.bib
-	@echo "Building main document..."
-	$(LATEX) $(LATEX_FLAGS) $(MAIN_TEX) || true
-	$(BIBER) $(MAIN) || true
-	$(LATEX) $(LATEX_FLAGS) $(MAIN_TEX) || true
-	$(LATEX) $(LATEX_FLAGS) $(MAIN_TEX) || true
+	@echo "========================================="
+	@echo "Building main document with bibliography"
+	@echo "========================================="
+	@echo "[1/4] First LaTeX pass..."
+	@$(LATEX) $(LATEX_FLAGS) $(MAIN_TEX) || (echo "First pass failed"; exit 1)
+	@if [ -f $(MAIN).bcf ]; then \
+		echo "[2/4] Running Biber for bibliography..."; \
+		$(BIBER) $(MAIN) || echo "Warning: Biber had issues but continuing..."; \
+		echo "[3/4] Second LaTeX pass (citations)..."; \
+		$(LATEX) $(LATEX_FLAGS) $(MAIN_TEX) || (echo "Second pass failed"; exit 1); \
+		echo "[4/4] Third LaTeX pass (final)..."; \
+		$(LATEX) $(LATEX_FLAGS) $(MAIN_TEX) || (echo "Third pass failed"; exit 1); \
+	else \
+		echo "No bibliography found, skipping Biber"; \
+	fi
 	@if [ -f $(MAIN_PDF) ]; then \
-		echo "Build complete!"; \
+		echo "=========================================";\
+		echo "Build complete: $(MAIN_PDF)"; \
+		echo "Pages: $$(pdfinfo $(MAIN_PDF) | grep Pages | awk '{print $$2}')"; \
+		echo "Size: $$(ls -lh $(MAIN_PDF) | awk '{print $$5}')"; \
+		echo "=========================================";\
 	else \
 		echo "Build failed - no PDF generated"; \
 		exit 1; \

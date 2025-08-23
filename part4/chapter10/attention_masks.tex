@@ -7,6 +7,12 @@ Attention masks are fundamental to controlling how special tokens interact with 
 \subsection{Types of Attention Masks for Special Tokens}
 
 Different special tokens require different attention patterns to function effectively. Understanding these patterns is crucial for implementation.
+\begin{comment}
+Feedback: Before linking to the code, it's essential to explain the core concepts. For example: "An attention mask is a matrix that tells the transformer which tokens are allowed to 'see' which other tokens. While the padding mask is the most common, special tokens often require custom masks to enforce specific behaviors:
+1.  **Gated Attention**: A custom mask can be used to create a 'gate' token. For example, a `<GATE>` token's row in the mask could be all ones (it can see everything), while its column could be all zeros (nothing can see it). This creates a one-way flow of information, perfect for a token that needs to aggregate information without influencing other tokens' representations.
+2.  **Segment-Scoped Attention**: For tasks with multiple, independent segments separated by a special token (e.g., `<DOC_SEP>`), a custom mask can be created that prevents attention from flowing *across* the separator. This forces the model to process each document independently until their representations are combined at a higher level.
+3.  **Hierarchical Attention**: For structured data, a mask can enforce a hierarchy. For example, a 'paragraph' token might be allowed to attend to all 'sentence' tokens within it, but not to sentences in other paragraphs."
+\end{comment}
 
 \begin{lstlisting}[language=Python, caption={Comprehensive attention mask generator for special tokens}]
 # Complete implementation available at:
@@ -106,3 +112,9 @@ When implementing attention masks for special tokens, consider these best practi
 \item \textbf{Memory Management}: Implement efficient storage for large attention matrices
 \item \textbf{Gradient Flow}: Ensure masks don't impede necessary gradient flow during training
 \end{itemize}
+\begin{comment}
+Feedback: This is a good list. To make it more actionable:
+1.  **Efficiency**: "Always create your attention masks using tensor operations (e.g., in PyTorch or TensorFlow). Avoid iterating and building masks in Python loops, as this will be a major performance bottleneck."
+2.  **Testing**: "Attention masks are a common source of bugs. Create a dedicated unit test for your masking logic. A good test will create a small, predictable input sequence with your special tokens and assert that the resulting mask has the exact pattern of zeros and ones that you expect."
+3.  **Sparsity**: "If your custom mask is very sparse (mostly zeros), consider using a sparse matrix representation or a specialized library like `torch.sparse` to significantly reduce memory usage and potentially speed up computation on compatible hardware."
+\end{comment}

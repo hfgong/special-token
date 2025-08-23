@@ -3,6 +3,9 @@
 \section{Introduction}
 
 Implementing special tokens in production transformer systems requires careful consideration of numerous practical aspects that extend beyond theoretical design principles. This chapter provides comprehensive guidelines for practitioners working to integrate special tokens into real-world applications, addressing the technical challenges and implementation details that arise when moving from conceptual designs to operational systems.
+\begin{comment}
+Feedback: This is a strong opening. To make it even more compelling, you could frame it as the "nuts and bolts" chapter. For example: "This chapter bridges the gap between the 'what' and the 'how.' Having explored the high-level design and training principles, we now dive into the practical, rubber-meets-the-road details of implementation. This is where theoretical designs become working code, and where subtle implementation choices can make the difference between a successful deployment and a failed experiment."
+\end{comment}
 
 The successful deployment of special tokens depends on understanding the intricate relationships between tokenization, embedding initialization, attention mechanisms, and position encoding strategies. Each of these components must be carefully orchestrated to ensure that special tokens fulfill their intended roles while maintaining computational efficiency and model stability.
 
@@ -11,12 +14,17 @@ The successful deployment of special tokens depends on understanding the intrica
 Modern transformer implementations face several key challenges when incorporating special tokens:
 
 \begin{itemize}
-\item \textbf{Tokenizer Compatibility}: Ensuring special tokens are properly handled across different tokenization schemes
-\item \textbf{Embedding Initialization}: Choosing appropriate initialization strategies for special token embeddings
-\item \textbf{Attention Mask Design}: Implementing correct attention patterns for various special token types
-\item \textbf{Position Encoding}: Handling position information for tokens that may not have traditional sequential positions
-\item \textbf{Backward Compatibility}: Maintaining compatibility with existing models and checkpoints
+\item \textbf{Tokenizer Compatibility}: Ensuring special tokens are properly handled across different tokenization schemes.
+\item \textbf{Embedding Initialization}: Choosing appropriate initialization strategies for special token embeddings.
+\item \textbf{Attention Mask Design}: Implementing correct attention patterns for various special token types.
+\item \textbf{Position Encoding}: Handling position information for tokens that may not have traditional sequential positions.
+\item \textbf{Backward Compatibility}: Maintaining compatibility with existing models and checkpoints.
 \end{itemize}
+\begin{comment}
+Examples for the above challenges:
+- Tokenizer Compatibility: "How do you add a new special token to a pre-trained tokenizer without invalidating its existing vocabulary and embeddings?"
+- Attention Mask Design: "How do you create a custom attention mask that allows a 'memory' token to see all other tokens, but prevents other tokens from seeing it?"
+\end{comment}
 
 \subsection{Best Practices Overview}
 

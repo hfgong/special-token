@@ -7,6 +7,9 @@ The optimization of special token embeddings represents one of the most direct a
 \subsection{Geometric Optimization Strategies}
 
 Special token embeddings must occupy positions in high-dimensional space that support their functional roles while maintaining appropriate relationships with content tokens and other special tokens.
+\begin{comment}
+Feedback: Before linking to the code, it's crucial to explain the core intuition. For example: "The geometry of the embedding space matters. For a [CLS] token to effectively summarize a sequence, its embedding should ideally be 'central' to the content tokens it's summarizing. For different special tokens (e.g., [TASK_A] and [TASK_B]) to be clearly distinguishable, their embeddings should be far apart, or 'orthogonal.' Geometric optimization involves adding terms to the loss function that explicitly encourage these desired spatial relationships, rather than hoping they emerge on their own."
+\end{comment}
 
 \subsubsection{Optimal Positioning in Embedding Space}
 
@@ -33,6 +36,9 @@ class ImplementationReference:
 \subsubsection{Multi-Objective Embedding Optimization}
 
 Special token embeddings must often satisfy multiple, potentially conflicting objectives simultaneously. Multi-objective optimization techniques enable finding Pareto-optimal solutions that balance these trade-offs.
+\begin{comment}
+Feedback: A simple example would make this concept much clearer. For instance: "Consider a custom token `<CRITICAL_KEYWORD>`. We might have two competing goals for its embedding: 1) It should be close to the embeddings of the words that make up the keyword (for semantic coherence), but 2) It should also be far away from the embeddings of regular content tokens to make it easily distinguishable for the attention mechanism. Multi-objective optimization provides a framework for training the embedding to find a 'sweet spot' that balances these two pressures, rather than satisfying one at the expense of the other."
+\end{comment}
 
 \begin{lstlisting}[language=Python, caption={Multi-objective embedding optimization}]
 # Complete implementation available at:

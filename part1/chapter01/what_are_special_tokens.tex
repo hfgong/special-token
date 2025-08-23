@@ -1,6 +1,9 @@
 \section{What Are Special Tokens?}
 
 Special tokens are predefined symbols added to the vocabulary of transformer models that serve specific architectural or functional purposes beyond representing natural language or data content. Unlike regular tokens that encode words, subwords, or patches of images, special tokens act as control signals, boundary markers, aggregation points, and task indicators within the model's processing pipeline.
+\begin{comment}
+Feedback: This is a good, dense definition. To make it more accessible, you could use an analogy. For example: "If a regular token is like a word in a sentence, a special token is like punctuation, a paragraph break, or even the title of the document. They provide structure and context rather than content."
+\end{comment}
 
 \subsection{Defining Characteristics}
 
@@ -33,6 +36,9 @@ These tokens temporarily occupy positions in the sequence. The \mask{} token rep
 
 \subsubsection{Control Tokens}
 Control tokens modify model behavior or indicate specific modes of operation. In code generation models, language-specific tokens like \specialtoken{Python} or \specialtoken{JavaScript} signal context switches. In controllable generation, tokens like \specialtoken{positive} or \specialtoken{formal} guide the style and sentiment of outputs.
+\begin{comment}
+Feedback: The "Control Tokens" section is a great place to highlight the power and flexibility of special tokens. The examples are good. You could make this even more impactful by mentioning a more advanced or surprising example, if one exists. For instance, "More advanced models use control tokens to switch between different personas, adopt a specific reasoning style (e.g., chain-of-thought), or even to query external tools and APIs." This hints at the cutting-edge applications.
+\end{comment}
 
 \subsection{Technical Implementation}
 
@@ -84,6 +90,9 @@ The importance of special tokens extends beyond mere convenience. They enable tr
 
 \item \textbf{Enable Bidirectional Training}: Mask tokens facilitate masked language modeling, allowing transformers to learn bidirectional representations.
 \end{enumerate}
+\begin{comment}
+Feedback: This list is a great summary. To avoid it being just a dry list, you could frame it as "Without special tokens, transformers would struggle to..." For example: "1. Handle variable-length inputs: Without padding tokens, every input in a batch would need to be the exact same length, making practical applications incredibly inefficient." This reframing emphasizes their problem-solving nature.
+\end{comment}
 
 \subsection{Design Considerations}
 

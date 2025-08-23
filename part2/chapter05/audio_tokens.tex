@@ -3,6 +3,9 @@
 \section{Audio Tokens [AUDIO]}
 
 Audio tokens represent a sophisticated extension of multimodal special tokens into the auditory domain, enabling transformer architectures to process and understand acoustic information alongside visual and textual modalities. The \specialtoken{AUDIO} token serves as a bridge between the continuous, temporal nature of audio signals and the discrete, sequence-based processing paradigm of modern AI systems.
+\begin{comment}
+Feedback: This is a strong start. To immediately frame the core challenge, you could add: "Unlike text with its clear word boundaries or images with their defined patches, audio is a continuous, high-frequency signal where information is encoded in subtle changes over time. The central task of an audio token is to discretize this fluid stream of information into meaningful chunks that a transformer can reason about."
+\end{comment}
 
 Unlike visual information that can be naturally segmented into patches, audio data presents unique challenges due to its temporal continuity, variable sampling rates, and diverse acoustic properties ranging from speech and music to environmental sounds and complex audio scenes.
 
@@ -27,6 +30,9 @@ The design of effective audio tokens involves several key considerations:
 \subsection{Audio Preprocessing and Feature Extraction}
 
 Before integration into multimodal transformers, audio signals require sophisticated preprocessing to extract meaningful features that can be encoded as tokens.
+\begin{comment}
+Feedback: It would be helpful to briefly explain *why* raw audio is not used. For example: "Raw audio waveforms are sampled at very high rates (e.g., 16,000+ samples per second), resulting in extremely long sequences that are computationally infeasible for standard transformers. Therefore, the first step is always to convert the raw audio into a more compressed and meaningful feature representation, such as a spectrogram, which captures the frequency content over time."
+\end{comment}
 
 \subsubsection{Spectral Feature Extraction}
 
@@ -315,5 +321,11 @@ Implementing effective audio tokens requires adherence to several key principles
 \item \textbf{Cross-Modal Validation}: Evaluate performance on multimodal tasks
 \item \textbf{Interpretability}: Monitor attention patterns between audio and other modalities
 \end{enumerate}
+\begin{comment}
+Feedback: This is a great list. To make it more actionable:
+1.  **Feature Diversity**: "Start with log-Mel spectrograms as a strong, general-purpose feature. If your task involves music, consider adding features like chroma or pitch to provide more relevant information to the model."
+2.  **Temporal Alignment**: "When working with video, be aware of potential audio-visual desynchronization in your dataset. A common preprocessing step is to use a tool like FFmpeg to verify and correct the alignment between audio and video streams."
+3.  **Noise Robustness**: "Incorporate audio-specific data augmentation during training. Libraries like `audiomentations` can add background noise, reverberation, and pitch shifts, which can significantly improve the model's real-world performance."
+\end{comment}
 
 Audio tokens represent a crucial component in creating truly multimodal AI systems that can understand and process acoustic information in conjunction with visual and textual data. Their development enables applications ranging from enhanced speech recognition to complex audio-visual scene understanding.

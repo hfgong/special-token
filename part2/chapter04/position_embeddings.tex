@@ -3,6 +3,9 @@
 \section{Position Embeddings as Special Tokens}
 
 Position embeddings in vision transformers represent a unique category of special tokens that encode spatial relationships in 2D image data. Unlike the 1D sequential nature of text, images possess inherent 2D spatial structure that requires sophisticated position encoding strategies. This section explores how position embeddings function as implicit special tokens that provide crucial spatial awareness to vision transformers.
+\begin{comment}
+Feedback: This is a good introduction. To frame the problem more starkly, you could add: "Without position embeddings, a Vision Transformer would see an image as a simple, unordered 'bag of patches.' It would have no inherent knowledge of whether a patch is at the top-left corner or the center of the image. Position embeddings are the mechanism that injects this critical spatial context back into the model."
+\end{comment}
 
 \subsection{From 1D to 2D: Spatial Position Encoding}
 
@@ -24,6 +27,9 @@ where $f$ is the position encoding function, and $\text{coordinate}(i,j)$ repres
 \subsection{Categories of Position Embeddings}
 
 Vision transformers employ various position embedding strategies, each with distinct characteristics and applications.
+\begin{comment}
+Feedback: Before diving into the specific types, it would be helpful to frame the core trade-off for the reader. For example: "The primary design choice in position embeddings is between *absolute* and *relative* positioning. Absolute embeddings learn a specific vector for each grid location (e.g., 'top-left corner'), while relative embeddings learn to represent the distance and direction between pairs of patches (e.g., 'two patches to the right'). This choice has significant implications for how well the model generalizes to different image sizes and tasks."
+\end{comment}
 
 \subsubsection{Learned Absolute Position Embeddings}
 
@@ -460,10 +466,10 @@ class AdaptivePositionInterpolation(nn.Module):
         low_freq_weight, high_freq_weight = freq_weights[0]
         
         # Standard bicubic interpolation
-        bicubic_result = self.bicubic_interpolate(pos_embed, orig_size, new_size)
+        bicubic_result = self.bicubic_interpolate(pos_embed, orig_size, new_size);
         
         # Bilinear interpolation (preserves low frequencies better)
-        bilinear_result = self.bilinear_interpolate(pos_embed, orig_size, new_size)
+        bilinear_result = self.bilinear_interpolate(pos_embed, orig_size, new_size);
         
         # Weighted combination based on frequency analysis
         result = (low_freq_weight * bilinear_result + 
@@ -492,7 +498,7 @@ The effectiveness of different position embedding strategies when transferring a
 \centering
 \begin{tabular}{lcccc}
 \toprule
-\textbf{Position Embedding} & \textbf{224→384} & \textbf{224→512} & \textbf{Parameters} & \textbf{Flexibility} \\
+\textbf{Position Embedding} & \textbf{224$\rightarrow$384} & \textbf{224$\rightarrow$512} & \textbf{Parameters} & \textbf{Flexibility} \\
 \midrule
 Learned Absolute & 82.1\% & 81.5\% & High & Low \\
 Sinusoidal 2D & 82.8\% & 82.9\% & None & High \\
@@ -500,7 +506,10 @@ Relative 2D & 83.2\% & 83.1\% & Medium & Medium \\
 Conditional & 83.6\% & 83.8\% & High & High \\
 \bottomrule
 \end{tabular}
-\caption{ImageNet-1K accuracy when transferring ViT-Base models from 224×224 training resolution to higher resolutions at test time.}
+\caption{ImageNet-1K accuracy when transferring ViT-Base models from 224$\times$224 training resolution to higher resolutions at test time.}
+\begin{comment}
+Feedback: Similar to the previous table, these numbers are very specific. It's better to cite the source or make it clear these are illustrative. For example, change the caption to: "Illustrative comparison of how different position embedding strategies affect fine-tuning performance when changing image resolution, based on trends observed in papers like [Citation]." This avoids presenting specific numbers as universal truths.
+\end{comment}
 \end{table}
 
 \subsubsection{Spatial Understanding Tasks}
@@ -562,5 +571,10 @@ Based on extensive research and practical experience, several best practices eme
 \item \textbf{Spatial Consistency}: Ensure position embeddings maintain spatial relationships
 \item \textbf{Regular Evaluation}: Test position embedding effectiveness across different resolutions
 \end{enumerate}
+\begin{comment}
+Feedback: This is a great, detailed list. To make it even more actionable:
+1.  **Task-Specific Choice**: "For simple classification on fixed-size images, learned absolute embeddings are a strong and simple baseline. If your application involves object detection or segmentation, the translation invariance of relative position embeddings often provides a significant advantage."
+2.  **Interpolation Method**: "When fine-tuning on a new image resolution, always remember to interpolate your learned absolute position embeddings. Forgetting this step is a common reason for poor performance, as the model receives scrambled spatial information. Bicubic interpolation is the standard and effective choice."
+\end{comment}
 
 Position embeddings represent a sophisticated form of special tokens that encode crucial spatial information in vision transformers. Their design significantly impacts model performance, particularly for tasks requiring spatial understanding. Understanding the trade-offs between different position embedding strategies enables practitioners to make informed choices for their specific applications and achieve optimal performance across diverse visual tasks.

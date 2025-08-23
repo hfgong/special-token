@@ -20,6 +20,13 @@ The mathematical formulation for visual \cls{} token processing follows the stan
 \mathbf{z}_\ell &= \text{MLP}(\text{LN}(\mathbf{z}_\ell)) + \mathbf{z}_\ell \\
 \mathbf{y} &= \text{LN}(\mathbf{z}_L^0)
 \end{align}
+\begin{comment}
+Feedback: These equations are dense for non-experts. A brief, intuitive walkthrough would be very helpful. For example:
+"Let's break this down:
+1. The first line shows the input preparation: the special [CLS] token is prepended to the sequence of embedded image patches, and all of them get a positional embedding.
+2. The next two lines describe a standard transformer block: the sequence goes through multi-head self-attention (MSA) and a feed-forward network (MLP), with layer normalization (LN) and residual connections. This is repeated for L layers.
+3. The final line shows that for classification, we take only the output corresponding to the [CLS] token from the final layer (z_L^0), normalize it, and pass it to the classifier head. The representations of all the image patches are discarded."
+\end{comment}
 
 where $\mathbf{x}_{\text{cls}}$ is the \cls{} token, $\mathbf{x}_i^p$ are flattened image patches, $\mathbf{E}$ is the patch embedding matrix, $\mathbf{E}_{\text{pos}}$ are position embeddings, and $\mathbf{z}_L^0$ represents the final \cls{} token representation after $L$ transformer layers.
 
@@ -218,12 +225,15 @@ Experimental results consistently show \cls{} token superiority:
 \toprule
 \textbf{Method} & \textbf{ImageNet-1K} & \textbf{Parameters} & \textbf{Training Time} \\
 \midrule
-Global Avg Pool & 79.2\% & 85.8M & 1.0× \\
-Attention Pool & 80.6\% & 86.1M & 1.1× \\
-CLS Token & \textbf{81.8\%} & 86.4M & 1.0× \\
+Global Avg Pool & 79.2\% & 85.8M & 1.0\% \\
+Attention Pool & 80.6\% & 86.1M & 1.1\% \\
+CLS Token & \textbf{81.8\%} & 86.4M & 1.0\% \\
 \bottomrule
 \end{tabular}
 \caption{Performance comparison of different pooling strategies in ViT-Base on ImageNet-1K classification.}
+\begin{comment}
+Feedback: Tables with specific numbers can be misleading if the context isn't provided (e.g., which paper, what training setup). It's safer and often more honest to make the comparison qualitative or cite the source directly. For example, you could change the caption to: "Illustrative performance comparison... based on results from [Citation]. Actual performance may vary." Or, you could rephrase the text to say: "Experiments in the original ViT paper and subsequent work have generally found that using a dedicated [CLS] token outperforms simple pooling strategies like Global Average Pooling by a notable margin, justifying the small increase in parameters."
+\end{comment}
 \end{table}
 
 \subsection{Best Practices and Guidelines}
@@ -238,5 +248,11 @@ Based on extensive research and empirical studies, several best practices emerge
 \item \textbf{Task-Specific Adaptation}: Adapt \cls{} token strategy to specific vision tasks
 \item \textbf{Regular Attention Visualization}: Use attention maps for model interpretability
 \end{enumerate}
+\begin{comment}
+Feedback: This list can be made more actionable.
+1.  **Appropriate Initialization**: "Stick to the standard small-variance random initialization for the [CLS] token unless you have a strong reason to do otherwise. It's a proven, stable baseline."
+2.  **Position Embedding Integration**: "Ensure your position embedding sequence has length N+1 (for N patches), not just N. Forgetting to add a position embedding for the [CLS] token itself is a common and hard-to-debug error."
+3.  **Regular Attention Visualization**: "Periodically visualize the [CLS] token's attention maps on a validation set. If the model consistently attends to background patches, it may indicate issues with the training data or that the model is learning spurious correlations."
+\end{comment}
 
 The \cls{} token's adaptation to computer vision represents a successful transfer of transformer concepts across domains. While maintaining the core principle of learned global aggregation, visual \cls{} tokens have evolved unique characteristics that address the spatial and hierarchical nature of visual information.

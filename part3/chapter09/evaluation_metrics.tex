@@ -3,6 +3,12 @@
 \section{Evaluation Metrics}
 
 The evaluation of special token training requires comprehensive metrics that assess not only overall model performance but also the quality of special token function development, training stability, and the preservation of intended capabilities. Unlike standard transformer evaluation that focuses primarily on downstream task performance, special token evaluation must consider multiple dimensions of model behavior and capability. This section presents systematic approaches for evaluating training progress and final model quality in the context of special tokens.
+\begin{comment}
+Feedback: Before linking to the code, it's crucial to establish the conceptual framework for evaluation. For example: "Evaluating the training of special tokens goes beyond just checking the final loss. A robust evaluation framework should answer three key questions throughout the training process:
+1.  **Is the token learning its job? (Functional Metrics)**: We need specific 'probe' tasks to measure if a token is actually learning its intended function. For a [CLS] token, this might be a linear probe to see how well its embedding can classify sentences.
+2.  **Is the training process healthy? (Stability Metrics)**: We need to monitor the training dynamics. Are the gradients flowing to the special tokens correctly? Are their embedding norms stable, or are they exploding or vanishing?
+3.  **Does it help the final task? (Downstream Metrics)**: Ultimately, the special token must improve performance on the final, downstream task. This is measured through standard evaluation metrics (e.g., accuracy, F1 score) and compared against a baseline model without the special token."
+\end{comment}
 
 \subsection{Function Development Metrics}
 

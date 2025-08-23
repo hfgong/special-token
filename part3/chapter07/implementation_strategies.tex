@@ -7,6 +7,11 @@ The successful implementation of custom special tokens requires careful consider
 \subsection{Embedding Initialization Strategies}
 
 The initialization of custom token embeddings significantly impacts training dynamics, convergence behavior, and final performance. Effective initialization strategies consider the token's intended function, the structure of the existing embedding space, and the characteristics of the target domain.
+\begin{comment}
+Feedback: Before linking to the code, it's crucial to explain the core idea. For example: "A key decision is how to initialize the embedding for a new token. A poor initialization can destabilize training. The two main strategies are:
+1.  **Random Initialization**: Simple, but can slow down convergence as the model has to learn the token's meaning from scratch. It's important to use a small standard deviation to avoid large initial gradients.
+2.  **Informed Initialization**: A more effective approach where the new token's embedding is initialized based on the embeddings of existing, semantically related tokens. This gives the model a strong 'hint' about the token's purpose and can significantly speed up learning."
+\end{comment}
 
 \subsubsection{Informed Initialization}
 
@@ -37,6 +42,9 @@ Integrating custom special tokens into existing training pipelines requires care
 \subsubsection{Progressive Integration}
 
 Rather than introducing all custom tokens simultaneously, progressive integration allows for stable training and easier debugging.
+\begin{comment}
+Feedback: Explaining the "why" is important here. For example: "When adding new custom tokens to a pre-trained model, it's often best to 'freeze' the original model weights and only train the new token embeddings for a few epochs. This allows the new tokens to settle into the existing embedding space without catastrophically disrupting the pre-trained representations. After this initial phase, you can unfreeze the entire model for end-to-end fine-tuning."
+\end{comment}
 
 \begin{lstlisting}[language=Python, caption={Progressive custom token integration}]
 # Complete implementation available at:
@@ -63,6 +71,9 @@ Integrating custom tokens into existing transformer architectures requires caref
 \subsubsection{Attention Mechanism Modifications}
 
 Custom tokens may require specialized attention patterns or processing that differs from standard token interactions.
+\begin{comment}
+Feedback: A brief explanation of what this means would be helpful. For example: "Sometimes, a custom token needs to behave differently in the attention mechanism. For instance, you might design a 'memory' token that can attend to all other tokens but that no other token can attend to. This requires modifying the attention mask to create a one-way information flow, allowing the token to aggregate information without broadcasting its own state."
+\end{comment}
 
 \begin{lstlisting}[language=Python, caption={Custom attention mechanisms for special tokens}]
 # Complete implementation available at:
@@ -89,6 +100,9 @@ Deploying models with custom special tokens requires additional considerations f
 \subsubsection{Model Serialization}
 
 Custom tokens must be properly handled during model saving and loading to ensure reproducibility and deployment reliability.
+\begin{comment}
+Feedback: This can be made more concrete. "When saving a model with custom tokens, ensure that the tokenizer's vocabulary file is saved along with the model weights. The `transformers` library's `save_pretrained` method typically handles this automatically, but it's a common source of errors when using custom tokenizers."
+\end{comment}
 
 \subsubsection{Runtime Optimization}
 
@@ -97,3 +111,6 @@ Production deployment requires optimization of custom token processing to minimi
 \subsubsection{Backwards Compatibility}
 
 Systems must handle models with different custom token configurations and provide appropriate fallback mechanisms for unsupported tokens.
+\begin{comment}
+Feedback: A practical example would be useful. "If you deploy a new version of a model that uses a new custom token, older versions of your inference service might not recognize it. A robust system should have a fallback mechanism, such as treating the unknown custom token as a standard [UNK] token, to prevent crashes, even if performance is degraded."
+\end{comment}

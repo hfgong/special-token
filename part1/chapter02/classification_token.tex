@@ -1,6 +1,9 @@
 \section{Classification Token [CLS]}
 
-The classification token, denoted as \cls{}, stands as one of the most influential innovations in transformer architecture. Introduced by BERT \citep{devlin2018bert}, the \cls{} token revolutionized how transformers handle sequence-level tasks by providing a dedicated position for aggregating contextual information from the entire input sequence.
+The classification token, denoted as \cls{}, stands as one of a highly influential innovations in transformer architecture. Introduced by BERT \citep{devlin2018bert}, the \cls{} token changed how transformers handle sequence-level tasks by providing a dedicated position for aggregating contextual information from the entire input sequence.
+\begin{comment}
+Feedback: The term "revolutionized" is used frequently in technical writing and can sound a bit hyperbolic. Consider a more measured alternative like "significantly changed" or "provided a new paradigm for". This maintains a more objective tone.
+\end{comment}
 
 \subsection{Origin and Design Philosophy}
 
@@ -15,16 +18,19 @@ Previous approaches relied on pooling strategies---averaging, max-pooling, or ta
 \end{itemize}
 
 The \cls{} token solved this elegantly by introducing a \emph{learnable aggregation point}. Positioned at the beginning of every input sequence, the \cls{} token has no inherent semantic meaning but is specifically trained to gather sequence-level information through the self-attention mechanism.
+\begin{comment}
+Feedback: This is a great explanation. To add even more intuition, you could add a sentence explaining *why* a learnable aggregator is better. For example: "Unlike fixed pooling functions, the [CLS] token's aggregation strategy is learned during pre-training, allowing the model to discover the most effective way to summarize a sequence for its objectives, rather than relying on a hand-crafted heuristic."
+\end{comment}
 
 \subsection{Mechanism and Computation}
 
 The \cls{} token operates through the self-attention mechanism, where it can attend to all other tokens in the sequence while simultaneously receiving attention from them. This bidirectional information flow enables the \cls{} token to accumulate contextual information from the entire input.
 
 Formally, for an input sequence with tokens $\{x_1, x_2, \ldots, x_n\}$, the augmented sequence becomes:
-$$\{\cls{}, x_1, x_2, \ldots, x_n\}$$
+$\{\cls{}, x_1, x_2, \ldots, x_n\}$
 
 During self-attention computation, the \cls{} token's representation $h_{\cls{}}$ is computed as:
-$$h_{\cls{}} = \text{Attention}(\cls{}, \{x_1, x_2, \ldots, x_n\})$$
+$h_{\cls{}} = \text{Attention}(\cls{}, \{x_1, x_2, \ldots, x_n\})$
 
 where the attention mechanism allows \cls{} to selectively focus on relevant parts of the input sequence based on the task requirements.
 
@@ -61,15 +67,15 @@ While the \cls{} token provides an elegant solution, several alternative pooling
 
 \subsubsection{Mean Pooling}
 Averages representations across all non-special tokens:
-$$h_{\text{mean}} = \frac{1}{n} \sum_{i=1}^{n} h_i$$
+$h_{\text{mean}} = \frac{1}{n} \sum_{i=1}^{n} h_i$
 
 \subsubsection{Max Pooling}
 Takes element-wise maximum across token representations:
-$$h_{\text{max}} = \max(h_1, h_2, \ldots, h_n)$$
+$h_{\text{max}} = \max(h_1, h_2, \ldots, h_n)$
 
 \subsubsection{Attention Pooling}
 Uses learned attention weights to combine token representations:
-$$h_{\text{att}} = \sum_{i=1}^{n} \alpha_i h_i, \quad \text{where } \alpha_i = \text{softmax}(w^T h_i)$$
+$h_{\text{att}} = \sum_{i=1}^{n} \alpha_i h_i, \quad \text{where } \alpha_i = \text{softmax}(w^T h_i)$
 
 \subsubsection{Multi-Head Pooling}
 Combines multiple pooling strategies or uses multiple \cls{} tokens for different aspects of the input.
@@ -108,12 +114,13 @@ Combines multiple pooling strategies or uses multiple \cls{} tokens for differen
 
 % Performance comparison
 \node[label] at (6, 2.8) {\textbf{Performance Comparison}};
-\node[label, align=center] at (2, 2.2) {Mean: 85\%\\Stable};
-\node[label, align=center] at (6, 2.2) {Max: 82\%\\Noisy};
-\node[label, align=center] at (10, 2.2) {CLS: 91\%\\Optimized};
+\node[label, align=center] at (2, 2.2) {Mean: 85\%\\Stable};\node[label, align=center] at (6, 2.2) {Max: 82\%\\Noisy};\node[label, align=center] at (10, 2.2) {CLS: 91\%\\Optimized};
 
 \end{tikzpicture}
 \caption{Comparison of different pooling strategies for sequence classification}
+\begin{comment}
+Feedback: The diagram is illustrative, but the performance percentages (85%, 82%, 91%) seem arbitrary. If these are from a specific paper or experiment, it would be great to cite it. If they are illustrative, it would be better to use qualitative labels instead of specific numbers to avoid giving a false sense of precision. For example: "Good Baseline", "Can be Noisy", "Often Superior".
+\end{comment}
 \end{figure}
 
 \subsection{Applications Across Domains}
@@ -128,7 +135,7 @@ The success of the \cls{} token in NLP led to its adoption across various domain
 
 \subsubsection{Sentence Pair Tasks}
 When processing two sentences, BERT uses the format:
-$$\{\cls{}, \text{sentence}_1, \sep{}, \text{sentence}_2, \sep{}\}$$
+$\{\cls{}, \text{sentence}_1, \sep{}, \text{sentence}_2, \sep{}\}$
 
 The \cls{} token aggregates information from both sentences for tasks like:
 - Natural language inference
@@ -140,7 +147,7 @@ These tasks are commonly evaluated on benchmark suites like GLUE \citep{wang2018
 
 \subsubsection{Vision Transformers}
 Vision Transformers \citep{dosovitskiy2020image} adapted the \cls{} token for image classification:
-$$\{\cls{}, \text{patch}_1, \text{patch}_2, \ldots, \text{patch}_N\}$$
+$\{\cls{}, \text{patch}_1, \text{patch}_2, \ldots, \text{patch}_N\}$
 
 The \cls{} token aggregates spatial information from image patches to produce global image representations. ViTs achieve competitive performance on ImageNet \citep{russakovsky2015imagenet, deng2009imagenet} and other vision benchmarks while maintaining computational efficiency \citep{strubell2019energy}.
 
@@ -254,5 +261,8 @@ Based on extensive research and practical experience, here are key recommendatio
 \item \textbf{Analysis}: Visualize attention patterns to understand what the \cls{} token captures
 \end{enumerate}
 \end{principle}
+\begin{comment}
+Feedback: This is a good list of principles, but it could be more actionable. For example, for "Task Alignment," you could add: "If your downstream task is very different from Next Sentence Prediction (e.g., fine-grained sentiment analysis), be aware that the [CLS] token's pre-trained representation may not be optimal and may require more aggressive fine-tuning." For "Layer Selection," you could suggest: "Start with the final layer's [CLS] token as a strong baseline, but if performance is suboptimal, consider concatenating or averaging the [CLS] representations from the last 2-4 layers, as this can sometimes provide a richer signal."
+\end{comment}
 
 The \cls{} token represents a fundamental shift in how transformers handle sequence-level tasks. Its elegant design, broad applicability, and strong empirical performance have made it a cornerstone of modern NLP and computer vision systems. Understanding its mechanisms, applications, and limitations is crucial for practitioners working with transformer-based models.

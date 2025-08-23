@@ -3,6 +3,9 @@
 \section{Video Frame Tokens}
 
 Video frame tokens represent the temporal extension of image tokens, enabling transformer architectures to process sequential visual information across time. Unlike static image tokens that capture spatial relationships within a single frame, video tokens must encode both spatial and temporal dependencies, making them fundamental for video understanding, generation, and multimodal video-text tasks.
+\begin{comment}
+Feedback: This is a good start. To emphasize the core challenge, you could add: "The primary difficulty in designing video tokens is managing the explosion of data: a few seconds of video can contain hundreds of high-resolution frames. Therefore, the central goal is to create representations that capture the essential motion and semantic changes over time without becoming computationally intractable."
+\end{comment}
 
 The challenge of video representation lies in balancing the rich temporal information with computational efficiency, as videos contain orders of magnitude more data than static images. Video frame tokens serve as compressed temporal representations that maintain essential motion dynamics while remaining compatible with transformer architectures.
 
@@ -13,6 +16,13 @@ Video tokens must capture the temporal evolution of visual scenes while maintain
 \begin{definition}[Video Frame Token]
 A Video Frame token is a learnable special token that represents temporal visual content within a video sequence. It encodes both spatial features within frames and temporal relationships across frames, enabling video understanding and generation tasks.
 \end{definition}
+\begin{comment}
+Feedback: This section would benefit from a brief discussion of the common architectural strategies before diving into the code. For example:
+"There are several common strategies for creating video tokens:
+1.  **Mean Pooling**: The simplest approach, where frame-level features (from an image encoder) are averaged across the time dimension to create a single video token. This is efficient but loses all temporal ordering.
+2.  **Transformer on Frames**: A more powerful approach where frame-level features are treated as a sequence and fed into a temporal transformer. The output tokens from this transformer then serve as the video tokens.
+3.  **Factorized Spatio-Temporal Attention**: An efficient approach where attention is first applied spatially within each frame, and then temporally across frames. This avoids the cubic complexity of full spatio-temporal attention."
+\end{comment}
 
 \begin{lstlisting}[language=Python, caption={Video frame token architecture}]
 # Complete implementation available at:
@@ -77,5 +87,11 @@ class VideoCaptioningModel(nn.Module):
 \item \textbf{Multi-Scale Processing}: Handle videos of different lengths and frame rates
 \item \textbf{Temporal Alignment}: Synchronize video tokens with audio and text when available
 \end{enumerate}
+\begin{comment}
+Feedback: This list is good, but could be more actionable.
+1.  **Frame Sampling**: "Start with a simple uniform sampling of frames (e.g., 16 or 32 frames per video). If your task requires detecting very brief events, you may need to increase the sampling rate or use a more sophisticated adaptive sampling method."
+2.  **Motion Modeling**: "While transformers can learn motion implicitly, for action recognition tasks, consider pre-processing videos to extract optical flow and feeding this as a separate channel or token type. This can provide a strong inductive bias for motion."
+3.  **Memory Efficiency**: "To manage memory, aggressively downsample the spatial resolution of your frames (e.g., to 224x224) before feeding them to the encoder. Most of the important information for many tasks is in the motion, not the fine-grained spatial detail."
+\end{comment}
 
 Video frame tokens extend the power of multimodal transformers to temporal visual understanding, enabling applications in video captioning, temporal action recognition, and video-text retrieval.

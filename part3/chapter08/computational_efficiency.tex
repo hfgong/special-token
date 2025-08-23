@@ -7,6 +7,12 @@ The computational efficiency of special tokens directly impacts the practical de
 \subsection{Computational Overhead Analysis}
 
 Understanding the computational costs associated with special tokens is essential for effective optimization. These costs manifest across multiple dimensions of the computational pipeline.
+\begin{comment}
+Feedback: Before linking to the code, it's crucial to explain the core strategies for efficiency. For example: "Optimizing the efficiency of special tokens typically involves reducing the effective sequence length that the transformer has to process. The main strategies to achieve this are:
+1.  **Token Pruning**: Identifying and removing special tokens (or content tokens) that are redundant or have low importance for the downstream task. This is often done in the later layers of the model.
+2.  **Token Merging**: Combining the embeddings of several special tokens (or a special token and its neighbors) into a single, more compact representation.
+3.  **Efficient Attention Patterns**: Designing custom attention masks that prevent special tokens from attending to all other tokens, replacing the expensive global attention with a cheaper sparse or local attention pattern."
+\end{comment}
 
 \subsubsection{Attention Computation Overhead}
 

@@ -1,6 +1,9 @@
 % Chapter 6 Introduction: Domain-Specific Special Tokens
 
 The versatility of transformer architectures has enabled their successful application across diverse domains beyond natural language processing and computer vision. Each specialized domain brings unique challenges, data structures, and representational requirements that necessitate the development of domain-specific special tokens. These tokens serve as specialized interfaces that enable transformers to effectively process and understand domain-specific information while maintaining the architectural elegance and scalability of the transformer paradigm.
+\begin{comment}
+Feedback: This is a strong opening. To make it even more compelling, you could frame it as moving from generalist to specialist. For example: "Having established the general-purpose tokens that form the foundation of language and vision models, we now turn to the world of specialists. This chapter explores how the core ideas of special tokens are adapted to domains with their own unique languages and rules—from the rigid syntax of computer code to the complex hierarchies of structured databases."
+\end{comment}
 
 Domain-specific special tokens represent the adaptation of the fundamental special token concept to specialized fields such as code generation, scientific computing, structured data processing, bioinformatics, and numerous other applications. Unlike general-purpose tokens that address broad computational patterns, domain-specific tokens encode the unique syntactic, semantic, and structural properties inherent to their respective domains.
 
@@ -9,12 +12,17 @@ Domain-specific special tokens represent the adaptation of the fundamental speci
 As transformer architectures have proven their effectiveness across various domains, the limitations of generic special tokens have become apparent when dealing with highly specialized data types and task requirements. Each domain presents distinct challenges that generic tokens cannot adequately address:
 
 \begin{enumerate}
-\item \textbf{Structural Complexity}: Specialized domains often have complex hierarchical structures that require dedicated representational mechanisms
-\item \textbf{Semantic Nuances}: Domain-specific semantics may not align with general linguistic or visual patterns
-\item \textbf{Syntactic Rules}: Strict syntactic constraints in domains like programming languages or mathematical notation
+\item \textbf{Structural Complexity}: Specialized domains often have complex hierarchical structures that require dedicated representational mechanisms.
+\item \textbf{Semantic Nuances}: Domain-specific semantics may not align with general linguistic or visual patterns.
+\item \textbf{Syntactic Rules}: Strict syntactic constraints in domains like programming languages or mathematical notation.
 \item \textbf{Performance Requirements}: Domain-specific optimizations that can significantly improve task performance
 \item \textbf{Interpretability Needs}: Domain experts require interpretable representations that align with field-specific conventions
 \end{enumerate}
+\begin{comment}
+Examples for the above challenges:
+- Structural Complexity: "A generic [SEP] token cannot distinguish between the end of a line of code, the end of a function, and the end of a class, yet these are fundamentally different structural boundaries."
+- Syntactic Rules: "In mathematics, the position of a token relative to a parenthesis or an integral sign completely changes its meaning in a way that has no parallel in natural language."
+\end{comment}
 
 \section{Design Principles for Domain-Specific Tokens}
 

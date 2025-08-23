@@ -3,6 +3,9 @@
 \section{Structured Data Processing}
 
 Structured data processing represents a critical domain where transformer architectures must navigate complex relationships between entities, schemas, and hierarchical data organizations. Unlike unstructured text or visual data, structured data processing requires tokens that understand database schemas, query languages, data relationships, and transformation pipelines while maintaining referential integrity and supporting complex analytical operations.
+\begin{comment}
+Feedback: This is a good introduction. To make the core challenge more vivid, you could add: "The fundamental challenge in this domain is that the meaning of a token is almost entirely defined by its context within a rigid schema. The word 'Apple' in a `company_name` column means something completely different from 'Apple' in a `fruit_type` column. Special tokens are therefore essential for providing this schema-level context that is invisible in the raw data itself."
+\end{comment}
 
 The integration of specialized tokens in structured data processing enables AI systems to assist with database design, query optimization, data migration, ETL pipeline development, and automated data analysis workflows while ensuring data quality and consistency across diverse data sources and formats.
 
@@ -13,6 +16,9 @@ Structured data processing requires specialized tokens that understand database 
 \subsubsection{Database Schema Tokens}
 
 Database operations require tokens that can represent tables, columns, relationships, and constraints.
+\begin{comment}
+Feedback: Before linking to the code, it's crucial to explain the motivation. For example: "When a user asks, 'Show me the biggest customers,' a model must translate this into a valid SQL query. To do this, it needs to know that 'customers' maps to a table named `customers`, and 'biggest' likely refers to a column like `total_revenue`. Schema-aware tokens, such as `<TABLE>`, `<COLUMN>`, and `<KEY>`, are used to linearize the database schema into a sequence the transformer can understand. This allows the model to learn the mapping between natural language questions and the specific structural elements of the database."
+\end{comment}
 
 The complete implementation is provided in the external code file \texttt{../../code/part2/chapter06/schemaaware\_database\_tokenization\_system.py}. Key components include:
 
@@ -26,6 +32,9 @@ class DatabaseSchemaTokenizer:
 \subsubsection{Data Transformation Tokens}
 
 ETL and data transformation pipelines require specialized tokens for operations and data flow.
+\begin{comment}
+Feedback: Explaining the "why" is important here as well. For example: "Data transformation pipelines involve a sequence of operations like 'JOIN', 'FILTER', 'GROUP_BY', and 'AGGREGATE'. By representing these operations as special tokens, the transformer can learn the common patterns and logic of data manipulation. This enables it to generate entire ETL scripts from a high-level description, treating the transformation process itself as a language to be generated."
+\end{comment}
 
 \begin{lstlisting}[language=Python, caption={Data transformation and ETL tokenization}]
 # Complete implementation available at:
@@ -81,12 +90,11 @@ Implementing effective structured data processing tokens requires several key co
 \item \textbf{Interoperability}: Support multiple data formats and database systems
 \item \textbf{Pipeline Management}: Enable complex ETL and data transformation workflows
 \end{enumerate}
-The complete implementation is provided in the external code file \texttt{../../code/part2/chapter06/data\_transformation\_and\_etl\_tokenization.py}. Key components include:
+\begin{comment}
+Feedback: This list is good but very high-level. To make it more actionable:
+1.  **Schema Awareness**: "Always serialize the database schema and prepend it to the input sequence for any query generation task. Use distinct special tokens for tables, columns, primary keys, and foreign keys to give the model a clear understanding of the database structure."
+2.  **Referential Integrity**: "When generating data manipulation statements (INSERT, UPDATE), use special tokens to represent foreign key relationships. This can guide the model to generate values that are consistent with the linked tables."
+3.  **Security**: "For text-to-SQL models, implement a post-processing validation step that uses a parser to check the generated SQL against a set of security rules (e.g., disallowing `DROP TABLE` commands) before execution. Never execute generated SQL without validation."
+\end{comment}
 
-\begin{lstlisting}[language=Python, caption=Core structure (see external file for complete implementation)]
-# See ../../code/part2/chapter06/data_transformation_and_etl_tokenization.py for the complete implementation
-# This shows only the main class structure
 Structured data processing tokens enable AI systems to work effectively with databases, data warehouses, and complex data processing pipelines, supporting automated database design, query optimization, and intelligent data transformation while maintaining data integrity and performance requirements.
-    # ... (complete implementation in external file)
-    pass
-\end{lstlisting}

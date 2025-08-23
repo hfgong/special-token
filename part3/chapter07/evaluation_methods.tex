@@ -3,6 +3,12 @@
 \section{Evaluation Methods}
 
 The evaluation of custom special tokens requires comprehensive methodologies that assess both their functional effectiveness and their integration quality within transformer architectures. Unlike standard model evaluation that focuses primarily on task performance, custom token evaluation must consider architectural impact, training dynamics, computational efficiency, and interpretability. This section presents systematic approaches for evaluating custom special tokens across multiple dimensions.
+\begin{comment}
+Feedback: Before diving into the specifics, it's helpful to establish the core questions a good evaluation should answer. For example: "A robust evaluation framework for a custom token should answer three key questions:
+1.  **Does it work?** (Ablation Studies): Does the token actually improve performance on the target task compared to a model without it?
+2.  **Is it learning what we think it's learning?** (Probing Tasks): Does the token's embedding actually encode the specific information we designed it to capture?
+3.  **How does it change the model's behavior?** (Behavioral Analysis): How does the token affect the model's attention patterns and internal representations?"
+\end{comment}
 
 \subsection{Functional Effectiveness Evaluation}
 
@@ -11,6 +17,12 @@ Functional effectiveness measures how well custom tokens achieve their intended 
 \subsubsection{Task-Specific Performance Metrics}
 
 Custom tokens should demonstrably improve performance on their target tasks compared to baseline models without the custom tokens.
+\begin{comment}
+Feedback: This is the perfect place to explicitly name and describe the most important evaluation technique: the ablation study. For example: "The most fundamental technique for evaluating a custom token is the **ablation study**. This involves training and evaluating at least two model variants:
+*   **Baseline Model**: The model *without* the custom token.
+*   **Proposed Model**: The model *with* the custom token.
+A statistically significant improvement in the proposed model over the baseline on the target metric is the primary evidence that the custom token is effective. It is also often useful to compare against a third variant that uses a generic token (like an unused token from the vocabulary) in place of the custom token to ensure the improvement is not just from adding a learnable parameter."
+\end{comment}
 
 \begin{lstlisting}[language=Python, caption={Comprehensive evaluation framework for custom tokens}]
 # Complete implementation available at:

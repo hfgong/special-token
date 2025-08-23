@@ -1,6 +1,9 @@
 \section{Unknown Token [UNK]}
 
 The unknown token, denoted as \unk{}, represents one of the oldest and most fundamental special tokens in natural language processing. Despite the evolution of sophisticated subword tokenization methods, the \unk{} token remains crucial for handling out-of-vocabulary (OOV) words and understanding the robustness limits of language models. This section explores its historical significance, modern applications, and the ongoing challenge of vocabulary coverage in transformer models.
+\begin{comment}
+Feedback: This is a good introduction. To make it more engaging, you could frame it as a narrative about a core problem in NLP. For example: "The [UNK] token is more than just a placeholder; it is the embodiment of a fundamental tension in natural language processing: the conflict between the finite vocabulary of a machine learning model and the infinite, ever-evolving nature of human language."
+\end{comment}
 
 \subsection{The Out-of-Vocabulary Problem}
 
@@ -95,6 +98,9 @@ During text generation:
 \subsection{The Subword Revolution}
 
 The limitations of \unk{} tokens drove the development of subword tokenization methods:
+\begin{comment}
+Feedback: This is a great transition. Before listing the methods, it would be powerful to state the core insight that unites them. For example: "The key insight behind the subword revolution was that even rare and unknown words are often composed of common, meaningful sub-units. By breaking words down into these smaller pieces, a model could maintain a fixed vocabulary while still representing a virtually unlimited set of words."
+\end{comment}
 
 \subsubsection{Byte Pair Encoding (BPE)}
 BPE \citep{sennrich2016neural} iteratively merges the most frequent character pairs:
@@ -391,6 +397,9 @@ Multilingual models may develop:
 \item \textbf{Document Limitations}: Clearly communicate vocabulary limitations to users
 \end{enumerate}
 \end{principle}
+\begin{comment}
+Feedback: This is a good list. To make it more actionable: For "Monitor Coverage," you could suggest: "Before fine-tuning on a new domain, run a vocabulary coverage analysis. If the [UNK] rate is above a certain threshold (e.g., 1%), consider augmenting the tokenizer's vocabulary with new domain-specific tokens." For "Handle Gracefully," you could add: "For generative tasks, implement a copy mechanism or a constrained decoding strategy to prevent the model from outputting literal '[UNK]' strings, which are unintelligible to users."
+\end{comment}
 
 \subsection{Conclusion}
 

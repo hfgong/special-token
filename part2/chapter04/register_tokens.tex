@@ -3,6 +3,9 @@
 \section{Register Tokens}
 
 Register tokens represent a recent innovation in vision transformer design, introduced to address specific computational and representational challenges that emerge in large-scale visual models. Unlike traditional special tokens that serve explicit functional roles, register tokens act as auxiliary learnable parameters that improve model capacity and training dynamics without directly participating in the final prediction.
+\begin{comment}
+Feedback: This is a good, technical introduction. To make it more intuitive, you could use an analogy. For example: "If a transformer layer is like a committee meeting, and the patch tokens are the members discussing the image, register tokens are like extra whiteboards in the room. They aren't members and don't get a final vote, but they provide a shared space where committee members can jot down intermediate thoughts, calculations, or summaries, leading to a more organized and effective discussion."
+\end{comment}
 
 The concept of register tokens stems from observations that vision transformers, particularly at larger scales, can benefit from additional "workspace" tokens that provide the model with extra computational flexibility and help stabilize attention patterns during training.
 
@@ -17,11 +20,14 @@ A Register token is a learnable parameter vector that participates in transforme
 Register tokens provide several theoretical and practical benefits:
 
 \begin{enumerate}
-\item \textbf{Attention Sink Mitigation}: Large attention weights can concentrate on specific positions, creating computational bottlenecks
+\item \textbf{Attention Sink Mitigation}: Large attention weights can concentrate on specific positions, creating computational bottlenecks.
 \item \textbf{Representation Capacity}: Additional parameters increase model expressiveness without changing output dimensionality
 \item \textbf{Training Stability}: Extra tokens can absorb noise and provide more stable gradient flows
 \item \textbf{Inference Efficiency}: Register tokens can be optimized for specific computational patterns
 \end{enumerate}
+\begin{comment}
+It's worth explaining the first point a bit more. "Some studies found that in the absence of dedicated 'scratch space,' some patch tokens would spontaneously become 'attention sinks,' attracting a large amount of attention from other tokens. Register tokens provide a dedicated, non-content-based place for this global information to be stored, freeing up the patch tokens to focus on representing their local features."
+\end{comment}
 
 \subsection{Architectural Integration}
 
@@ -389,20 +395,26 @@ Based on empirical research and practical deployment experience, several guideli
 \item \textbf{Attention Monitoring}: Regularly visualize attention patterns to ensure healthy usage
 \item \textbf{Gradient Analysis}: Monitor gradient flow to register tokens during training
 \end{enumerate}
+\begin{comment}
+Feedback: This is a good list. To make it more actionable and direct for a practitioner:
+1.  **Conservative Token Count**: "Start with a small number of register tokens (4 is a common default). Only increase this number if you observe attention sink issues or if performance on your downstream task plateaus."
+2.  **Regularization Strategy**: "If you find your register tokens are all learning similar representations (i.e., they are redundant), implement a simple cosine similarity loss between them to encourage diversity."
+3.  **Attention Monitoring**: "The key diagnostic for register tokens is attention visualization. If they are not receiving significant attention from patch tokens in the middle-to-late layers of the model, they are likely not contributing positively and could be removed."
+\end{comment}
 
 \subsubsection{Implementation Checklist}
 
 When implementing register tokens in vision transformers:
 
 \begin{itemize}
-\item[$\square$] Initialize register tokens with appropriate variance (typically 0.02)
-\item[$\square$] Include register tokens in position embedding calculations
-\item[$\square$] Implement regularization to encourage diversity and prevent collapse
-\item[$\square$] Monitor attention patterns during training
-\item[$\square$] Profile computational impact on target hardware
-\item[$\square$] Validate that register tokens don't interfere with main task performance
-\item[$\square$] Consider dynamic allocation for variable complexity inputs
-\item[$\square$] Document register token configuration for reproducibility
+    \item[$\bullet$] Initialize register tokens with appropriate variance (typically 0.02)
+    \item[$\bullet$] Include register tokens in position embedding calculations
+    \item[$\bullet$] Implement regularization to encourage diversity and prevent collapse
+    \item[$\bullet$] Monitor attention patterns during training
+    \item[$\bullet$] Profile computational impact on target hardware
+    \item[$\bullet$] Validate that register tokens don't interfere with main task performance
+    \item[$\bullet$] Consider dynamic allocation for variable complexity inputs
+    \item[$\bullet$] Document register token configuration for reproducibility
 \end{itemize}
 
 Register tokens represent an emerging frontier in vision transformer design, offering additional computational flexibility while maintaining architectural elegance. Their careful implementation can lead to improved model capacity and training dynamics, though they require thoughtful design and monitoring to realize their full potential without unnecessary computational overhead.

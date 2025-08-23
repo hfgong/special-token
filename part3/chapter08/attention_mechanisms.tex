@@ -7,6 +7,9 @@ The optimization of attention mechanisms involving special tokens represents a c
 \subsection{Attention Pattern Optimization}
 
 Attention patterns involving special tokens significantly impact model performance, interpretability, and computational efficiency. Optimizing these patterns requires careful analysis of current attention behavior and targeted interventions to improve pattern quality.
+\begin{comment}
+Feedback: Before linking to the code, it's helpful to explain the core problem. For example: "The goal of attention optimization for special tokens is to ensure they are 'paying attention' to the right things. For instance, a [CLS] token should learn to attend broadly across the entire sequence to create a good summary. If analysis shows it is only attending to the first few tokens, this is a suboptimal pattern. Optimization techniques, such as adding an auxiliary loss that encourages diverse attention, can be used to guide the [CLS] token to learn a more effective pattern."
+\end{comment}
 
 \subsubsection{Pattern Analysis and Profiling}
 
@@ -33,6 +36,9 @@ class ImplementationReference:
 \subsection{Head Specialization for Special Tokens}
 
 Attention head specialization enables different heads to focus on specific aspects of special token processing, improving both efficiency and interpretability.
+\begin{comment}
+Feedback: This is a key concept that needs more explanation. For example: "In a multi-head attention mechanism, different heads can learn different types of relationships. Head specialization for special tokens involves encouraging this division of labor. For example, when processing a question and a context separated by a [SEP] token, we could encourage some heads to specialize in 'question-to-context' attention, others in 'context-to-question' attention, and still others in attending only to tokens *within* their own segment. This can be achieved through techniques like targeted dropout on the attention weights or by using different parameterizations for different heads."
+\end{comment}
 
 \subsubsection{Functional Head Assignment}
 

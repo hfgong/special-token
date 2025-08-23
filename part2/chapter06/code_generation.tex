@@ -3,6 +3,9 @@
 \section{Code Generation Models}
 
 Code generation models represent one of the most successful applications of transformer architectures to domain-specific tasks, enabling AI systems to understand, generate, and manipulate source code across multiple programming languages. The unique challenges of code processing—including strict syntactic requirements, complex semantic relationships, and the need for executable output—have driven the development of specialized tokens that capture the structural and semantic properties of programming languages.
+\begin{comment}
+Feedback: This is a strong introduction. To make the core challenge more vivid, you could add: "Unlike natural language, which is often ambiguous and flexible, code is a formal language where a single misplaced character can render the entire sequence invalid. This unforgiving nature requires special tokens that can explicitly represent the rigid syntax and deep, non-local dependencies inherent in programming."
+\end{comment}
 
 Unlike natural language, code has precise syntactic rules, hierarchical structures, and execution semantics that must be preserved for the output to be functional. This necessitates special tokens that understand programming constructs, maintain syntactic correctness, and enable sophisticated code understanding and generation capabilities.
 
@@ -35,6 +38,9 @@ class ImplementationReference:
 \subsubsection{Indentation and Structure Tokens}
 
 Code structure is heavily dependent on indentation and hierarchical organization.
+\begin{comment}
+Feedback: Before the code, it's helpful to explain *why* these tokens are so important for code. For example: "In many languages like Python, whitespace (indentation) is syntactically meaningful. A standard tokenizer would discard this information. By introducing explicit `<INDENT>` and `<DEDENT>` tokens, the model can treat structure as part of the sequence it learns from, allowing it to understand and generate correctly formatted code blocks, loops, and functions. This transforms invisible structure into a visible signal for the transformer."
+\end{comment}
 
 \begin{lstlisting}[language=Python, caption=Structure-aware code tokenization]
 class StructuralCodeTokenizer:
@@ -152,5 +158,11 @@ Implementing effective code generation requires several key considerations:
 \item \textbf{Error Handling}: Provide robust error recovery mechanisms
 \item \textbf{Performance}: Optimize for real-time code assistance
 \end{enumerate}
+\begin{comment}
+Feedback: This is a good list. To make it more actionable for a developer:
+1.  **Syntax Preservation**: "Instead of generating code token by token without constraints, use a syntax-aware decoding strategy. This could involve a parser that validates the next token, or a grammar-based approach that only allows syntactically valid tokens to be sampled."
+2.  **Context Awareness**: "Don't just train on isolated code snippets. For better performance, pre-train on entire repositories. This allows the model to learn about dependencies between files, common API usage patterns, and project-level conventions."
+3.  **Performance**: "For real-time code completion, model latency is critical. Consider using smaller, distilled models, quantization, and efficient attention mechanisms like FlashAttention to ensure suggestions appear instantly as the user types."
+\end{comment}
 
 Code generation models with specialized tokens have revolutionized software development by enabling intelligent code completion, automated refactoring, and sophisticated code understanding capabilities.

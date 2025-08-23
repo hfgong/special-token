@@ -3,6 +3,9 @@
 \section{Modality Switching Tokens}
 
 Modality switching tokens represent adaptive mechanisms that enable transformer architectures to dynamically select, combine, and transition between different modalities based on task requirements, input availability, and contextual needs. These tokens facilitate flexible multimodal processing that can gracefully handle missing modalities, prioritize relevant information sources, and optimize computational resources.
+\begin{comment}
+Feedback: This is a good introduction. To make the concept more tangible, you could use an analogy: "If a standard multimodal model is like a panel of experts where each expert (vision, audio, text) always gets an equal say, a model with modality switching tokens is like a skilled project manager who can listen to all the experts but then dynamically decide which expert's opinion is most relevant for the current problem. Sometimes the visual expert is most important, sometimes it's the audio expert, and the switching token learns to make that decision on the fly."
+\end{comment}
 
 Unlike static multimodal architectures that process all available modalities uniformly, modality switching tokens provide dynamic control over information flow, enabling more efficient and contextually appropriate multimodal understanding.
 
@@ -57,6 +60,9 @@ class ImplementationReference:
 \end{lstlisting}
 
 \subsection{Training Strategies for Switching Tokens}
+\begin{comment}
+Feedback: Before the code, it's helpful to explain the core training strategy in simple terms. For example: "The key to training a model to switch between modalities is to force it to be robust to missing information. The most common technique is **modality dropout**, where during training, one or more modalities are randomly dropped from the input. This prevents the model from becoming overly reliant on any single modality and forces it to learn how to make the best possible prediction with whatever information it has available. This, in turn, trains the switching mechanism to identify which available modalities are most useful."
+\end{comment}
 
 \begin{lstlisting}[language=Python, caption=Training with modality dropout and switching]
 class ModalityDropoutTrainer:
@@ -132,5 +138,12 @@ Implementing effective modality switching tokens requires careful consideration 
 \item \textbf{Confidence Calibration}: Accurately estimate prediction confidence
 \item \textbf{Fallback Strategies}: Implement systematic fallback mechanisms
 \end{enumerate}
+\begin{comment}
+Feedback: This is a good list. To make it more actionable:
+1.  **Graceful Degradation**: "When evaluating your model, don't just test it with all modalities present. Create specific test sets with one or more modalities missing to explicitly measure how gracefully the performance degrades. This is a key indicator of a well-trained switching mechanism."
+2.  **Training Robustness**: "Start with a modality dropout probability of around 0.3-0.5. If the model still seems to rely too heavily on one modality, you can increase the dropout rate for that specific modality."
+3.  **Interpretability**: "During inference, log the modality importance weights that the switching token produces. This can provide valuable insights into your model's decision-making process and help you debug unexpected predictions."
+\end{comment}
 
 Modality switching tokens represent a crucial advancement toward more flexible and robust multimodal AI systems. By enabling dynamic adaptation to varying input conditions and intelligent resource allocation, these tokens pave the way for practical multimodal applications that can handle real-world deployment scenarios with missing or unreliable input modalities.
+

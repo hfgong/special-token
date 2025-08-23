@@ -3,10 +3,20 @@
 \section{Position Encoding}
 
 Position encoding for special tokens presents unique challenges since these tokens often don't follow conventional sequential ordering rules. Special tokens may represent global context, structural boundaries, or meta-information that transcends positional constraints. This section explores strategies for effectively encoding positional information for special tokens while maintaining their semantic purpose.
+\begin{comment}
+Feedback: Before diving into the specifics, it's helpful to frame the core problem. For example: "A standard position embedding assigns a unique vector to each integer position (0, 1, 2, ...). But what position should we assign to a [CLS] token that represents the entire sequence? Or to a [SEP] token that represents a boundary *between* positions? The strategies in this section address this challenge, exploring ways to assign positional information to special tokens that reflects their functional role rather than just their literal place in the sequence."
+\end{comment}
 
 \subsection{Special Token Position Assignment}
 
 The assignment of positional information to special tokens requires careful consideration of their semantic roles and interaction patterns.
+\begin{comment}
+Feedback: It would be useful to list the common strategies here. For example: "Common strategies include:
+1.  **Fixed Position**: Assigning a fixed position ID (e.g., always 0 for [CLS]) regardless of where it appears. This is simple but can be inflexible.
+2.  **Type-Based Position**: Assigning a special, learnable 'position embedding' that is the same for all tokens of a certain type (e.g., all [SEP] tokens share one position embedding). This tells the model the token's role, not its location.
+3.  **No Position**: Simply not adding a position embedding to certain special tokens, forcing the model to treat them as position-agnostic.
+4.  **Relative Position**: Using relative position embeddings, which naturally handle the relationships between special tokens and content tokens without needing to assign absolute positions."
+\end{comment}
 
 \begin{lstlisting}[language=Python, caption={Flexible position encoding for special tokens}]
 # Complete implementation available at:
@@ -72,7 +82,7 @@ class ImplementationReference:
 
 \subsection{Multi-Scale Position Encoding}
 
-Multi-scale position encoding allows special tokens to operate at different temporal scales within the sequence.
+Multi-Scale position encoding allows special tokens to operate at different temporal scales within the sequence.
 
 \begin{lstlisting}[language=Python, caption={Multi-scale position encoding for hierarchical processing}]
 # Complete implementation available at:
@@ -106,3 +116,9 @@ When implementing position encoding for special tokens, consider these best prac
 \item \textbf{Evaluation}: Test position encoding strategies across different sequence lengths and structures
 \item \textbf{Compatibility}: Ensure position encodings work well with existing pre-trained models when fine-tuning
 \end{itemize}
+\begin{comment}
+Feedback: This is a good list. To make it more actionable:
+1.  **Semantic Alignment**: "For a global token like [CLS], assign it a fixed position (e.g., 0) so the model can learn a consistent representation for it. For boundary tokens like [SEP], consider using a 'type-based' embedding that is independent of its absolute position."
+2.  **Flexibility**: "If your task involves sequences of varying lengths and complex structures, relative position embeddings are often a more robust and flexible choice than learned absolute position embeddings, which can struggle to generalize to lengths not seen during training."
+3.  **Compatibility**: "When fine-tuning a pre-trained model, be aware that its position embeddings are also pre-trained. If you insert new special tokens in the middle of the sequence, you must handle the resulting shift in position indices for all subsequent tokens to avoid providing incorrect positional information to the model."
+\end{comment}

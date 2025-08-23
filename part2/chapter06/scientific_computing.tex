@@ -3,6 +3,9 @@
 \section{Scientific Computing}
 
 Scientific computing represents a specialized domain where transformer architectures must handle mathematical notation, scientific data structures, and complex symbolic relationships. Unlike general text processing, scientific computing requires tokens that understand mathematical semantics, dimensional analysis, unit conversions, and the hierarchical nature of scientific formulations.
+\begin{comment}
+Feedback: This is a good start. To highlight the unique challenge, you could add: "Processing scientific text is not merely a matter of adding new vocabulary. It requires understanding a fundamentally different and more structured 'language' embedded within natural language—the language of mathematics and formal science, where symbols have precise, context-dependent meanings and relationships are governed by strict logical rules."
+\end{comment}
 
 The integration of specialized tokens in scientific computing enables AI systems to assist with mathematical modeling, scientific paper analysis, automated theorem proving, and computational research workflows while maintaining the precision and rigor required in scientific contexts.
 
@@ -13,6 +16,9 @@ Scientific computing requires specialized tokens for representing mathematical e
 \subsubsection{Formula Boundary Tokens}
 
 Mathematical expressions require clear demarcation to distinguish between narrative text and mathematical content.
+\begin{comment}
+Feedback: Before linking to the code, it's helpful to explain the motivation. For example: "A standard tokenizer would break a formula like `E=mc^2` into disconnected tokens (`e`, `=`, `m`, `c`, `^`, `2`), losing the critical semantic structure. By wrapping formulas in special tokens like `<MATH_START>` and `<MATH_END>`, the model learns to treat the content within as a distinct semantic unit, allowing it to apply a different 'mode' of processing that respects mathematical syntax."
+\end{comment}
 
 The complete implementation is provided in the external code file \texttt{../../code/part2/chapter06/mathematical\_formula\_tokenization\_system.py}. Key components include:
 
@@ -26,6 +32,9 @@ class MathematicalTokenizer:
 \subsubsection{Unit and Dimensional Analysis}
 
 Scientific computing requires awareness of physical units and dimensional consistency.
+\begin{comment}
+Feedback: Again, explaining the "why" is crucial here. For example: "Without explicit unit awareness, a model might incorrectly treat '10 meters' and '10 miles' as similar concepts because the number '10' is the same. By introducing special tokens for units (e.g., `<UNIT_METER>`, `<UNIT_SECOND>`) and dimensions, the model can learn the rules of dimensional analysis, enabling it to validate the physical correctness of equations and perform meaningful conversions."
+\end{comment}
 
 \begin{lstlisting}[language=Python, caption={Unit-aware scientific computing tokens}]
 # Complete implementation available at:
@@ -81,5 +90,11 @@ Implementing effective scientific computing tokens requires several key consider
 \item \textbf{Computational Integration}: Enable integration with scientific computing tools
 \item \textbf{Error Handling}: Provide robust error detection for scientific inconsistencies
 \end{enumerate}
+\begin{comment}
+Feedback: This list is good. To make it more actionable:
+1.  **Mathematical Precision**: "When tokenizing mathematical formulas, use a canonical representation like LaTeX or MathML. This avoids ambiguity and provides a standardized format for the model to learn from."
+2.  **Validation Integration**: "For generative tasks, don't just rely on the transformer's output. Pipe the generated formulas or equations into a symbolic math library (like SymPy) to validate their syntactic and semantic correctness. This can be used as a form of reinforcement learning or as a filter for invalid outputs."
+3.  **Domain Expertise**: "When building your training data, use a parser to identify key scientific entities (e.g., chemical compounds, gene names, physical constants) and consider representing them with dedicated special tokens to ensure they are treated as single, indivisible concepts."
+\end{comment}
 
 Scientific computing tokens enable AI systems to engage meaningfully with mathematical and scientific content, supporting research workflows, automated analysis, and scientific discovery while maintaining the rigor and precision required in scientific contexts.

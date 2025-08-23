@@ -1,6 +1,9 @@
 \section{Tokenization and Special Token Insertion}
 
 The integration of special tokens into transformer models requires careful consideration during the tokenization process. This section explores the technical mechanics of how special tokens are inserted, positioned, and processed within the tokenization pipeline, examining both the algorithmic approaches and their implications for model performance.
+\begin{comment}
+Feedback: This is a clear introduction. To set the stage even better, you could add a sentence that frames the importance of this step. For example: "This process is more than a technical preliminary; it is where the model's understanding of structure and task begins. Errors or inefficiencies at this stage can have cascading effects on the model's performance."
+\end{comment}
 
 \subsection{Tokenization Pipeline Architecture}
 
@@ -175,6 +178,9 @@ class T5Tokenizer:
             
         return self.convert_tokens_to_ids(tokens)
 \end{lstlisting}
+\begin{comment}
+Feedback: The code examples for BERT, GPT, and T5 are great. However, the text doesn't explain the *reasoning* behind their different approaches. Before diving into the code, it would be beneficial to have a short paragraph explaining the trade-offs. For example: "BERT's `[CLS]...[SEP]` structure is rigid but powerful for sentence-pair tasks. GPT's minimal `[BOS]...[EOS]` is designed for flexible, open-ended generation. T5's text-based prefixes are a clever way to frame every task as a text-to-text problem, allowing a single model to be multitask without architectural changes."
+\end{comment}
 
 \subsection{Advanced Special Token Insertion Techniques}
 
@@ -348,6 +354,9 @@ Based on extensive practical experience, several best practices have emerged for
 \item \textbf{Validation Pipeline}: Include comprehensive validation to ensure special tokens are inserted correctly
 \item \textbf{Backward Compatibility}: Design token insertion strategies that remain compatible across model versions
 \end{itemize}
+\begin{comment}
+Feedback: This list of best practices is good, but a bit generic. It could be made more actionable. For example, for "Truncation Strategy," you could say: "Implement intelligent truncation (e.g., 'longest_first' for sentence pairs) that preserves important information while accommodating special tokens, rather than naively truncating from the end." For "Validation Pipeline," you could suggest: "Include a validation step that decodes a sample of tokenized inputs back to text to visually inspect that special tokens are inserted as expected."
+\end{comment}
 
 \subsection{Performance Considerations}
 

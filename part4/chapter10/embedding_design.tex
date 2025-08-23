@@ -7,6 +7,12 @@ The design and initialization of special token embeddings significantly impacts 
 \subsection{Initialization Strategies for Special Token Embeddings}
 
 The initialization of special token embeddings must balance between providing useful starting points and avoiding interference with pre-existing model knowledge.
+\begin{comment}
+Feedback: Before linking to the code, it's crucial to explain the core strategies. For example: "When adding a new special token to a pre-trained model, you have several initialization options:
+1.  **Random Initialization**: The simplest approach, but it can lead to instability. It's crucial to use a very small standard deviation (e.g., 0.02) to avoid disrupting the model's learned geometry.
+2.  **Mean Initialization**: Initialize the new token's embedding with the mean of all other token embeddings. This places the new token at the 'center' of the embedding space, making it a neutral starting point.
+3.  **Semantic Initialization**: The most effective approach. Initialize the new token's embedding with the average of the embeddings of a few semantically related words. For a `<USER>` token, you might average the embeddings for 'user', 'person', and 'human'."
+\end{comment}
 
 \begin{lstlisting}[language=Python, caption={Advanced initialization strategies for special token embeddings}]
 # Complete implementation available at:
@@ -29,6 +35,9 @@ class ImplementationReference:
 \subsection{Adaptive Embedding Updates}
 
 Special token embeddings often benefit from adaptive update strategies that account for their unique roles in the model.
+\begin{comment}
+Feedback: Explaining the "why" is important here. For example: "Special tokens often have very different learning dynamics than content tokens. A [CLS] token, for instance, receives gradients from the entire sequence, while a rare custom token might receive very few updates. An adaptive strategy, such as using a **separate, higher learning rate** for the special token embeddings, can help them learn their function more quickly without destabilizing the rest of the model, which is trained with a lower learning rate."
+\end{comment}
 
 \begin{lstlisting}[language=Python, caption={Adaptive embedding update strategies}]
 # Complete implementation available at:
@@ -164,3 +173,9 @@ When designing embeddings for special tokens, consider these best practices:
 \item \textbf{Evaluation}: Regularly evaluate the quality of special token representations
 \item \textbf{Stability}: Ensure embeddings remain stable and don't diverge during training
 \end{itemize}
+\begin{comment}
+Feedback: This is a good list. To make it more actionable:
+1.  **Initialization Strategy**: "Default to 'semantic initialization' (averaging related words) when possible. If not, use 'mean initialization'. Use 'random initialization' only as a last resort and with a small standard deviation."
+2.  **Learning Rate Scheduling**: "When fine-tuning, use a 10x to 100x smaller learning rate for the pre-trained model weights compared to the learning rate for your newly added special token embeddings and any new output layers."
+3.  **Monitoring**: "During training, log the norm (magnitude) of your special token embeddings. If a token's norm is exploding or shrinking to zero, it's a sign of instability. Consider applying L2 regularization or gradient clipping to stabilize it."
+\end{comment}

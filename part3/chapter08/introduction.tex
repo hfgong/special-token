@@ -1,6 +1,9 @@
 % Chapter 8 Introduction: Special Token Optimization
 
 Special token optimization represents a critical frontier in transformer architecture development, where careful tuning of token representations, attention mechanisms, and computational strategies can yield significant improvements in model performance, efficiency, and capability. Unlike general model optimization that focuses broadly on network parameters, special token optimization requires targeted approaches that consider the unique roles these tokens play in information aggregation, sequence organization, and architectural coordination.
+\begin{comment}
+Feedback: This is a strong opening. To make it even more compelling, you could frame it as moving from "design" to "refinement." For example: "Having learned how to design and implement custom special tokens, we now turn to the art of perfecting them. This chapter is about optimization: the process of taking a functional special token and making it faster, more effective, and more efficient. It's the difference between a rough prototype and a production-ready component."
+\end{comment}
 
 The optimization of special tokens operates at multiple levels, from low-level embedding space adjustments to high-level architectural modifications that reshape how transformers process and understand input sequences. This multi-faceted optimization challenge requires sophisticated techniques that balance competing objectives: maximizing functional effectiveness while minimizing computational overhead, enhancing interpretability while maintaining training stability, and enabling specialized capabilities while preserving general-purpose utility.
 
@@ -11,6 +14,9 @@ As transformer architectures have evolved from simple sequence-to-sequence model
 \subsection{Embedding Space Inefficiencies}
 
 Special tokens often occupy suboptimal positions within high-dimensional embedding spaces, leading to inefficient attention patterns, poor gradient flow, and limited representational capacity. Standard embedding initialization techniques, designed for content tokens with rich distributional patterns, may position special tokens in ways that interfere with their intended functions or limit their ability to influence model behavior effectively.
+\begin{comment}
+Feedback: A concrete example would make this much clearer. For instance: "For example, a randomly initialized [CLS] token might start in a 'remote' part of the embedding space, far from the content tokens it needs to aggregate. This forces the model to waste significant training time just learning to move the [CLS] token to a more central, effective location. Optimization techniques can place it in a better starting position, accelerating learning."
+\end{comment}
 
 \subsection{Attention Pattern Suboptimality}
 

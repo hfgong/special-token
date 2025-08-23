@@ -1,6 +1,9 @@
 % Chapter 7 Introduction: Custom Special Token Design
 
 The design of custom special tokens represents one of the most critical and nuanced aspects of modern transformer architecture development. Unlike the standardized special tokens that have become ubiquitous across transformer implementations, custom special tokens offer practitioners the opportunity to encode domain-specific knowledge, optimize performance for particular tasks, and introduce novel capabilities that extend beyond the limitations of general-purpose architectures.
+\begin{comment}
+Feedback: This is a great opening. To make it even more exciting for the reader, you could frame it as moving from a user to a creator. For example: "In the previous parts, we explored the standard toolkit of special tokens. In this part, we move from being users of these tools to becoming architects. This chapter is about designing and forging your own special tokens to solve unique problems and push the boundaries of what transformers can do."
+\end{comment}
 
 The process of custom special token design requires a deep understanding of both the theoretical foundations of attention mechanisms and the practical considerations of implementation, training, and deployment. Successful custom token design bridges the gap between abstract architectural concepts and concrete performance improvements, enabling models to achieve superior results on specialized tasks while maintaining compatibility with existing transformer frameworks.
 
@@ -11,6 +14,9 @@ While standardized special tokens like \cls{}, \sep{}, and \mask{} have proven t
 \subsection{Domain-Specific Optimization}
 
 Standard special tokens were designed with general natural language processing tasks in mind, optimizing for broad applicability rather than specialized performance. Custom tokens enable practitioners to encode domain-specific patterns, relationships, and constraints directly into the model architecture, resulting in more efficient learning and superior task performance.
+\begin{comment}
+Feedback: A concrete example would make this much stronger. For instance: "For example, a standard [SEP] token treats all boundaries equally, but in a legal document, the boundary between a 'clause' and a 'sub-clause' has a specific hierarchical meaning. A custom `<CLAUSE_END>` token can be trained to specifically capture this legal structure, leading to better document understanding."
+\end{comment}
 
 \subsection{Task-Specific Information Flow}
 

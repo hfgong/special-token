@@ -1,6 +1,9 @@
 \section{Padding Token [PAD]}
 
 The padding token, denoted as \pad{}, represents one of the most fundamental yet often overlooked components in transformer architectures. While seemingly simple, the \pad{} token enables efficient batch processing and serves as a cornerstone for practical deployment of transformer models. Understanding its mechanics, implications, and optimization strategies is crucial for effective model implementation.
+\begin{comment}
+Feedback: This is a solid introduction. To make it even more compelling, you could frame padding as a core engineering trade-off. For example: "The [PAD] token represents a fundamental compromise between the messy, variable-length nature of real-world data and the rigid, fixed-size requirements of high-performance computing hardware. Mastering its use is key to building efficient and scalable transformer systems."
+\end{comment}
 
 \subsection{The Batching Challenge}
 
@@ -20,7 +23,7 @@ The \pad{} token solves this by filling shorter sequences to match the longest s
 \subsubsection{Basic Padding Strategy}
 For a batch of sequences with lengths $[l_1, l_2, \ldots, l_B]$, padding extends each sequence to $L = \max(l_1, l_2, \ldots, l_B)$:
 
-$$\text{sequence}_i = \{x_{i,1}, x_{i,2}, \ldots, x_{i,l_i}, \pad{}, \pad{}, \ldots, \pad{}\}$$
+$\text{sequence}_i = \{x_{i,1}, x_{i,2}, \ldots, x_{i,l_i}, \pad{}, \pad{}, \ldots, \pad{}\}$
 
 where the number of padding tokens is $(L - l_i)$.
 
@@ -32,6 +35,9 @@ Different strategies exist for padding placement:
 \item \textbf{Left Padding}: Prepend \pad{} tokens to the beginning  
 \item \textbf{Center Padding}: Distribute \pad{} tokens around the original sequence
 \end{itemize}
+\begin{comment}
+Feedback: The distinction between left and right padding is important but not fully explained. It would be very helpful to add a sentence on the implications. For example: "While right-padding is common for encoder-only models like BERT, left-padding is often crucial for decoder-only models like GPT. This is because a decoder must not attend to future tokens, and left-padding ensures that the real content tokens maintain their correct causal positions relative to each other, which is essential for coherent text generation."
+\end{comment}
 
 \begin{lstlisting}[language=Python, caption=Padding Implementation]
 import torch
@@ -79,7 +85,7 @@ An attention mask $M \in \{0, 1\}^{B \times L}$ where:
 \end{itemize}
 
 The masked attention computation becomes:
-$$\text{Attention}(Q, K, V) = \text{softmax}\left(\frac{QK^T}{\sqrt{d_k}} + (1-M) \cdot (-\infty)\right)V$$
+$\text{Attention}(Q, K, V) = \text{softmax}\left(\frac{QK^T}{\sqrt{d_k}} + (1-M) \cdot (-\infty)\right)V$
 
 Setting masked positions to $-\infty$ ensures they receive zero attention after softmax.
 
@@ -145,7 +151,7 @@ Padding introduces significant memory overhead:
 \end{itemize}
 
 For a batch with sequence lengths $[10, 50, 100, 25]$, all sequences are padded to length 100, wasting:
-$$\text{Wasted positions} = 4 \times 100 - (10 + 50 + 100 + 25) = 215 \text{ positions}$$
+$\text{Wasted positions} = 4 \times 100 - (10 + 50 + 100 + 25) = 215 \text{ positions}$
 
 \subsubsection{Efficiency Optimizations}
 Several strategies mitigate padding overhead:
@@ -349,10 +355,16 @@ Modern frameworks implement adaptive padding:
 \subsubsection{Incorrect Masking}
 \textbf{Problem}: Forgetting to mask padding positions in attention
 \textbf{Solution}: Always verify attention mask implementation
+\begin{comment}
+Feedback: To make this pitfall more impactful, describe the consequence. For example: "Consequence: The model's attention is diluted by attending to meaningless padding tokens, leading to degraded performance and nonsensical representations."
+\end{comment}
 
 \subsubsection{Loss Computation Errors}
 \textbf{Problem}: Including padding positions in loss calculation
 \textbf{Solution}: Implement proper masked loss functions
+\begin{comment}
+Feedback: Similarly, what is the consequence? "Consequence: The model is penalized for its predictions on padding tokens, which can destabilize training and lead to the model learning to simply predict padding."
+\end{comment}
 
 \subsubsection{Memory Inefficiency}
 \textbf{Problem}: Excessive padding leading to OOM errors
@@ -389,5 +401,8 @@ Next-generation hardware may reduce padding overhead:
 \item \textbf{Consistency}: Maintain identical padding strategies across training and inference
 \end{enumerate}
 \end{principle}
+\begin{comment}
+Feedback: This list can be made more actionable. For "Minimize Overhead," you could add: "Before training, analyze the length distribution of your dataset. If it is highly skewed, implementing length-based bucketing is one of the highest-impact optimizations you can make." For "Consistency," you could suggest: "Encapsulate your tokenization and padding logic in a single, version-controlled function or class that is used by both your training and inference pipelines to prevent subtle bugs."
+\end{comment}
 
 The \pad{} token, while conceptually simple, requires careful implementation to achieve efficient and correct transformer behavior. Understanding its implications for memory usage, computation, and model training is essential for building scalable transformer-based systems. As the field moves toward more efficient architectures, the role of padding continues to evolve, but its fundamental importance in enabling batch processing remains central to practical transformer deployment.

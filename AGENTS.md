@@ -21,10 +21,24 @@ The latex files are organized in three levels, to keep the context smaller for e
 
 Use latex **tikz** package for most diagrams, keep each of them in a latex file to be compiled as PDF as mentioned above.
 
+* Why do we use PDF and \\includegraphics? This makes it much easier to scale the diagram without adjusting node coordinates, sizes and font sizes. This also allows us to inspect and fix errors separately.  
 * Always make sure tikz figures compile. A typical broken pattern is multiline text in a node.  
 * Make sure nodes/blocks don't overlap with each other, be aware of large nodes/blocks.  
 * Use circular and diamond node shapes only for short text, longer text makes them too large with big empty space inside.  
-* Be consistent with tikz diagram styles throughout the book.
+* Be consistent with tikz diagram styles throughout the book.  
+* Lualatex, do calculations using lua code and avoid awkward pfg math or foreach.
+
+When asked to review and fix diagrams, do the following:
+
+* Inspect the latex file for the tikz diagram, add enough documentations about the spacing, alignment and size constraints among nodes, texts and annotations, if there isn't any.
+* Based on the documentation, check the standalone PDF image, see if there are any overlap, displacement and misalignment. If so, try to fix them.
+* Use \\usetikzlibrary{positioning}, and properties like \`\`right=0.5in of" for alignment.
+
+# Self-made Tools
+
+Consider creating some python tools for text processing and visualization with examples, put code files under code/.
+
+Python tools are useful to find latex file contents that are not easy to do with grep and find.
 
 # Research and Outlining
 
@@ -40,3 +54,12 @@ Consider diagram/table/formula driven writing. If suited, after writing the outl
 
 Consider textbook tone and style first if not specified.
 
+# Proofread and Feedbacks
+
+I will use \\begin{comment}\\end{comment} to add my feedback into the latex file when I proofread. If being asked, address them one by one, and add \`\`% addressed", to make them as resolved.  
+You can also use this idea to add TODO items for yourself.
+
+# Frequent Latex Errors to Avoid
+
+Be careful of unicode characters, replace it with Latex symbols if possible.  
+Make sure \\end{} is properly added.  

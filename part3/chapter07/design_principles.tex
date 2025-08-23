@@ -11,6 +11,9 @@ Custom special tokens must be designed with careful consideration of the mathema
 \subsubsection{Embedding Space Coherence}
 
 Custom tokens should occupy meaningful positions within the existing embedding space, maintaining geometric relationships that support effective attention computation.
+\begin{comment}
+Feedback: This is a good principle, but it's abstract. A concrete example would help. For instance: "A practical application of this principle is in initialization. Instead of initializing a new custom token with pure random noise, it's often better to initialize it with the average of the embeddings of semantically related words. For example, a new `<LEGAL_ARGUMENT>` token could be initialized with the average of the embeddings for 'therefore', 'because', and 'pursuant to'. This gives the model a better starting point and can speed up training."
+\end{comment}
 
 \begin{lstlisting}[language=Python, caption={Embedding space analysis for custom token design}]
 # Complete implementation available at:
@@ -59,6 +62,9 @@ Custom special tokens should be designed with clear functional purposes that add
 \subsubsection{Single Responsibility Principle}
 
 Each custom token should have a well-defined, singular purpose within the model architecture. This principle prevents functional overlap and ensures that each token contributes uniquely to model capability.
+\begin{comment}
+Feedback: A "do this, not that" example would be very effective here. For example: "DO: Create a `<QUESTION_START>` token for question answering and a separate `<SUMMARY_START>` token for summarization. DON'T: Create a single `<TASK_START>` token and expect the model to infer the task from the context. Giving each token a single, clear job makes the model's learning task easier and the resulting system more robust."
+\end{comment}
 
 \subsubsection{Compositional Design}
 
@@ -95,7 +101,11 @@ The purpose and behavior of custom tokens should be readily interpretable throug
 \subsubsection{Diagnostic Capabilities}
 
 Well-designed custom tokens provide diagnostic information that aids in model debugging, performance analysis, and behavioral understanding.
+\begin{comment}
+Feedback: This is a great point. An example would make it more concrete. "For instance, if you design a `<TOOL_USE>` token, you can analyze its attention patterns to see exactly which parts of the input text the model considered relevant when it decided to call a specific tool. This provides a powerful debugging and interpretability signal."
+\end{comment}
 
 \subsubsection{Ablation-Friendly Design}
 
 Custom tokens should be designed to support clean ablation studies that isolate their contributions to model performance and behavior.
+
