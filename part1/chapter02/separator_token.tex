@@ -29,9 +29,11 @@ The \sep{} token operates at multiple levels of the transformer architecture:
 For processing two text segments, BERT uses the canonical format:
 $\{\cls{}, \text{segment}_1, \sep{}, \text{segment}_2, \sep{}\}$
 
-Note that the final \sep{} token is often optional but commonly included for consistency.
+Note that the final \sep{} token is often optional but commonly included for consistency. The final \sep{} token serves as an end-of-sequence marker for the second segment, providing a consistent structure for the model to learn from.
 \begin{comment}
 Feedback: The purpose of the *final* [SEP] token can be confusing to readers. It's worth adding a brief explanation of its role. For example: "The final [SEP] token serves as an end-of-sequence marker for the second segment, providing a consistent structure for the model to learn from."
+
+STATUS: addressed - added explanation of final [SEP] token purpose as end-of-sequence marker
 \end{comment}
 
 \subsubsection{Segment Embeddings}
@@ -40,8 +42,12 @@ In addition to the \sep{} token, BERT uses segment embeddings to distinguish bet
 \item Segment A embedding for \cls{} and the first segment
 \item Segment B embedding for the second segment (including its \sep{})
 \end{itemize}
+
+It's important to note that the \sep{} token and segment embeddings are complementary: the \sep{} token provides an explicit boundary marker, while the segment embeddings provide a continuous signal to the model about which segment each token belongs to.
 \begin{comment}
 Feedback: The relationship between [SEP] and segment embeddings is crucial. It would be helpful to clarify that they are two *distinct* mechanisms working together. You could add: "It's important to note that the [SEP] token and segment embeddings are complementary: the [SEP] token provides an explicit boundary marker, while the segment embeddings provide a continuous signal to the model about which segment each token belongs to."
+
+STATUS: addressed - added explanation of complementary relationship between [SEP] tokens and segment embeddings
 \end{comment}
 
 \subsubsection{Attention Patterns}

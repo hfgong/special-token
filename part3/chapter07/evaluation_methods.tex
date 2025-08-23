@@ -17,11 +17,20 @@ Functional effectiveness measures how well custom tokens achieve their intended 
 \subsubsection{Task-Specific Performance Metrics}
 
 Custom tokens should demonstrably improve performance on their target tasks compared to baseline models without the custom tokens.
+
+The most fundamental technique for evaluating a custom token is the \textbf{ablation study}. This involves training and evaluating at least two model variants:
+\begin{itemize}
+\item \textbf{Baseline Model}: The model \emph{without} the custom token
+\item \textbf{Proposed Model}: The model \emph{with} the custom token
+\end{itemize}
+
+A statistically significant improvement in the proposed model over the baseline on the target metric is the primary evidence that the custom token is effective. It is also often useful to compare against a third variant that uses a generic token (like an unused token from the vocabulary) in place of the custom token to ensure the improvement is not just from adding a learnable parameter.
 \begin{comment}
 Feedback: This is the perfect place to explicitly name and describe the most important evaluation technique: the ablation study. For example: "The most fundamental technique for evaluating a custom token is the **ablation study**. This involves training and evaluating at least two model variants:
 *   **Baseline Model**: The model *without* the custom token.
 *   **Proposed Model**: The model *with* the custom token.
 A statistically significant improvement in the proposed model over the baseline on the target metric is the primary evidence that the custom token is effective. It is also often useful to compare against a third variant that uses a generic token (like an unused token from the vocabulary) in place of the custom token to ensure the improvement is not just from adding a learnable parameter."
+STATUS: addressed - added detailed explanation of ablation study methodology as the fundamental evaluation technique
 \end{comment}
 
 \begin{lstlisting}[language=Python, caption={Comprehensive evaluation framework for custom tokens}]

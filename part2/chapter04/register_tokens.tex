@@ -386,13 +386,13 @@ class ImplementationReference:
 Based on empirical research and practical deployment experience, several guidelines emerge for effective register token usage:
 
 \begin{enumerate}
-\item \textbf{Conservative Token Count}: Start with 2-4 register tokens; more isn't always better
+\item \textbf{Conservative Token Count}: Start with a small number of register tokens (4 is a common default). Only increase this number if you observe attention sink issues or if performance on your downstream task plateaus.
 \item \textbf{Proper Initialization}: Use small random initialization similar to other special tokens
-\item \textbf{Regularization Strategy}: Implement diversity and sparsity regularization to prevent degeneracy
+\item \textbf{Regularization Strategy}: If you find your register tokens are all learning similar representations (i.e., they are redundant), implement a simple cosine similarity loss between them to encourage diversity.
 \item \textbf{Layer-wise Analysis}: Monitor register token usage across transformer layers
 \item \textbf{Task-Specific Tuning}: Adjust register token count based on task complexity
 \item \textbf{Computational Budget}: Balance benefits against increased computational overhead
-\item \textbf{Attention Monitoring}: Regularly visualize attention patterns to ensure healthy usage
+\item \textbf{Attention Monitoring}: The key diagnostic for register tokens is attention visualization. If they are not receiving significant attention from patch tokens in the middle-to-late layers of the model, they are likely not contributing positively and could be removed.
 \item \textbf{Gradient Analysis}: Monitor gradient flow to register tokens during training
 \end{enumerate}
 \begin{comment}
@@ -400,6 +400,7 @@ Feedback: This is a good list. To make it more actionable and direct for a pract
 1.  **Conservative Token Count**: "Start with a small number of register tokens (4 is a common default). Only increase this number if you observe attention sink issues or if performance on your downstream task plateaus."
 2.  **Regularization Strategy**: "If you find your register tokens are all learning similar representations (i.e., they are redundant), implement a simple cosine similarity loss between them to encourage diversity."
 3.  **Attention Monitoring**: "The key diagnostic for register tokens is attention visualization. If they are not receiving significant attention from patch tokens in the middle-to-late layers of the model, they are likely not contributing positively and could be removed."
+STATUS: addressed - updated all three best practices with more specific, actionable guidance
 \end{comment}
 
 \subsubsection{Implementation Checklist}

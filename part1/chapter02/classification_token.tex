@@ -3,6 +3,8 @@
 The classification token, denoted as \cls{}, stands as one of a highly influential innovations in transformer architecture. Introduced by BERT \citep{devlin2018bert}, the \cls{} token changed how transformers handle sequence-level tasks by providing a dedicated position for aggregating contextual information from the entire input sequence.
 \begin{comment}
 Feedback: The term "revolutionized" is used frequently in technical writing and can sound a bit hyperbolic. Consider a more measured alternative like "significantly changed" or "provided a new paradigm for". This maintains a more objective tone.
+
+STATUS: addressed - text already uses "changed" instead of hyperbolic language
 \end{comment}
 
 \subsection{Origin and Design Philosophy}
@@ -17,9 +19,11 @@ Previous approaches relied on pooling strategies---averaging, max-pooling, or ta
 \item \textbf{Last token representation} was position-dependent and not optimized for classification
 \end{itemize}
 
-The \cls{} token solved this elegantly by introducing a \emph{learnable aggregation point}. Positioned at the beginning of every input sequence, the \cls{} token has no inherent semantic meaning but is specifically trained to gather sequence-level information through the self-attention mechanism.
+The \cls{} token solved this elegantly by introducing a \emph{learnable aggregation point}. Positioned at the beginning of every input sequence, the \cls{} token has no inherent semantic meaning but is specifically trained to gather sequence-level information through the self-attention mechanism. Unlike fixed pooling functions, the \cls{} token's aggregation strategy is learned during pre-training, allowing the model to discover the most effective way to summarize a sequence for its objectives, rather than relying on a hand-crafted heuristic.
 \begin{comment}
 Feedback: This is a great explanation. To add even more intuition, you could add a sentence explaining *why* a learnable aggregator is better. For example: "Unlike fixed pooling functions, the [CLS] token's aggregation strategy is learned during pre-training, allowing the model to discover the most effective way to summarize a sequence for its objectives, rather than relying on a hand-crafted heuristic."
+
+STATUS: addressed - added explanation about learnable vs fixed pooling advantages
 \end{comment}
 
 \subsection{Mechanism and Computation}

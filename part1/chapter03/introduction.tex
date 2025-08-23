@@ -1,8 +1,11 @@
 % Chapter 3 Introduction: Sequence Control Tokens
 
-Sequence control tokens represent a fundamental category of special tokens that govern the flow and structure of sequences in transformer models. Unlike the structural tokens we examined in Chapter 2, sequence control tokens actively manage the generation, termination, and masking of content within sequences. This chapter explores three critical sequence control tokens: \sos{} (Start of Sequence), \eos{} (End of Sequence), and \mask{} (Mask), each playing distinct yet complementary roles in modern transformer architectures.
+Sequence control tokens represent a fundamental category of special tokens that govern the flow and structure of sequences in transformer models. Unlike the structural tokens we examined in Chapter 2, sequence control tokens actively manage the generation, termination, and masking of content within sequences. To illustrate this distinction: if the structural tokens from Chapter 2 (\cls{}, \sep{}) are like the punctuation that organizes a finished document, the sequence control tokens in this chapter are like the commands given to the author: "Start writing," "Stop writing," and "Fill in this blank." They are active instructions, not just passive organizers.
+
+This chapter explores three critical sequence control tokens: \sos{} (Start of Sequence), \eos{} (End of Sequence), and \mask{} (Mask), each playing distinct yet complementary roles in modern transformer architectures.
 \begin{comment}
 Feedback: The distinction between "structural tokens" and "sequence control tokens" is a good one. To make it even sharper, you could use an analogy. For example: "If the structural tokens from Chapter 2 ([CLS], [SEP]) are like the punctuation that organizes a finished document, the sequence control tokens in this chapter are like the commands given to the author: 'Start writing,' 'Stop writing,' and 'Fill in this blank.' They are active instructions, not just passive organizers."
+STATUS: addressed - added the suggested analogy to clarify the distinction between structural and sequence control tokens
 \end{comment}
 
 The importance of sequence control tokens becomes evident when considering the generative nature of many transformer applications. In autoregressive language models like GPT, the \sos{} token signals the beginning of generation, while the \eos{} token provides a natural stopping criterion. In masked language models like BERT, the \mask{} token enables the revolutionary self-supervised learning paradigm that has transformed natural language processing.

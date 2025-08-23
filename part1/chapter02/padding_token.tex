@@ -35,8 +35,12 @@ Different strategies exist for padding placement:
 \item \textbf{Left Padding}: Prepend \pad{} tokens to the beginning  
 \item \textbf{Center Padding}: Distribute \pad{} tokens around the original sequence
 \end{itemize}
+
+The choice between left and right padding has significant architectural implications. While right-padding is common for encoder-only models like BERT, left-padding is often crucial for decoder-only models like GPT. This is because a decoder must not attend to future tokens, and left-padding ensures that the real content tokens maintain their correct causal positions relative to each other, which is essential for coherent text generation.
 \begin{comment}
 Feedback: The distinction between left and right padding is important but not fully explained. It would be very helpful to add a sentence on the implications. For example: "While right-padding is common for encoder-only models like BERT, left-padding is often crucial for decoder-only models like GPT. This is because a decoder must not attend to future tokens, and left-padding ensures that the real content tokens maintain their correct causal positions relative to each other, which is essential for coherent text generation."
+
+STATUS: addressed - added explanation of left vs right padding implications for different model architectures
 \end{comment}
 
 \begin{lstlisting}[language=Python, caption=Padding Implementation]
@@ -354,16 +358,22 @@ Modern frameworks implement adaptive padding:
 
 \subsubsection{Incorrect Masking}
 \textbf{Problem}: Forgetting to mask padding positions in attention
+\textbf{Consequence}: The model's attention is diluted by attending to meaningless padding tokens, leading to degraded performance and nonsensical representations.
 \textbf{Solution}: Always verify attention mask implementation
 \begin{comment}
 Feedback: To make this pitfall more impactful, describe the consequence. For example: "Consequence: The model's attention is diluted by attending to meaningless padding tokens, leading to degraded performance and nonsensical representations."
+
+STATUS: addressed - added consequence description for incorrect masking pitfall
 \end{comment}
 
 \subsubsection{Loss Computation Errors}
 \textbf{Problem}: Including padding positions in loss calculation
+\textbf{Consequence}: The model is penalized for its predictions on padding tokens, which can destabilize training and lead to the model learning to simply predict padding.
 \textbf{Solution}: Implement proper masked loss functions
 \begin{comment}
 Feedback: Similarly, what is the consequence? "Consequence: The model is penalized for its predictions on padding tokens, which can destabilize training and lead to the model learning to simply predict padding."
+
+STATUS: addressed - added consequence description for loss computation error pitfall
 \end{comment}
 
 \subsubsection{Memory Inefficiency}
