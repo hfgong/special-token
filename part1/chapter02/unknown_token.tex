@@ -38,8 +38,7 @@ During training, the model learns to:
 
 During inference, any word not in the vocabulary is mapped to \unk{}.
 
-\begin{example}[Traditional UNK Processing]
-\begin{lstlisting}[language=Python]
+\begin{lstlisting}[language=Python, caption=Traditional UNK Processing]
 class TraditionalTokenizer:
     def __init__(self, vocab_size=30000):
         self.vocab_size = vocab_size
@@ -107,7 +106,6 @@ print(f"Encoded:  {encoded}")
 print(f"Decoded:  {decoded}")
 # Output might be: "the [UNK] [UNK] [UNK] [UNK] [UNK]"
 \end{lstlisting}
-\end{example}
 
 \subsection{Limitations of Traditional UNK Approach}
 
@@ -174,8 +172,7 @@ A unified subword tokenizer:
 \item Includes whitespace in the subword vocabulary
 \end{itemize}
 
-\begin{example}[Subword vs Traditional Tokenization]
-\begin{lstlisting}[language=Python]
+\begin{lstlisting}[language=Python, caption=Subword vs Traditional Tokenization]
 from transformers import BertTokenizer, GPT2Tokenizer
 
 # Traditional word-level tokenizer (conceptual)
@@ -217,7 +214,6 @@ gpt2_has_unk = '<|endoftext|>' in gpt2_tokens  # GPT-2's special token
 print(f"BERT has UNK: {bert_has_unk}")
 print(f"GPT-2 has UNK: {gpt2_has_unk}")
 \end{lstlisting}
-\end{example}
 
 \subsection{UNK Tokens in Modern Transformers}
 
@@ -267,8 +263,7 @@ When \unk{} tokens are present:
 \subsubsection{Inference Handling}
 Strategies for dealing with \unk{} tokens during inference:
 
-\begin{example}[UNK Token Handling]
-\begin{lstlisting}[language=Python]
+\begin{lstlisting}[language=Python, caption=UNK Token Handling]
 import torch
 from transformers import BertTokenizer, BertForMaskedLM
 
@@ -320,7 +315,6 @@ if unk_predictions:
 else:
     print("No UNK tokens found")
 \end{lstlisting}
-\end{example}
 
 \subsection{UNK Token Analysis and Debugging}
 

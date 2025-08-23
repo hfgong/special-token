@@ -1,5 +1,6 @@
 \documentclass[tikz,border=10pt]{standalone}
 \usepackage{tikz}
+\usepackage{amssymb}
 \usetikzlibrary{shapes,arrows,positioning,calc,patterns,shadows,arrows.meta}
 
 \definecolor{bertblue}{RGB}{66,133,244}
@@ -11,13 +12,20 @@
 \begin{tikzpicture}[
     token/.style={rectangle, rounded corners=3pt, minimum width=1cm, minimum height=0.6cm, font=\footnotesize},
     hidden/.style={circle, fill=black!20, minimum size=0.4cm},
-    arrow/.style={->, >=stealth, thick},
+    arrow/.style={-{Stealth}, thick},
     pooling/.style={rectangle, rounded corners=5pt, minimum width=2cm, minimum height=0.8cm, font=\small\bfseries},
     label/.style={font=\footnotesize}
 ]
 
-% Title
-\node[font=\large\bfseries] at (6, 8.5) {Pooling Strategies for Sequence Classification};
+% === SPACING AND ALIGNMENT DOCUMENTATION ===
+% Title: y=8.5, centered at x=6
+% Input tokens: y=7, spaced 1.2cm apart horizontally
+% Hidden representations: y=6, aligned with tokens above
+% Pooling methods: y=4, evenly distributed at x=0,3,6,9
+% Method descriptions: y=3.3
+% Classification layer: y=2
+% Comparison table: y=0 to -1.5, divided into 4 columns
+
 
 % Input tokens (shared across all methods)
 \node[token, fill=clsorange!20] (cls) at (0, 7) {[CLS]};
@@ -81,20 +89,25 @@
     \node[label] at (\x, 1.5) {Logits};
 }
 
-% Comparison table
-\node[rectangle, draw=black, fill=gray!5, minimum width=12cm, minimum height=2.5cm] at (4.5, 0) {};
+% Comparison table - properly aligned in 4 columns
+\node[rectangle, draw=black, fill=gray!5, minimum width=12cm, minimum height=3cm] (table) at (4.5, -0.5) {};
 \node[font=\small\bfseries] at (4.5, 1) {Performance Comparison};
 
-\node[label, align=left] at (1, 0.5) {\textbf{CLS Token:}\\• Learnable aggregation\\• Task-specific\\• BERT's approach};
-\node[label, align=left] at (4, 0.5) {\textbf{Mean Pooling:}\\• Simple averaging\\• No learning\\• Dilutes information};
-\node[label, align=left] at (7, 0.5) {\textbf{Max Pooling:}\\• Sparse selection\\• Loses context\\• Task-dependent};
-\node[label, align=left] at (10, 0.5) {\textbf{Attention Pool:}\\• Flexible weighting\\• More parameters\\• Often competitive};
+% Column headers with consistent positioning
+\begin{scope}[every node/.style={label, align=left, anchor=north, text width=2.6cm}]
+    \node at (0.5, 0.5) {\textbf{CLS Token:}\\• Learnable aggregation\\• Task-specific\\• BERT's approach};
+    \node at (3.5, 0.5) {\textbf{Mean Pooling:}\\• Simple averaging\\• No learning\\• Dilutes information};
+    \node at (6.5, 0.5) {\textbf{Max Pooling:}\\• Sparse selection\\• Loses context\\• Task-dependent};
+    \node at (9.5, 0.5) {\textbf{Attention Pool:}\\• Flexible weighting\\• More parameters\\• Often competitive};
+\end{scope}
 
-% Pros and Cons
-\node[label, align=left, text width=2.5cm] at (1, -0.5) {\textcolor{gptgreen}{$\checkmark$} Pre-trained\\$\checkmark$ Effective\\$\times$ Single vector};
-\node[label, align=left, text width=2.5cm] at (4, -0.5) {\textcolor{gptgreen}{$\checkmark$} Simple\\$\checkmark$ No params\\$\times$ Poor performance};
-\node[label, align=left, text width=2.5cm] at (7, -0.5) {\textcolor{gptgreen}{$\checkmark$} Sparse\\$\checkmark$ No params\\$\times$ Loses nuance};
-\node[label, align=left, text width=2.5cm] at (10, -0.5) {\textcolor{gptgreen}{$\checkmark$} Adaptive\\$\checkmark$ Flexible\\$\times$ More complex};
+% Pros and Cons - aligned below headers
+\begin{scope}[every node/.style={label, align=left, anchor=north, text width=2.6cm}]
+    \node at (0.5, -0.7) {\textcolor{gptgreen}{$\checkmark$} Pre-trained\\\textcolor{gptgreen}{$\checkmark$} Effective\\\textcolor{red}{$\times$} Single vector};
+    \node at (3.5, -0.7) {\textcolor{gptgreen}{$\checkmark$} Simple\\\textcolor{gptgreen}{$\checkmark$} No params\\\textcolor{red}{$\times$} Poor performance};
+    \node at (6.5, -0.7) {\textcolor{gptgreen}{$\checkmark$} Sparse\\\textcolor{gptgreen}{$\checkmark$} No params\\\textcolor{red}{$\times$} Loses nuance};
+    \node at (9.5, -0.7) {\textcolor{gptgreen}{$\checkmark$} Adaptive\\\textcolor{gptgreen}{$\checkmark$} Flexible\\\textcolor{red}{$\times$} More complex};
+\end{scope};
 
 \end{tikzpicture}
 \end{document}

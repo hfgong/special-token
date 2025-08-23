@@ -38,8 +38,7 @@ Control tokens modify model behavior or indicate specific modes of operation. In
 
 From an implementation perspective, special tokens are integrated at multiple levels of the transformer pipeline:
 
-\begin{example}[Tokenizer Configuration]
-\begin{lstlisting}[language=Python]
+\begin{lstlisting}[language=Python, caption=Tokenizer Configuration]
 from transformers import AutoTokenizer
 
 tokenizer = AutoTokenizer.from_pretrained("bert-base-uncased")
@@ -57,7 +56,6 @@ decoded = tokenizer.decode(encoded['input_ids'])
 print(f"Encoded with special tokens: {decoded}")
 # Output: [CLS] hello world [SEP]
 \end{lstlisting}
-\end{example}
 
 \subsection{Embedding Space Properties}
 

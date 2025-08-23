@@ -33,8 +33,7 @@ Different strategies exist for padding placement:
 \item \textbf{Center Padding}: Distribute \pad{} tokens around the original sequence
 \end{itemize}
 
-\begin{example}[Padding Implementation]
-\begin{lstlisting}[language=Python]
+\begin{lstlisting}[language=Python, caption=Padding Implementation]
 import torch
 from transformers import BertTokenizer
 
@@ -67,7 +66,6 @@ for i, text in enumerate(texts):
     pad_count = (inputs['input_ids'][i] == tokenizer.pad_token_id).sum()
     print(f"Padding tokens: {pad_count}")
 \end{lstlisting}
-\end{example}
 
 \subsection{Attention Masking}
 
@@ -86,8 +84,7 @@ $$\text{Attention}(Q, K, V) = \text{softmax}\left(\frac{QK^T}{\sqrt{d_k}} + (1-M
 Setting masked positions to $-\infty$ ensures they receive zero attention after softmax.
 
 \subsubsection{Implementation Details}
-\begin{example}[Attention Masking]
-\begin{lstlisting}[language=Python]
+\begin{lstlisting}[language=Python, caption=Attention Masking]
 import torch
 import torch.nn.functional as F
 
@@ -136,7 +133,6 @@ print(f"Attention weights shape: {weights.shape}")
 # Verify padding positions have zero attention
 print("Attention to padding positions:", weights[0, 0, 7:])  # Should be ~0
 \end{lstlisting}
-\end{example}
 
 \subsection{Computational Implications}
 
@@ -172,8 +168,7 @@ Several strategies mitigate padding overhead:
 \subsubsection{Loss Computation}
 When computing loss, padding positions must be excluded:
 
-\begin{example}[Masked Loss Computation]
-\begin{lstlisting}[language=Python]
+\begin{lstlisting}[language=Python, caption=Masked Loss Computation]
 import torch
 import torch.nn as nn
 
@@ -213,7 +208,6 @@ mask = torch.tensor([
 loss = compute_masked_loss(predictions, targets, mask)
 print(f"Masked loss: {loss.item():.4f}")
 \end{lstlisting}
-\end{example}
 
 \subsubsection{Gradient Flow}
 Proper masking ensures gradients don't flow through padding positions:

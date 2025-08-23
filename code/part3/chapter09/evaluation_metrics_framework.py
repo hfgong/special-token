@@ -1,20 +1,3 @@
-% Evaluation Metrics for Special Token Training
-
-\section{Evaluation Metrics}
-
-The evaluation of special token training requires comprehensive metrics that assess not only overall model performance but also the quality of special token function development, training stability, and the preservation of intended capabilities. Unlike standard transformer evaluation that focuses primarily on downstream task performance, special token evaluation must consider multiple dimensions of model behavior and capability. This section presents systematic approaches for evaluating training progress and final model quality in the context of special tokens.
-
-\subsection{Function Development Metrics}
-
-Assessing the development of special token functions during training is crucial for understanding whether tokens are learning their intended roles and how effectively they contribute to model capabilities.
-
-\subsubsection{Functional Capability Assessment}
-
-Direct measurement of special token functional capabilities provides insight into how well tokens are fulfilling their intended roles.
-
-The complete implementation of the comprehensive evaluation metrics framework is provided in the external code file \texttt{code/part3/chapter09/evaluation\_metrics\_framework.py}. The key components include:
-
-\begin{lstlisting}[language=Python, caption=Core structure of the evaluation framework]
 class SpecialTokenEvaluationFramework:
     def __init__(self, model, special_tokens, evaluation_config):
         self.model = model
@@ -581,40 +564,3 @@ class ComprehensiveMetricsAggregator:
             overall_score = self.aggregation_strategies[strategy](scores, list(component_weights.values()))
         
         return overall_score
-\end{lstlisting}
-
-\subsection{Training Progress Metrics}
-
-Monitoring training progress for models with special tokens requires specialized metrics that track both overall model development and specific special token capability emergence.
-
-\subsubsection{Convergence Analysis}
-
-Understanding convergence patterns helps identify whether training is proceeding effectively and when intervention may be needed.
-
-\subsubsection{Function Emergence Tracking}
-
-Tracking the emergence of special token functions during training provides insight into the learning process and helps identify optimal training durations.
-
-\subsection{Stability and Robustness Metrics}
-
-Training stability is particularly important for models with special tokens, as these tokens can introduce unique training dynamics that require careful monitoring.
-
-\subsubsection{Gradient Flow Analysis}
-
-Analyzing gradient flow through special tokens helps identify potential training instabilities and optimization challenges.
-
-\subsubsection{Parameter Stability Assessment}
-
-Monitoring parameter stability ensures that special tokens develop stable, reliable representations rather than exhibiting pathological behaviors.
-
-\subsection{Comparative Evaluation Frameworks}
-
-Comparing models with and without special tokens, or with different special token configurations, requires careful experimental design and evaluation frameworks.
-
-\subsubsection{Ablation Study Protocols}
-
-Systematic ablation studies help isolate the contributions of specific special tokens and identify their individual and collective impacts on model performance.
-
-\subsubsection{Cross-Configuration Comparison}
-
-Comparing different special token configurations helps identify optimal designs and training strategies for specific applications.

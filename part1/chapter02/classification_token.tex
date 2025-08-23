@@ -28,8 +28,7 @@ $$h_{\cls{}} = \text{Attention}(\cls{}, \{x_1, x_2, \ldots, x_n\})$$
 
 where the attention mechanism allows \cls{} to selectively focus on relevant parts of the input sequence based on the task requirements.
 
-\begin{example}[CLS Token Processing]
-\begin{lstlisting}[language=Python]
+\begin{lstlisting}[language=Python, caption=CLS Token Processing]
 import torch
 from transformers import BertModel, BertTokenizer
 
@@ -55,7 +54,6 @@ print(f"CLS representation shape: {cls_representation.shape}")
 # This representation can be used for classification
 classification_logits = torch.nn.Linear(768, 2)(cls_representation)  # Binary classification
 \end{lstlisting}
-\end{example}
 
 \subsection{Pooling Strategies and Alternatives}
 
@@ -91,21 +89,21 @@ Combines multiple pooling strategies or uses multiple \cls{} tokens for differen
 \node[normaltoken] at (0.8, 5.2) {The};
 \node[normaltoken] at (2, 5.2) {cat};
 \node[normaltoken] at (3.2, 5.2) {runs};
-\draw[->, thick] (2, 4.8) -- (2, 4.3);
+\draw[-{Stealth}, thick] (2, 4.8) -- (2, 4.3);
 \node[pooling, fill=bertblue!20] at (2, 3.8) {Mean};
 
 \node[label] at (6, 6) {\textbf{Max Pooling}};
 \node[normaltoken] at (4.8, 5.2) {The};
 \node[normaltoken] at (6, 5.2) {cat};
 \node[normaltoken] at (7.2, 5.2) {runs};
-\draw[->, thick] (6, 4.8) -- (6, 4.3);
+\draw[-{Stealth}, thick] (6, 4.8) -- (6, 4.3);
 \node[pooling, fill=gptgreen!20] at (6, 3.8) {Max};
 
 \node[label] at (10, 6) {\textbf{CLS Pooling}};
 \node[clstoken] at (8.8, 5.2) {[CLS]};
 \node[normaltoken] at (10, 5.2) {cat};
 \node[normaltoken] at (11.2, 5.2) {runs};
-\draw[->, thick] (8.8, 4.8) -- (10, 4.3);
+\draw[-{Stealth}, thick] (8.8, 4.8) -- (10, 4.3);
 \node[pooling, fill=clsorange!20] at (10, 3.8) {CLS};
 
 % Performance comparison
@@ -163,8 +161,7 @@ When fine-tuning for downstream tasks:
 \item \textbf{Ensemble Methods}: Combine \cls{} representations from multiple layers
 \end{itemize}
 
-\begin{example}[Fine-tuning CLS Token]
-\begin{lstlisting}[language=Python]
+\begin{lstlisting}[language=Python, caption=Fine-tuning CLS Token]
 import torch.nn as nn
 from transformers import BertModel
 
@@ -203,7 +200,6 @@ class BERTClassifierPooler(nn.Module):
         
         return logits
 \end{lstlisting}
-\end{example}
 
 \subsection{Limitations and Criticisms}
 

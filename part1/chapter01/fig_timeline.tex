@@ -9,61 +9,70 @@
 
 \begin{document}
 \begin{tikzpicture}[
-    timeline/.style={ultra thick, black!80, ->},
+    timeline/.style={ultra thick, black!80, -{Stealth[length=3mm]}},
     year/.style={font=\small\bfseries},
     event/.style={rectangle, rounded corners=5pt, minimum width=2.5cm, minimum height=0.7cm, font=\footnotesize, align=center},
     innovation/.style={font=\scriptsize\itshape, text width=3cm, align=center}
 ]
 
+% === SPACING AND ALIGNMENT DOCUMENTATION ===
+% Timeline: Main horizontal axis at y=0, spanning x=0 to x=14
+% Event boxes: Alternating above (y=1.5) and below (y=-1.5) timeline for visual balance
+% Innovation descriptions: 1.2 units above/below their event boxes (y=2.7 or y=-2.7)
+% Arrows: Connect timeline to event boxes, length ~1.3 units
+% Year markers: 0.2 units below timeline
+% Legend: Bottom of diagram at y=-3.8 to -4.1
+% Title: Top of diagram at y=4
+
 % Timeline arrow
 \draw[timeline] (0,0) -- (14,0);
 \node[year, anchor=west] at (14.2,0) {Future};
 
-% Years
+% Years - evenly distributed along timeline
 \foreach \year/\x in {2014/1, 2017/3, 2018/5, 2019/7, 2020/8.5, 2021/10, 2023/12} {
     \draw[thick] (\x, -0.1) -- (\x, 0.1);
     \node[year, anchor=north] at (\x, -0.2) {\year};
 }
 
-% Pre-transformer era
-\node[event, fill=gray!20, draw=gray!60] at (1, 1.2) {RNN/LSTM\\Era};
-\node[innovation, gray!70] at (1, 2.2) {Basic markers:\\START, END,\\UNK, PAD};
-\draw[->, gray!50] (1, 0.2) -- (1, 0.8);
+% Pre-transformer era (2014) - above timeline
+\node[event, fill=gray!20, draw=gray!60] (rnn) at (1, 1.2) {RNN/LSTM\\Era};
+\node[innovation, gray!70, above=0.5cm of rnn] {Basic markers:\\START, END,\\UNK, PAD};
+\draw[-{Stealth}, gray!50] (1, 0.2) -- (1, 0.8);
 
-% Transformer
-\node[event, fill=gptgreen!20, draw=gptgreen!60] at (3, -1.2) {Transformer};
-\node[innovation, gptgreen!70] at (3, -2.2) {Positional\\encodings,\\minimal tokens};
-\draw[->, gptgreen!50] (3, -0.2) -- (3, -0.8);
+% Transformer (2017) - below timeline
+\node[event, fill=gptgreen!20, draw=gptgreen!60] (transformer) at (3, -1.2) {Transformer};
+\node[innovation, gptgreen!70, below=0.5cm of transformer] {Positional\\encodings,\\minimal tokens};
+\draw[-{Stealth}, gptgreen!50] (3, -0.2) -- (3, -0.8);
 
-% BERT
-\node[event, fill=bertblue!20, draw=bertblue!60] at (5, 1.5) {BERT};
-\node[innovation, bertblue!70] at (5, 2.7) {Architectural tokens:\\{[CLS], [SEP], [MASK]}};
-\draw[->, bertblue!50] (5, 0.2) -- (5, 1.1);
+% BERT (2018) - above timeline with consistent spacing
+\node[event, fill=bertblue!20, draw=bertblue!60] (bert) at (5, 1.5) {BERT};
+\node[innovation, bertblue!70, above=0.6cm of bert] {Architectural tokens:\\{[CLS], [SEP], [MASK]}};
+\draw[-{Stealth}, bertblue!50] (5, 0.2) -- (5, 1.1);
 
-% GPT-2
-\node[event, fill=gptgreen!20, draw=gptgreen!60] at (7, -1.5) {GPT-2/3};
-\node[innovation, gptgreen!70] at (7, -2.5) {Minimalist\\approach,\\prompt patterns};
-\draw[->, gptgreen!50] (7, -0.2) -- (7, -1.1);
+% GPT-2/3 (2019) - below timeline with consistent spacing
+\node[event, fill=gptgreen!20, draw=gptgreen!60] (gpt) at (7, -1.5) {GPT-2/3};
+\node[innovation, gptgreen!70, below=0.6cm of gpt] {Minimalist\\approach,\\prompt patterns};
+\draw[-{Stealth}, gptgreen!50] (7, -0.2) -- (7, -1.1);
 
-% Vision Transformer
-\node[event, fill=vitpurple!20, draw=vitpurple!60] at (8.5, 1.5) {ViT};
-\node[innovation, vitpurple!70] at (8.5, 2.7) {Cross-modal\\adaptation\\of [CLS]};
-\draw[->, vitpurple!50] (8.5, 0.2) -- (8.5, 1.1);
+% Vision Transformer (2020) - above timeline
+\node[event, fill=vitpurple!20, draw=vitpurple!60] (vit) at (8.5, 1.5) {ViT};
+\node[innovation, vitpurple!70, above=0.6cm of vit] {Cross-modal\\adaptation\\of [CLS]};
+\draw[-{Stealth}, vitpurple!50] (8.5, 0.2) -- (8.5, 1.1);
 
-% CLIP
-\node[event, fill=clporange!20, draw=clporange!60] at (10, -1.5) {CLIP};
-\node[innovation, clporange!70] at (10, -2.7) {Multimodal\\alignment\\tokens};
-\draw[->, clporange!50] (10, -0.2) -- (10, -1.1);
+% CLIP (2021) - below timeline with consistent spacing
+\node[event, fill=clporange!20, draw=clporange!60] (clip) at (10, -1.5) {CLIP};
+\node[innovation, clporange!70, below=0.6cm of clip] {Multimodal\\alignment\\tokens};
+\draw[-{Stealth}, clporange!50] (10, -0.2) -- (10, -1.1);
 
-% Recent innovations
-\node[event, fill=red!20, draw=red!60] at (12, 1.5) {Tool-Use\\Tokens};
-\node[innovation, red!70] at (12, 2.7) {API calls,\\function\\invocation};
-\draw[->, red!50] (12, 0.2) -- (12, 1.1);
+% Recent innovations - Tool-Use Tokens (2023) - above timeline
+\node[event, fill=red!20, draw=red!60] (tooluse) at (12, 1.5) {Tool-Use\\Tokens};
+\node[innovation, red!70, above=0.6cm of tooluse] {API calls,\\function\\invocation};
+\draw[-{Stealth}, red!50] (12, 0.2) -- (12, 1.1);
 
-% Register tokens
-\node[event, fill=purple!20, draw=purple!60] at (12, -1.5) {Register\\Tokens};
-\node[innovation, purple!70] at (12, -2.7) {Memory\\mechanisms,\\dynamic storage};
-\draw[->, purple!50] (12, -0.2) -- (12, -1.1);
+% Register tokens (2023) - below timeline, aligned with Tool-Use above
+\node[event, fill=purple!20, draw=purple!60] (register) at (12, -1.5) {Register\\Tokens};
+\node[innovation, purple!70, below=0.6cm of register] {Memory\\mechanisms,\\dynamic storage};
+\draw[-{Stealth}, purple!50] (12, -0.2) -- (12, -1.1);
 
 % Key transitions
 \draw[dashed, thick, bertblue!40] (3.5, -3) -- (3.5, 3.5);

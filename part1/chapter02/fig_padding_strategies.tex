@@ -18,43 +18,49 @@
     title/.style={font=\small\bfseries}
 ]
 
-% Title removed - using figure caption instead
+% === SPACING AND ALIGNMENT DOCUMENTATION ===
+% Strategy headers: y=8, x positions at 2, 6, 10
+% Sequence rows: y=7.5, 7.0, 6.5, 6.0 with 0.5cm spacing
+% Token boxes: 0.4cm horizontal spacing for naive, 0.3cm for others
+% Memory usage: y=5.3 and 5.5
+% Performance chart: y=1.5, height proportional to efficiency
+% Legend: bottom right at x=10.5-11.2
 
 % Strategy 1: Naive Padding
-\node[title, bertblue] at (2, 8) {1. Naive Padding};
+\node[title, bertblue] (naive-title) at (2, 8) {1. Naive Padding};
 
-% Sequences with different lengths
-\node[label] at (0.5, 7.5) {Seq 1:};
+% Sequences with different lengths - using consistent positioning
+\node[label] (seq1-label) at (0.5, 7.5) {Seq 1:};
 \foreach \i in {0,...,2} {
-    \node[realtoken] at (1+\i*0.4, 7.5) {};
+    \node[realtoken] at ($(seq1-label.east)+(0.5+\i*0.4,0)$) {};
 }
 \foreach \i in {3,...,9} {
-    \node[padtoken] at (1+\i*0.4, 7.5) {};
+    \node[padtoken] at ($(seq1-label.east)+(0.5+\i*0.4,0)$) {};
 }
 
-\node[label] at (0.5, 7) {Seq 2:};
+\node[label] (seq2-label) at (0.5, 7) {Seq 2:};
 \foreach \i in {0,...,6} {
-    \node[realtoken] at (1+\i*0.4, 7) {};
+    \node[realtoken] at ($(seq2-label.east)+(0.5+\i*0.4,0)$) {};
 }
 \foreach \i in {7,...,9} {
-    \node[padtoken] at (1+\i*0.4, 7) {};
+    \node[padtoken] at ($(seq2-label.east)+(0.5+\i*0.4,0)$) {};
 }
 
-\node[label] at (0.5, 6.5) {Seq 3:};
+\node[label] (seq3-label) at (0.5, 6.5) {Seq 3:};
 \foreach \i in {0,...,9} {
-    \node[realtoken] at (1+\i*0.4, 6.5) {};
+    \node[realtoken] at ($(seq3-label.east)+(0.5+\i*0.4,0)$) {};
 }
 
-\node[label] at (0.5, 6) {Seq 4:};
+\node[label] (seq4-label) at (0.5, 6) {Seq 4:};
 \foreach \i in {0,...,1} {
-    \node[realtoken] at (1+\i*0.4, 6) {};
+    \node[realtoken] at ($(seq4-label.east)+(0.5+\i*0.4,0)$) {};
 }
 \foreach \i in {2,...,9} {
-    \node[padtoken] at (1+\i*0.4, 6) {};
+    \node[padtoken] at ($(seq4-label.east)+(0.5+\i*0.4,0)$) {};
 }
 
 % Memory usage calculation
-\node[label, align=center] at (2, 5.3) {Memory Usage:\\40 positions\\60\% waste};
+\node[label, align=center, below=1cm of naive-title] {Memory Usage:\\40 positions\\60\% waste};
 
 % Strategy 2: Length Bucketing
 \node[title, gptgreen] at (6, 8) {2. Length Bucketing};
@@ -161,26 +167,28 @@
 
 \node[label, align=center] at (6, 3) {Memory Usage:\\20 positions\\0\% waste};
 
-% Performance comparison chart
-\node[rectangle, draw=black, fill=gray!5, minimum width=12cm, minimum height=1.5cm] at (6, 1.5) {};
-\node[title] at (6, 2.1) {Performance Comparison};
+% Performance comparison chart - properly spaced
+\node[rectangle, draw=black, fill=gray!5, minimum width=12cm, minimum height=1.8cm] (chart) at (6, 1.3) {};
+\node[title, above=0.1cm of chart.north] {Performance Comparison};
 
-% Bar chart showing efficiency
-\foreach \strategy/\x/\color/\height in {Naive/1/bertblue/0.4, Bucketing/3/gptgreen/0.75, Dynamic/5/sepviolet/0.85, Packed/7/clsorange/0.95, Variable/9/purple/1.0} {
-    \draw[fill=\color!30, draw=\color] (\x, 1) rectangle ++(0.8, \height);
-    \node[label, rotate=45, anchor=west] at (\x+0.1, 0.8) {\strategy};
+% Bar chart showing efficiency - better positioned
+\foreach \strategy/\x/\color/\height in {Naive/1.5/bertblue/0.4, Bucketing/3/gptgreen/0.75, Dynamic/4.5/sepviolet/0.85, Packed/6/clsorange/0.95, Variable/7.5/purple/1.0} {
+    \draw[fill=\color!30, draw=\color] (\x, 0.8) rectangle ++(0.6, \height);
+    \node[label, rotate=45, anchor=west] at (\x+0.05, 0.7) {\strategy};
 }
 
-\node[label] at (0.5, 1.7) {Efficiency};
-\node[label] at (5, 0.6) {Strategy};
+\node[label, rotate=90] at (0.3, 1.5) {Efficiency};
+\node[label] at (4.5, 0.4) {Strategy};
 
-% Legend
-\node[realtoken, scale=0.8] at (10.5, 2) {};
-\node[label] at (11.2, 2) {Real Token};
-\node[padtoken, scale=0.8] at (10.5, 1.7) {};
-\node[label] at (11.2, 1.7) {Padding};
-\node[token, fill=sepviolet!20, scale=0.8] at (10.5, 1.4) {S};
-\node[label] at (11.2, 1.4) {Separator};
+% Legend - properly aligned
+\begin{scope}[every node/.style={label, anchor=west}]
+    \node[realtoken, scale=0.8] (real-legend) at (9.5, 2) {};
+    \node at ($(real-legend.east)+(0.1,0)$) {Real Token};
+    \node[padtoken, scale=0.8] (pad-legend) at (9.5, 1.7) {};
+    \node at ($(pad-legend.east)+(0.1,0)$) {Padding};
+    \node[token, fill=sepviolet!20, scale=0.8] (sep-legend) at (9.5, 1.4) {S};
+    \node at ($(sep-legend.east)+(0.1,0)$) {Separator};
+\end{scope}
 
 \end{tikzpicture}
 \end{document}

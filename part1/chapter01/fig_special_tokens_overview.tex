@@ -18,67 +18,77 @@
     special/.style={token, thick, draw=black!80},
     regular/.style={token, draw=black!40, fill=white},
     embedding/.style={circle, fill=black, inner sep=1.5pt},
-    arrow/.style={->, >=stealth, thick},
+    arrow/.style={-{Stealth}, thick},
     label/.style={font=\footnotesize\sffamily}
 ]
+
+% === SPACING AND ALIGNMENT DOCUMENTATION ===
+% Token spacing: 1.3cm horizontal gap between token centers
+% Token row: y=4 for all tokens
+% Type labels: 0.7cm below tokens (y=3.3)
+% Embeddings: 1.5cm below tokens (y=2.5)
+% Embedding layer box: centered at y=2.5
+% Position embeddings: y=1.0
+% Annotations: bottom at y=0
+% Legend: right side at x=12.5
 
 % Title
 \node[font=\large\bfseries] at (5, 6) {Special Tokens in Transformer Input Sequence};
 
-% Input sequence tokens
+% Input sequence tokens - evenly spaced with consistent gaps
 \node[special, fill=clsorange!20, draw=clsorange!80] (cls) at (0, 4) {[CLS]};
-\node[regular] (tok1) at (1.5, 4) {The};
-\node[regular] (tok2) at (2.8, 4) {cat};
-\node[special, fill=maskred!20, draw=maskred!80] (mask) at (4.1, 4) {[MASK]};
-\node[regular] (tok3) at (5.4, 4) {on};
-\node[regular] (tok4) at (6.5, 4) {the};
-\node[regular] (tok5) at (7.6, 4) {mat};
-\node[special, fill=sepviolet!20, draw=sepviolet!80] (sep) at (8.9, 4) {[SEP]};
-\node[special, fill=padgray!40, draw=padgray!80] (pad) at (10.2, 4) {[PAD]};
+\node[regular, right=0.3cm of cls] (tok1) {The};
+\node[regular, right=0.3cm of tok1] (tok2) {cat};
+\node[special, fill=maskred!20, draw=maskred!80, right=0.3cm of tok2] (mask) {[MASK]};
+\node[regular, right=0.3cm of mask] (tok3) {on};
+\node[regular, right=0.3cm of tok3] (tok4) {the};
+\node[regular, right=0.3cm of tok4] (tok5) {mat};
+\node[special, fill=sepviolet!20, draw=sepviolet!80, right=0.3cm of tok5] (sep) {[SEP]};
+\node[special, fill=padgray!40, draw=padgray!80, right=0.3cm of sep] (pad) {[PAD]};
 
-% Token type indicators
-\node[label, clsorange!80] at (0, 3.3) {Aggregation};
-\node[label, maskred!80] at (4.1, 3.3) {Placeholder};
-\node[label, sepviolet!80] at (8.9, 3.3) {Boundary};
-\node[label, padgray!80] at (10.2, 3.3) {Padding};
+% Token type indicators - aligned below tokens
+\node[label, clsorange!80, below=0.2cm of cls] {Aggregation};
+\node[label, maskred!80, below=0.2cm of mask] {Placeholder};
+\node[label, sepviolet!80, below=0.2cm of sep] {Boundary};
+\node[label, padgray!80, below=0.2cm of pad] {Padding};
 
-% Embeddings representation
-\node[embedding] (emb-0) at (0, 2.5) {};
-\node[embedding] (emb-1) at (1.5, 2.5) {};
-\node[embedding] (emb-2) at (2.8, 2.5) {};
-\node[embedding] (emb-3) at (4.1, 2.5) {};
-\node[embedding] (emb-4) at (5.4, 2.5) {};
-\node[embedding] (emb-5) at (6.5, 2.5) {};
-\node[embedding] (emb-6) at (7.6, 2.5) {};
-\node[embedding] (emb-7) at (8.9, 2.5) {};
-\node[embedding] (emb-8) at (10.2, 2.5) {};
+% Embeddings representation - aligned with tokens
+\node[embedding, below=1cm of cls] (emb-cls) {};
+\node[embedding, below=1cm of tok1] (emb-1) {};
+\node[embedding, below=1cm of tok2] (emb-2) {};
+\node[embedding, below=1cm of mask] (emb-mask) {};
+\node[embedding, below=1cm of tok3] (emb-3) {};
+\node[embedding, below=1cm of tok4] (emb-4) {};
+\node[embedding, below=1cm of tok5] (emb-5) {};
+\node[embedding, below=1cm of sep] (emb-sep) {};
+\node[embedding, below=1cm of pad] (emb-pad) {};
 
-\draw[arrow, black!40] (0, 3.5) -- (emb-0);
-\draw[arrow, black!40] (1.5, 3.5) -- (emb-1);
-\draw[arrow, black!40] (2.8, 3.5) -- (emb-2);
-\draw[arrow, black!40] (4.1, 3.5) -- (emb-3);
-\draw[arrow, black!40] (5.4, 3.5) -- (emb-4);
-\draw[arrow, black!40] (6.5, 3.5) -- (emb-5);
-\draw[arrow, black!40] (7.6, 3.5) -- (emb-6);
-\draw[arrow, black!40] (8.9, 3.5) -- (emb-7);
-\draw[arrow, black!40] (10.2, 3.5) -- (emb-8);
+% Arrows from tokens to embeddings
+\draw[arrow, black!40] (cls.south) -- (emb-cls);
+\draw[arrow, black!40] (tok1.south) -- (emb-1);
+\draw[arrow, black!40] (tok2.south) -- (emb-2);
+\draw[arrow, black!40] (mask.south) -- (emb-mask);
+\draw[arrow, black!40] (tok3.south) -- (emb-3);
+\draw[arrow, black!40] (tok4.south) -- (emb-4);
+\draw[arrow, black!40] (tok5.south) -- (emb-5);
+\draw[arrow, black!40] (sep.south) -- (emb-sep);
+\draw[arrow, black!40] (pad.south) -- (emb-pad);
 
 % Embedding layer
 \node[rectangle, draw=black!60, fill=bertblue!10, minimum width=11cm, minimum height=0.6cm] at (5.1, 2.5) {};
 \node[label] at (5.1, 2.5) {Embedding Layer};
 
-% Self-attention connections (simplified)
-\draw[arrow, bertblue!40, densely dotted] (emb-1) to[bend left=20] (emb-0);
-\draw[arrow, bertblue!40, densely dotted] (emb-2) to[bend left=20] (emb-0);
-\draw[arrow, bertblue!40, densely dotted] (emb-3) to[bend left=20] (emb-0);
-\draw[arrow, bertblue!40, densely dotted] (emb-4) to[bend left=20] (emb-0);
-\draw[arrow, bertblue!40, densely dotted] (emb-5) to[bend left=20] (emb-0);
-\draw[arrow, bertblue!40, densely dotted] (emb-6) to[bend left=20] (emb-0);
-\draw[arrow, bertblue!40, densely dotted] (emb-7) to[bend left=20] (emb-0);
+% Self-attention connections (simplified) - all tokens attend to CLS
+\draw[arrow, bertblue!40, densely dotted] (emb-1) to[bend left=20] (emb-cls);
+\draw[arrow, bertblue!40, densely dotted] (emb-2) to[bend left=20] (emb-cls);
+\draw[arrow, bertblue!40, densely dotted] (emb-mask) to[bend left=20] (emb-cls);
+\draw[arrow, bertblue!40, densely dotted] (emb-3) to[bend left=20] (emb-cls);
+\draw[arrow, bertblue!40, densely dotted] (emb-4) to[bend left=20] (emb-cls);
+\draw[arrow, bertblue!40, densely dotted] (emb-5) to[bend left=20] (emb-cls);
+\draw[arrow, bertblue!40, densely dotted] (emb-sep) to[bend left=20] (emb-cls);
 
-% Attention flow to CLS
-\node[label, bertblue!80] at (0, 1.5) {Aggregates};
-\node[label, bertblue!80] at (0, 1.2) {Information};
+% Attention flow to CLS label
+\node[label, bertblue!80, below=0.2cm of emb-cls] (agg-label) {Aggregates\\Information};
 
 % Position embeddings
 \node[rectangle, draw=black!40, fill=gptgreen!10, minimum width=11cm, minimum height=0.3cm] at (5.1, 1.0) {};
@@ -96,15 +106,15 @@
 \node[regular, scale=0.7] at (11.8, 1.3) {word};
 \node[label, align=left] at (13.2, 1.3) {Regular};
 
-% Annotations
-\draw[arrow, black!60] (0, 0.5) -- (0, 1.3);
-\node[label, align=center] at (0, 0) {Used for\\Classification};
+% Annotations - positioned relative to embeddings
+\node[label, align=center, below=1.5cm of emb-cls] (cls-ann) {Used for\\Classification};
+\draw[arrow, black!60] (cls-ann.north) -- (emb-cls.south);
 
-\draw[arrow, black!60] (4.1, 0.5) -- (4.1, 2.2);
-\node[label, align=center] at (4.1, 0) {Predicted\\During MLM};
+\node[label, align=center, below=1.5cm of emb-mask] (mask-ann) {Predicted\\During MLM};
+\draw[arrow, black!60] (mask-ann.north) -- (emb-mask.south);
 
-\draw[arrow, black!60] (10.2, 0.5) -- (10.2, 2.2);
-\node[label, align=center] at (10.2, 0) {Ignored in\\Attention};
+\node[label, align=center, below=1.5cm of emb-pad] (pad-ann) {Ignored in\\Attention};
+\draw[arrow, black!60] (pad-ann.north) -- (emb-pad.south);
 
 \end{tikzpicture}
 \end{document}

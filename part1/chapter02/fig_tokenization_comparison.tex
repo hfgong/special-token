@@ -17,61 +17,67 @@
     title/.style={font=\large\bfseries}
 ]
 
-% Title removed - using figure caption instead
+% === SPACING AND ALIGNMENT DOCUMENTATION ===
+% Input text: y=8.2, centered
+% Method headers: y=7.3, x positions at 1.5 and 8.5
+% Token examples: y=6.5 for methods 1-2, y=4.2-3.8 for methods 3-4
+% Comparison table: y=2 to 1.3
+% Bottom insights: y=0
 
 % Input text
 \node[label, align=center] at (6, 8.2) {\textbf{Input Text:}\\``The antidisestablishmentarianism was extraordinary''};
 
 % Method 1: Traditional Word-Level
-\node[label, bertblue, align=left] at (1, 7.3) {\textbf{1. Traditional Word-Level}\\(vocab\_size = 5,000)};
+\node[label, bertblue, align=left] (method1) at (1.5, 7.3) {\textbf{1. Traditional Word-Level}\\(vocab\_size = 5,000)};
 
-\node[goodtoken] at (0.5, 6.5) {The};
-\node[unktoken] at (2, 6.5) {[UNK]};
-\node[goodtoken] at (3.5, 6.5) {was};
-\node[unktoken] at (5, 6.5) {[UNK]};
+\node[goodtoken] (trad1) at (0.5, 6.5) {The};
+\node[unktoken, right=0.2cm of trad1] (trad2) {[UNK]};
+\node[goodtoken, right=0.2cm of trad2] (trad3) {was};
+\node[unktoken, right=0.2cm of trad3] (trad4) {[UNK]};
 
-\node[label, align=center] at (2.75, 5.9) {\textcolor{unkred}{50\% UNK rate}\\Information loss};
+\node[label, align=center, below=0.3cm of trad2.south east] {\textcolor{unkred}{50\% UNK rate}\\Information loss};
 
 % Method 2: Character-Level
-\node[label, gptgreen, align=left] at (8, 7.3) {\textbf{2. Character-Level}\\(no vocabulary limit)};
+\node[label, gptgreen, align=left] (method2) at (8.5, 7.3) {\textbf{2. Character-Level}\\(no vocabulary limit)};
 
-\node[goodtoken, scale=0.7] at (7, 6.7) {T};
-\node[goodtoken, scale=0.7] at (7.4, 6.7) {h};
-\node[goodtoken, scale=0.7] at (7.8, 6.7) {e};
-\node[goodtoken, scale=0.7] at (8.2, 6.7) {\space};
-\node[goodtoken, scale=0.7] at (8.6, 6.7) {a};
-\node[goodtoken, scale=0.7] at (9, 6.7) {n};
-\node[label] at (9.4, 6.7) {...};
+% First row of characters
+\node[goodtoken, scale=0.7] (char1) at (7, 6.7) {T};
+\node[goodtoken, scale=0.7, right=0.05cm of char1] (char2) {h};
+\node[goodtoken, scale=0.7, right=0.05cm of char2] (char3) {e};
+\node[goodtoken, scale=0.7, right=0.05cm of char3] (char4) {\_};
+\node[goodtoken, scale=0.7, right=0.05cm of char4] (char5) {a};
+\node[goodtoken, scale=0.7, right=0.05cm of char5] (char6) {n};
+\node[label, right=0.1cm of char6] {...};
 
-\node[goodtoken, scale=0.7] at (7, 6.3) {w};
-\node[goodtoken, scale=0.7] at (7.4, 6.3) {a};
-\node[goodtoken, scale=0.7] at (7.8, 6.3) {s};
-\node[goodtoken, scale=0.7] at (8.2, 6.3) {\space};
-\node[goodtoken, scale=0.7] at (8.6, 6.3) {e};
-\node[goodtoken, scale=0.7] at (9, 6.3) {x};
-\node[label] at (9.4, 6.3) {...};
+% Second row of characters
+\node[goodtoken, scale=0.7] (char7) at (7, 6.3) {w};
+\node[goodtoken, scale=0.7, right=0.05cm of char7] (char8) {a};
+\node[goodtoken, scale=0.7, right=0.05cm of char8] (char9) {s};
+\node[goodtoken, scale=0.7, right=0.05cm of char9] (char10) {\_};
+\node[goodtoken, scale=0.7, right=0.05cm of char10] (char11) {e};
+\node[goodtoken, scale=0.7, right=0.05cm of char11] (char12) {x};
+\node[label, right=0.1cm of char12] {...};
 
-\node[label, align=center] at (8, 5.9) {\textcolor{gptgreen}{0\% UNK rate}\\Very long sequences};
+\node[label, align=center] at (8.2, 5.9) {\textcolor{gptgreen}{0\% UNK rate}\\Very long sequences};
 
 % Method 3: Subword (BPE/WordPiece)
 \node[label, subwordpurple, align=left] at (3, 5) {\textbf{3. Subword Tokenization}\\(WordPiece/BPE)};
 
-% First word breakdown
-\node[subword] at (0.8, 4.2) {The};
-\node[subword] at (2.2, 4.2) {anti};
-\node[subword] at (3.4, 4.2) {\#\#dis};
-\node[subword] at (4.7, 4.2) {\#\#esta};
-\node[subword] at (6.1, 4.2) {\#\#bli};
+% First word breakdown - properly spaced
+\node[subword] (sub1) at (0.5, 4.2) {The};
+\node[subword, right=0.1cm of sub1] (sub2) {anti};
+\node[subword, right=0.1cm of sub2] (sub3) {\#\#dis};
+\node[subword, right=0.1cm of sub3] (sub4) {\#\#esta};
+\node[subword, right=0.1cm of sub4] (sub5) {\#\#bli};
+\node[subword, right=0.1cm of sub5] (sub6) {\#\#sh};
 
-\node[subword] at (0.8, 3.8) {\#\#sh};
-\node[subword] at (2.2, 3.8) {\#\#ment};
-\node[subword] at (3.6, 3.8) {\#\#arian};
-\node[subword] at (5.2, 3.8) {\#\#ism};
-
-% Second word
-\node[subword] at (7, 4.2) {was};
-\node[subword] at (8.5, 4.2) {extra};
-\node[subword] at (10, 4.2) {\#\#ordinary};
+% Second row of subwords
+\node[subword, below=0.3cm of sub2] (sub7) {\#\#ment};
+\node[subword, right=0.1cm of sub7] (sub8) {\#\#arian};
+\node[subword, right=0.1cm of sub8] (sub9) {\#\#ism};
+\node[subword, right=0.1cm of sub9] (sub10) {was};
+\node[subword, right=0.1cm of sub10] (sub11) {extra};
+\node[subword, right=0.1cm of sub11] (sub12) {\#\#ordinary};
 
 \node[label, align=center] at (5, 3.3) {\textcolor{subwordpurple}{0\% UNK rate}\\Balanced efficiency};
 
@@ -126,7 +132,7 @@
 \node[label, font=\footnotesize, gptgreen] at (10, 1.3) {Perfect};
 
 % Evolution arrow
-\draw[->, very thick, black!60] (1, 0.8) -- (10, 0.8);
+\draw[-{Stealth}, very thick, black!60] (1, 0.8) -- (10, 0.8);
 \node[label] at (5.5, 0.5) {Evolution toward better OOV handling};
 
 % Key insights

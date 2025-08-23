@@ -12,23 +12,51 @@
     token/.style={rectangle, rounded corners=3pt, minimum width=1.5cm, minimum height=0.8cm, font=\footnotesize},
     sostoken/.style={token, fill=soscolor!20, draw=soscolor, thick},
     normaltoken/.style={token, fill=tokencolor!20, draw=tokencolor},
-    attention/.style={->, thick, blue!60, opacity=0.7},
+    attention/.style={-{Stealth}, thick, blue!60, opacity=0.7},
     label/.style={font=\small},
     title/.style={font=\large\bfseries}
 ]
 
-% Title removed - using figure caption instead
+% === COMPREHENSIVE SPACING AND ALIGNMENT DOCUMENTATION ===
+%
+% OVERALL LAYOUT (12cm width x 8cm height approximately):
+% - Title: y=7.2, horizontally centered at x=6
+% - Token sequence: y=6.5, spans x=1 to x=7 with 0.5cm gaps using relative positioning
+% - Position labels: 0.3cm below each token using "below=0.3cm of token"
+% - Attention arrows: curved paths from tokens to SOS with varying bend angles (30°-70°)
+% - Attention weights: positioned along arrow curves using calc library interpolation
+% - Attention matrix: y=4.5, centered at x=6 with 0.5x0.35 cell dimensions
+% - Matrix labels: tiny font, positioned 0.05cm from matrix edges
+% - Key insights box: y=1.5, 10cm width x 1.5cm height, centered at x=6
+% - Generation process note: y=0.5, centered
+%
+% COLOR SCHEME:
+% - SOS token: soscolor (yellow) background with soscolor border
+% - Normal tokens: tokencolor (purple) background with tokencolor border  
+% - SOS matrix cells: soscolor!80 (self) and soscolor!30 (column)
+% - Attention matrix: blue!70 (SOS column), blue!50 (other valid), gray!10 (masked)
+% - Attention arrows: blue!60 with 0.7 opacity
+%
+% RELATIVE POSITIONING USAGE:
+% - Tokens positioned relative to previous: "right=0.5cm of previous_token"
+% - Position labels: "below=0.3cm of token"
+% - Matrix positioned using scope shift for grouped elements
+%
+% SIZE CONSTRAINTS:
+% - Token minimum width: 1.5cm, height: 0.8cm with 3pt rounded corners
+% - Matrix cells: 0.45x0.3cm with thin borders, 0.05cm spacing
+% - Font sizes: \footnotesize for tokens, \tiny for matrix, \small for labels
 
 % Input sequence with SOS
 \node[label] at (6, 7.2) {\textbf{Generation Sequence:}};
 
-% Tokens
+% Tokens - using relative positioning for consistent spacing
 \node[sostoken] (sos) at (1, 6.5) {[SOS]};
-\node[normaltoken] (t1) at (3, 6.5) {The};
-\node[normaltoken] (t2) at (5, 6.5) {cat};
-\node[normaltoken] (t3) at (7, 6.5) {sits};
-\node[normaltoken] (t4) at (9, 6.5) {on};
-\node[normaltoken] (t5) at (11, 6.5) {mat};
+\node[normaltoken, right=0.5cm of sos] (t1) {The};
+\node[normaltoken, right=0.5cm of t1] (t2) {cat};
+\node[normaltoken, right=0.5cm of t2] (t3) {sits};
+\node[normaltoken, right=0.5cm of t3] (t4) {on};
+\node[normaltoken, right=0.5cm of t4] (t5) {mat};
 
 % Position labels
 \node[label, below=0.3cm of sos] {pos 0};
@@ -45,54 +73,61 @@
 \draw[attention] (t4) to[bend left=60] (sos);
 \draw[attention] (t5) to[bend left=70] (sos);
 
-% Attention weights (example values)
-\node[label, soscolor] at (2, 7.8) {0.15};
-\node[label, soscolor] at (4, 7.6) {0.12};
-\node[label, soscolor] at (6, 7.4) {0.08};
-\node[label, soscolor] at (8, 7.2) {0.05};
-\node[label, soscolor] at (10, 7.0) {0.03};
+% Attention weights (example values) - positioned along the curves
+\node[label, soscolor] at ($(t1)!0.5!(sos) + (0,0.8)$) {0.15};
+\node[label, soscolor] at ($(t2)!0.5!(sos) + (0,1.0)$) {0.12};
+\node[label, soscolor] at ($(t3)!0.5!(sos) + (0,1.2)$) {0.08};
+\node[label, soscolor] at ($(t4)!0.5!(sos) + (0,1.4)$) {0.05};
+\node[label, soscolor] at ($(t5)!0.5!(sos) + (0,1.6)$) {0.03};
 
 % Self-attention pattern visualization
-\node[label] at (6, 5.5) {\textbf{Attention Matrix (Layer 6):}};
+\node[label] (matrix-title) at (6, 5) {\textbf{Attention Matrix (Layer 6):}};
 
-% Create attention matrix
-\begin{scope}[shift={(6,-1)}]
+% Create attention matrix - better positioned and sized
+\begin{scope}[shift={(6,-0.5)}]
 \foreach \i in {0,...,5} {
     \foreach \j in {0,...,5} {
-        \pgfmathsetmacro{\opacity}{0.8 - 0.1*\j}
-        \ifnum\j=0
-            \def\color{soscolor}
-        \else
-            \def\color{tokencolor}
-        \fi
         \ifnum\i=0
-            \fill[\color!\opacity!white] (\j*0.6-1.5, -\i*0.4) rectangle ++(0.5, 0.35);
+            \ifnum\j=0
+                \fill[soscolor!80] (\j*0.5-1.25, -\i*0.35) rectangle ++(0.45, 0.3);
+            \else
+                \fill[soscolor!30] (\j*0.5-1.25, -\i*0.35) rectangle ++(0.45, 0.3);
+            \fi
         \else
             \ifnum\j<\i
-                \pgfmathsetmacro{\attweight}{0.8 - 0.1*(\i-\j)}
-                \fill[blue!\attweight!white] (\j*0.6-1.5, -\i*0.4) rectangle ++(0.5, 0.35);
+                \ifnum\j=0
+                    \fill[blue!70] (\j*0.5-1.25, -\i*0.35) rectangle ++(0.45, 0.3);
+                \else
+                    \fill[blue!50] (\j*0.5-1.25, -\i*0.35) rectangle ++(0.45, 0.3);
+                \fi
             \else
-                \fill[gray!10] (\j*0.6-1.5, -\i*0.4) rectangle ++(0.5, 0.35);
+                \fill[gray!10] (\j*0.5-1.25, -\i*0.35) rectangle ++(0.45, 0.3);
             \fi
         \fi
-        \draw[thin] (\j*0.6-1.5, -\i*0.4) rectangle ++(0.5, 0.35);
+        \draw[thin] (\j*0.5-1.25, -\i*0.35) rectangle ++(0.45, 0.3);
     }
 }
 
-% Matrix labels
-\node[label, font=\tiny] at (-1.8, 0) {[SOS]};
-\node[label, font=\tiny] at (-1.8, -0.4) {The};
-\node[label, font=\tiny] at (-1.8, -0.8) {cat};
-\node[label, font=\tiny] at (-1.8, -1.2) {sits};
-\node[label, font=\tiny] at (-1.8, -1.6) {on};
-\node[label, font=\tiny] at (-1.8, -2.0) {mat};
+% Matrix labels - better positioned
+% Row labels (Query)
+\node[label, font=\tiny, anchor=east] at (-1.35, 0) {[SOS]};
+\node[label, font=\tiny, anchor=east] at (-1.35, -0.35) {The};
+\node[label, font=\tiny, anchor=east] at (-1.35, -0.7) {cat};
+\node[label, font=\tiny, anchor=east] at (-1.35, -1.05) {sits};
+\node[label, font=\tiny, anchor=east] at (-1.35, -1.4) {on};
+\node[label, font=\tiny, anchor=east] at (-1.35, -1.75) {mat};
 
-\node[label, font=\tiny] at (-1.2, 0.3) {[SOS]};
-\node[label, font=\tiny] at (-0.6, 0.3) {The};
-\node[label, font=\tiny] at (0, 0.3) {cat};
-\node[label, font=\tiny] at (0.6, 0.3) {sits};
-\node[label, font=\tiny] at (1.2, 0.3) {on};
-\node[label, font=\tiny] at (1.8, 0.3) {mat};
+% Column labels (Key)
+\node[label, font=\tiny, anchor=south] at (-1, 0.2) {[SOS]};
+\node[label, font=\tiny, anchor=south] at (-0.5, 0.2) {The};
+\node[label, font=\tiny, anchor=south] at (0, 0.2) {cat};
+\node[label, font=\tiny, anchor=south] at (0.5, 0.2) {sits};
+\node[label, font=\tiny, anchor=south] at (1, 0.2) {on};
+\node[label, font=\tiny, anchor=south] at (1.5, 0.2) {mat};
+
+% Axis labels
+\node[label, font=\tiny, rotate=90] at (-2, -0.85) {Query};
+\node[label, font=\tiny] at (0.25, 0.5) {Key};
 \end{scope}
 
 % Legend

@@ -40,8 +40,7 @@ The \sep{} token participates in self-attention, allowing it to:
 \item Act as a bridge for cross-segment information flow
 \end{itemize}
 
-\begin{example}[SEP Token Usage]
-\begin{lstlisting}[language=Python]
+\begin{lstlisting}[language=Python, caption=SEP Token Usage]
 from transformers import BertTokenizer, BertModel
 import torch
 
@@ -76,7 +75,6 @@ for pos in sep_positions:
     sep_repr = sequence_output[pos[0], pos[1], :]
     print(f"SEP at position {pos[1].item()}: shape {sep_repr.shape}")
 \end{lstlisting}
-\end{example}
 
 \subsection{Cross-Segment Information Flow}
 
@@ -171,8 +169,7 @@ Format: \texttt{[CLS] chapter [SEP] section [SEP] paragraph [SEP]}
 
 \sep{} tokens can represent hierarchical document structure.
 
-\begin{example}[Multi-Segment Processing]
-\begin{lstlisting}[language=Python]
+\begin{lstlisting}[language=Python, caption=Multi-Segment Processing]
 def encode_multi_segment(segments, tokenizer, max_length=512):
     """Encode multiple text segments with SEP separation."""
     
@@ -220,7 +217,6 @@ segments = [
 encoded = encode_multi_segment(segments, tokenizer)
 print("Multi-segment encoding complete")
 \end{lstlisting}
-\end{example}
 
 \subsection{Training Dynamics and Optimization}
 

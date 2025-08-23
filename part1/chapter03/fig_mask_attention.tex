@@ -12,13 +12,42 @@
     token/.style={rectangle, rounded corners=3pt, minimum width=1.5cm, minimum height=0.8cm, font=\footnotesize},
     masktoken/.style={token, fill=maskred!20, draw=maskred, thick},
     normaltoken/.style={token, fill=tokencolor!20, draw=tokencolor},
-    attention/.style={<->, thick, attentioncolor, opacity=0.8},
-    prediction/.style={->, very thick, maskred},
+    attention/.style={{Stealth}-{Stealth}, thick, attentioncolor, opacity=0.8},
+    prediction/.style={-{Stealth}, very thick, maskred},
     label/.style={font=\small},
     title/.style={font=\large\bfseries}
 ]
 
-% Title removed - using figure caption instead
+% === COMPREHENSIVE SPACING AND ALIGNMENT DOCUMENTATION ===
+%
+% OVERALL LAYOUT (14cm width x 8.5cm height approximately):
+% - Title: y=7.8, horizontally centered at x=6
+% - Original text: y=7.4, gray text showing unmasked version
+% - Token sequence: y=6.5, spans x=1 to x=11 with 2cm gaps using relative positioning
+% - Position labels: 0.3cm below each token using "below=0.3cm of token"
+% - Bidirectional attention: curved arrows between MASK tokens and all other tokens
+% - Attention weights: positioned above first MASK token curves
+% - Predictions: y=5.8, positioned below each MASK token
+% - Attention matrix: y=2.5, centered with 0.6x0.4 cell dimensions
+% - Matrix labels: tiny font, positioned 0.1cm from matrix edges
+% - Key insights box: y=0.8, 12cm width x 2cm height, centered
+%
+% COLOR SCHEME:
+% - MASK tokens: maskred (red) background with maskred border
+% - Normal tokens: tokencolor (purple) background with tokencolor border
+% - MASK matrix cells: maskred!50 for self-attention
+% - Attention weights: attentioncolor (green) for bidirectional connections
+% - Attention matrix: varied colors showing bidirectional patterns
+%
+% RELATIVE POSITIONING USAGE:
+% - Tokens positioned relative to previous: "right=2cm of previous_token"
+% - Position labels: "below=0.3cm of token"
+% - Matrix positioned using scope shift for grouped elements
+%
+% SIZE CONSTRAINTS:
+% - Token minimum width: 1.5cm, height: 0.8cm with 3pt rounded corners
+% - Matrix cells: 0.5x0.35cm with thin borders, 0.1cm spacing
+% - Font sizes: \footnotesize for tokens, \tiny for matrix, \small for labels
 
 % Input sequence with MASK
 \node[label] at (6, 7.8) {\textbf{MLM Training Example:}};
@@ -26,13 +55,13 @@
 % Original text
 \node[label, gray] at (6, 7.4) {Original: "The cat sits on the mat"};
 
-% Masked sequence
+% Masked sequence - using relative positioning for better alignment
 \node[normaltoken] (t1) at (1, 6.5) {The};
-\node[masktoken] (mask1) at (3, 6.5) {[MASK]};
-\node[normaltoken] (t3) at (5, 6.5) {sits};
-\node[normaltoken] (t4) at (7, 6.5) {on};
-\node[normaltoken] (t5) at (9, 6.5) {the};
-\node[masktoken] (mask2) at (11, 6.5) {[MASK]};
+\node[masktoken, right=2cm of t1] (mask1) {[MASK]};
+\node[normaltoken, right=2cm of mask1] (t3) {sits};
+\node[normaltoken, right=2cm of t3] (t4) {on};
+\node[normaltoken, right=2cm of t4] (t5) {the};
+\node[masktoken, right=2cm of t5] (mask2) {[MASK]};
 
 % Position labels
 \node[label, below=0.3cm of t1] {pos 0};
