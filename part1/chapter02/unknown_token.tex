@@ -1,4 +1,4 @@
-\section{Unknown Token [UNK]}
+\section{Unknown Token \unk{}}
 
 The unknown token, denoted as \unk{}, is more than just a placeholder; it is the embodiment of a fundamental tension in natural language processing: the conflict between the finite vocabulary of a machine learning model and the infinite, ever-evolving nature of human language. Despite the evolution of sophisticated subword tokenization methods, the \unk{} token remains crucial for handling out-of-vocabulary (OOV) words and understanding the robustness limits of language models. This section explores its historical significance, modern applications, and the ongoing challenge of vocabulary coverage in transformer models.
 \begin{comment}
@@ -100,10 +100,21 @@ During text generation:
 \subsection{The Subword Revolution}
 
 The limitations of \unk{} tokens drove the development of subword tokenization methods. The key insight behind the subword revolution was that even rare and unknown words are often composed of common, meaningful sub-units. By breaking words down into these smaller pieces, a model could maintain a fixed vocabulary while still representing a virtually unlimited set of words.
-\begin{comment}
-Feedback: This is a great transition. Before listing the methods, it would be powerful to state the core insight that unites them. For example: "The key insight behind the subword revolution was that even rare and unknown words are often composed of common, meaningful sub-units. By breaking words down into these smaller pieces, a model could maintain a fixed vocabulary while still representing a virtually unlimited set of words."
 
-STATUS: addressed - added core insight about subword decomposition enabling unlimited word representation with fixed vocabulary
+However, the subword revolution did not completely eliminate \unk{} tokens. While their frequency dramatically decreased, modern transformer models still retain \unk{} tokens for edge cases:
+
+\begin{itemize}
+\item \textbf{BERT}: Uses \texttt{[UNK]} for characters or sequences outside its WordPiece vocabulary
+\item \textbf{T5}: Employs \texttt{<unk>} tokens when SentencePiece cannot tokenize unusual character sequences  
+\item \textbf{GPT-2/GPT-3}: Rarely encounter \unk{} due to byte-level BPE, but retain the mechanism
+\item \textbf{PaLM}: Uses SentencePiece with \unk{} fallback for truly unusual inputs
+\end{itemize}
+
+In practice, \unk{} tokens now occur primarily with: corrupted text, rare Unicode characters, adversarial inputs, or domain-specific symbols not seen during tokenizer training.
+\begin{comment}
+Feedback: After Subword revolution, is UNK eliminated? List the popular models if they use UNK: BERT, T5, GPT-2, GPT-3, PALM etc.
+
+STATUS: addressed - added explanation that UNK still exists in modern models with specific examples of when and how it's used
 \end{comment}
 
 \subsubsection{Byte Pair Encoding (BPE)}
@@ -208,7 +219,7 @@ Even advanced subword methods struggle with:
 \caption{Comparison of tokenization strategies and their handling of out-of-vocabulary words}
 \end{figure}
 
-\subsection{Handling UNK Tokens in Practice}
+\subsection{Handling \unk{} Tokens in Practice}
 
 \subsubsection{Training Strategies}
 When \unk{} tokens are present:
@@ -357,7 +368,7 @@ Emerging techniques for adaptive vocabularies:
 \item Learned token boundaries
 \end{itemize}
 
-\subsection{UNK Tokens in Evaluation and Metrics}
+\subsection{\unk{} Tokens in Evaluation and Metrics}
 
 \subsubsection{Impact on Evaluation}
 \unk{} tokens affect various metrics:
@@ -374,36 +385,33 @@ Emerging techniques for adaptive vocabularies:
 \item Consider domain-specific vocabulary coverage
 \end{itemize}
 
-\subsection{Future Directions}
+% \subsection{Future Directions}
 
-\subsubsection{Contextualized UNK Handling}
-Future developments may include:
-\begin{itemize}
-\item Context-aware \unk{} token representations
-\item Learned strategies for \unk{} token processing
-\item Dynamic vocabulary expansion during inference
-\end{itemize}
+% \subsubsection{Contextualized UNK Handling}
+% Future developments may include:
+% \begin{itemize}
+% \item Context-aware \unk{} token representations
+% \item Learned strategies for \unk{} token processing
+% \item Dynamic vocabulary expansion during inference
+% \end{itemize}
 
-\subsubsection{Cross-Lingual UNK Mitigation}
-Multilingual models may develop:
-\begin{itemize}
-\item Cross-lingual transfer for \unk{} tokens
-\item Universal character-level representations
-\item Language-adaptive tokenization strategies
-\end{itemize}
+% \subsubsection{Cross-Lingual UNK Mitigation}
+% Multilingual models may develop:
+% \begin{itemize}
+% \item Cross-lingual transfer for \unk{} tokens
+% \item Universal character-level representations
+% \item Language-adaptive tokenization strategies
+% \end{itemize}
 
-\begin{principle}[UNK Token Best Practices]
-\begin{enumerate}
-\item \textbf{Minimize Occurrence}: Use appropriate subword tokenization to reduce \unk{} frequency
-\item \textbf{Monitor Coverage}: Regularly analyze vocabulary coverage for target domains
-\item \textbf{Handle Gracefully}: Implement robust strategies for \unk{} token processing
-\item \textbf{Evaluate Impact}: Assess how \unk{} tokens affect downstream task performance
-\item \textbf{Document Limitations}: Clearly communicate vocabulary limitations to users
-\end{enumerate}
-\end{principle}
-\begin{comment}
-Feedback: This is a good list. To make it more actionable: For "Monitor Coverage," you could suggest: "Before fine-tuning on a new domain, run a vocabulary coverage analysis. If the [UNK] rate is above a certain threshold (e.g., 1%), consider augmenting the tokenizer's vocabulary with new domain-specific tokens." For "Handle Gracefully," you could add: "For generative tasks, implement a copy mechanism or a constrained decoding strategy to prevent the model from outputting literal '[UNK]' strings, which are unintelligible to users."
-\end{comment}
+% \begin{principle}[UNK Token Best Practices]
+% \begin{enumerate}
+% \item \textbf{Minimize Occurrence}: Use appropriate subword tokenization to reduce \unk{} frequency
+% \item \textbf{Monitor Coverage}: Regularly analyze vocabulary coverage for target domains
+% \item \textbf{Handle Gracefully}: Implement robust strategies for \unk{} token processing
+% \item \textbf{Evaluate Impact}: Assess how \unk{} tokens affect downstream task performance
+% \item \textbf{Document Limitations}: Clearly communicate vocabulary limitations to users
+% \end{enumerate}
+% \end{principle}
 
 \subsection{Conclusion}
 

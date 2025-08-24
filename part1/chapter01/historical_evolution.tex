@@ -36,7 +36,7 @@ The original transformer primarily used:
 
 BERT \citep{devlin2018bert} transformed special tokens from simple markers into architectural components. Three key innovations emerged:
 
-\subsubsection{The [CLS] Token Revolution}
+\subsubsection{The \cls{} Token Revolution}
 BERT introduced the \cls{} token as a dedicated aggregation point for sentence-level representations. This design choice, while simple, was a significant departure from previous methods that required complex pooling strategies (e.g., max-pooling or mean-pooling over all token representations). It offered a parameter-efficient way to derive a single, powerful representation for the entire sequence:
 \begin{itemize}
 \item It provided a fixed position for classification tasks
@@ -50,15 +50,15 @@ Feedback: The word "revolutionary" is strong. While the [CLS] token was hugely i
 STATUS: addressed - reframed to emphasize significant departure from previous methods and parameter efficiency
 \end{comment}
 
-\subsubsection{The [SEP] Token for Multi-Segment Processing}
+\subsubsection{The \sep{} Token for Multi-Segment Processing}
 The \sep{} token enabled BERT to process multiple sentences simultaneously, crucial for tasks like:
 \begin{itemize}
-\item Question answering (question [SEP] context)
-\item Natural language inference (premise [SEP] hypothesis)
+\item Question answering (question \sep{} context)
+\item Natural language inference (premise \sep{} hypothesis)
 \item Sentence pair classification
 \end{itemize}
 
-\subsubsection{The [MASK] Token and Bidirectional Pre-training}
+\subsubsection{The \mask{} Token and Bidirectional Pre-training}
 The \mask{} token enabled masked language modeling (MLM), allowing BERT to learn bidirectional representations. This was impossible with traditional left-to-right language modeling and represented a fundamental shift in pre-training methodology.
 
 \subsection{GPT Series: Minimalist Special Tokens (2018-2023)}
@@ -128,6 +128,7 @@ Recent innovations include register tokens \citep{darcet2023vision} that serve a
 The historical evolution of special tokens reveals several important patterns:
 
 \begin{principle}[Evolution Patterns]
+
 \begin{enumerate}
 \item \textbf{From Necessity to Architecture}: Special tokens evolved from solving practical problems to enabling new architectures
 \item \textbf{Cross-Modal Transfer}: Successful special token designs transfer across modalities (text to vision)
@@ -136,15 +137,15 @@ The historical evolution of special tokens reveals several important patterns:
 \end{enumerate}
 \end{principle}
 
-\subsection{Current Trends and Future Directions}
+% \subsection{Current Trends and Future Directions}
 
-Today's special token research focuses on:
+% Today's special token research focuses on:
 
-\begin{itemize}
-\item \textbf{Dynamic Tokens}: Tokens that adapt based on input content
-\item \textbf{Hierarchical Tokens}: Multi-level special tokens for structured data
-\item \textbf{Continuous Tokens}: Soft, continuous representations rather than discrete tokens
-\item \textbf{Universal Tokens}: Special tokens that work across different model architectures
-\end{itemize}
+% \begin{itemize}
+% \item \textbf{Dynamic Tokens}: Tokens that adapt based on input content
+% \item \textbf{Hierarchical Tokens}: Multi-level special tokens for structured data
+% \item \textbf{Continuous Tokens}: Soft, continuous representations rather than discrete tokens
+% \item \textbf{Universal Tokens}: Special tokens that work across different model architectures
+% \end{itemize}
 
 Understanding this historical context is crucial for appreciating why special tokens are designed the way they are today and for anticipating future developments. As we'll see in subsequent chapters, each major special token innovation has unlocked new capabilities in transformer models, from bidirectional understanding to multimodal reasoning.

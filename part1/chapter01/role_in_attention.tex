@@ -37,7 +37,7 @@ The \cls{} token exemplifies global information aggregation. Through multi-head 
 h_{\text{CLS}}^{(l+1)} = \text{MultiHead}\left(\sum_{i=1}^{n} \alpha_{i} h_i^{(l)}\right)
 \end{equation}
 
-where $\alpha_i$ represents attention weights from the \cls{} token to position $i$, and $l$ denotes the layer index. In simple terms, this equation shows that the \cls{} token's representation at the next layer is a weighted sum of all the other tokens' representations from the current layer. The attention scores determine the weights, allowing the \cls{} token to "listen" most closely to the most important parts of the sequence. This aggregation mechanism allows the \cls{} token to develop a comprehensive representation of the entire input sequence.
+where $\alpha_i$ represents attention weights from the \cls{} token to position $i$, and $l$ denotes the layer index. In simple terms, this equation shows that the \cls{} token's representation at the next layer is a weighted sum of all the other tokens' representations from the current layer. The attention scores determine the weights, allowing the \cls{} token to ``listen" most closely to the most important parts of the sequence. This aggregation mechanism allows the \cls{} token to develop a comprehensive representation of the entire input sequence.
 \begin{comment}
 Feedback: The equation is correct, but it might be helpful to add a plain-language explanation of what it means. For example: "In simple terms, this equation shows that the [CLS] token's representation at the next layer is a weighted sum of all the other tokens' representations from the current layer. The attention scores determine the weights, allowing the [CLS] token to 'listen' most closely to the most important parts of the sequence."
 

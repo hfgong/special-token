@@ -1,4 +1,4 @@
-\section{Classification Token [CLS]}
+\section{Classification Token \cls{}}
 
 The classification token\index{CLS token}, denoted as \cls{}, stands as one of a highly influential innovations in transformer architecture. Introduced by BERT\index{BERT} \citep{devlin2018bert}, the \cls{} token changed how transformers handle sequence-level tasks by providing a dedicated position for aggregating contextual information from the entire input sequence.
 \begin{comment}
@@ -71,15 +71,15 @@ While the \cls{} token provides an elegant solution, several alternative pooling
 
 \subsubsection{Mean Pooling}
 Averages representations across all non-special tokens:
-$h_{\text{mean}} = \frac{1}{n} \sum_{i=1}^{n} h_i$
+$h_{\text{mean}} = \frac{1}{n} \sum_{i=1}^{n} h_i$.
 
 \subsubsection{Max Pooling}
 Takes element-wise maximum across token representations:
-$h_{\text{max}} = \max(h_1, h_2, \ldots, h_n)$
+$h_{\text{max}} = \max(h_1, h_2, \ldots, h_n)$.
 
 \subsubsection{Attention Pooling}
 Uses learned attention weights to combine token representations:
-$h_{\text{att}} = \sum_{i=1}^{n} \alpha_i h_i, \quad \text{where } \alpha_i = \text{softmax}(w^T h_i)$
+$h_{\text{att}} = \sum_{i=1}^{n} \alpha_i h_i$, where $\alpha_i = \text{softmax}(w^T h_i)$.
 
 \subsubsection{Multi-Head Pooling}
 Combines multiple pooling strategies or uses multiple \cls{} tokens for different aspects of the input.
@@ -125,6 +125,9 @@ Combines multiple pooling strategies or uses multiple \cls{} tokens for differen
 \begin{comment}
 Feedback: The diagram is illustrative, but the performance percentages (85%, 82%, 91%) seem arbitrary. If these are from a specific paper or experiment, it would be great to cite it. If they are illustrative, it would be better to use qualitative labels instead of specific numbers to avoid giving a false sense of precision. For example: "Good Baseline", "Can be Noisy", "Often Superior".
 \end{comment}
+\begin{comment}
+Feedback: Is the performance comparison hallucinated? Also move the tikzpicture into a separate standalone latex file, compile using lualatex as a PDF and includegraphics here. This helps to review the diagram without compiling entire book.
+\end{comment}
 \end{figure}
 
 \subsection{Applications Across Domains}
@@ -137,21 +140,33 @@ The success of the \cls{} token in NLP led to its adoption across various domain
 - Spam detection
 - Intent recognition
 
+\begin{comment}
+Feedback: Convert the above into latex items, with a little elaboration.
+\end{comment}
+
 \subsubsection{Sentence Pair Tasks}
 When processing two sentences, BERT uses the format:
 $\{\cls{}, \text{sentence}_1, \sep{}, \text{sentence}_2, \sep{}\}$
 
 The \cls{} token aggregates information from both sentences for tasks like:
-- Natural language inference
-- Semantic textual similarity  
-- Question answering
-- Paraphrase detection
+\begin{itemize}
+\item \textbf{Natural language inference}: Determining logical relationships (entailment, contradiction, or neutrality) between premise and hypothesis sentences
+\item \textbf{Semantic textual similarity}: Measuring the degree of semantic equivalence between sentence pairs on continuous scales
+\item \textbf{Question answering}: Combining question and passage context to produce answer representations for span selection or classification
+\item \textbf{Paraphrase detection}: Identifying whether two sentences express the same meaning despite different surface forms
+\end{itemize}
+
+\begin{comment}
+Feedback: Convert the above into latex items, with a little elaboration.
+
+STATUS: addressed - converted to proper LaTeX items with detailed elaborations for each task type
+\end{comment}
 
 These tasks are commonly evaluated on benchmark suites like GLUE \citep{wang2018glue} and SuperGLUE \citep{wang2019superglue}.
 
 \subsubsection{Vision Transformers}
-Vision Transformers \citep{dosovitskiy2020image} adapted the \cls{} token for image classification:
-$\{\cls{}, \text{patch}_1, \text{patch}_2, \ldots, \text{patch}_N\}$
+Vision Transformers \citep{dosovitskiy2020image} adapted the \cls{} token for image classification:\\
+$\{\cls{}, \text{patch}_1, \text{patch}_2, \ldots, \text{patch}_N\}$.
 
 The \cls{} token aggregates spatial information from image patches to produce global image representations. ViTs achieve competitive performance on ImageNet \citep{russakovsky2015imagenet, deng2009imagenet} and other vision benchmarks while maintaining computational efficiency \citep{strubell2019energy}.
 
@@ -161,11 +176,26 @@ The \cls{} token's effectiveness depends on proper training strategies:
 
 \subsubsection{Pre-training Objectives}
 During BERT pre-training, the \cls{} token is optimized for:
-- Next Sentence Prediction (NSP): Determining if two sentences follow each other
-- Masked Language Modeling: Contributing to bidirectional context understanding
+\begin{itemize}
+\item \textbf{Next Sentence Prediction (NSP)}: Determining if two sentences follow each other in the original text, which teaches the \cls{} token to encode sentence-level coherence and discourse relationships
+\item \textbf{Masked Language Modeling}: Contributing to bidirectional context understanding by attending to both masked and unmasked tokens, allowing the \cls{} token to learn rich contextual representations that support both tasks
+\end{itemize}
+
+This multitask training approach is crucial because it forces the \cls{} token to develop representations that capture both local linguistic patterns (through MLM) and global discourse structure (through NSP), creating a more versatile and powerful sentence-level representation.
+
+\begin{comment}
+Feedback: Convert the above into latex items, with a little elaboration on how this multitask training helps CLS embedding.
+
+STATUS: addressed - converted to LaTeX items with elaboration on how multitask training benefits CLS embeddings
+\end{comment}
 
 \subsubsection{Fine-tuning Considerations}
-When fine-tuning for downstream tasks:
+When fine-tuning for downstream tasks, the \cls{} token requires careful handling because its pre-trained representations may not perfectly align with the target task's objectives, necessitating strategic adaptation:
+\begin{comment}
+Feedback: One more sentence to elaborate why we need some extra care for downstream tasks.
+
+STATUS: addressed - added explanation about why CLS tokens need careful handling during fine-tuning
+\end{comment}
 
 \begin{itemize}
 \item \textbf{Learning Rate}: Often use lower learning rates for pre-trained \cls{} representations
@@ -240,17 +270,29 @@ Some models use multiple \cls{} tokens to capture different aspects of the input
 - Hierarchical \cls{} tokens for different granularities
 - Specialized \cls{} tokens for different modalities
 
+\begin{comment}
+Feedback: Convert the above into latex items, with a little elaboration
+\end{comment}
+
 \subsubsection{Learned Pooling}
 Instead of a fixed \cls{} token, some approaches learn optimal pooling strategies:
 - Attention-based pooling with learned parameters
 - Adaptive pooling based on input characteristics
 - Multi-scale pooling for different sequence lengths
 
+\begin{comment}
+Feedback: Convert the above into latex items, with a little elaboration
+\end{comment}
+
 \subsubsection{Dynamic CLS Tokens}
 Recent research explores \cls{} tokens that adapt based on:
 - Input content and length
 - Task requirements
 - Layer-specific objectives
+
+\begin{comment}
+Feedback: Convert the above into latex items, with a little elaboration
+\end{comment}
 
 \subsection{Best Practices and Recommendations}
 

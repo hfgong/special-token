@@ -1,4 +1,4 @@
-\section{Separator Token [SEP]}
+\section{Separator Token \sep{}}
 
 The separator token\index{SEP token}, denoted as \sep{}, serves as a critical boundary marker in transformer models, enabling them to process multiple text segments within a single input sequence. Introduced alongside the \cls{} token in BERT\index{BERT} \citep{devlin2018bert}, the \sep{} token was a key enabler for how transformers handle tasks requiring understanding of relationships between different text segments.
 \begin{comment}
@@ -30,7 +30,7 @@ STATUS: addressed - added explanation of efficiency gains from joint encoding
 The \sep{} token operates at multiple levels of the transformer architecture:
 
 \subsubsection{Input Segmentation}
-For processing two text segments, BERT uses the canonical format:
+For processing two text segments, BERT uses the canonical format:\\
 $\{\cls{}, \text{segment}_1, \sep{}, \text{segment}_2, \sep{}\}$
 
 Note that the final \sep{} token is often optional but commonly included for consistency. The final \sep{} token serves as an end-of-sequence marker for the second segment, providing a consistent structure for the model to learn from.
@@ -343,32 +343,32 @@ Feedback: This is another good but generic list. To make it more actionable: For
 STATUS: addressed - added actionable details for Balanced Segments and Ablation Studies
 \end{comment}
 
-\subsection{Future Directions}
+% \subsection{Future Directions}
 
-The \sep{} token concept continues to evolve:
+% The \sep{} token concept continues to evolve:
 
-\subsubsection{Dynamic Segmentation}
-Future models may learn to:
-\begin{itemize}
-\item Automatically identify optimal segment boundaries
-\item Adapt segment structure based on content
-\item Use reinforcement learning for boundary optimization
-\end{itemize}
+% \subsubsection{Dynamic Segmentation}
+% Future models may learn to:
+% \begin{itemize}
+% \item Automatically identify optimal segment boundaries
+% \item Adapt segment structure based on content
+% \item Use reinforcement learning for boundary optimization
+% \end{itemize}
 
-\subsubsection{Cross-Modal Separators}
-Extending \sep{} tokens to multimodal scenarios:
-\begin{itemize}
-\item Text-image boundaries
-\item Audio-text transitions
-\item Video-text alignment
-\end{itemize}
+% \subsubsection{Cross-Modal Separators}
+% Extending \sep{} tokens to multimodal scenarios:
+% \begin{itemize}
+% \item Text-image boundaries
+% \item Audio-text transitions
+% \item Video-text alignment
+% \end{itemize}
 
-\subsubsection{Continuous Separators}
-Moving beyond discrete tokens to:
-\begin{itemize}
-\item Continuous boundary representations
-\item Soft segmentation mechanisms
-\item Learnable boundary functions
-\end{itemize}
+% \subsubsection{Continuous Separators}
+% Moving beyond discrete tokens to:
+% \begin{itemize}
+% \item Continuous boundary representations
+% \item Soft segmentation mechanisms
+% \item Learnable boundary functions
+% \end{itemize}
 
 The \sep{} token represents a elegant solution to multi-segment processing in transformers. Its ability to maintain segment identity while enabling cross-segment information flow has made it indispensable for many NLP tasks. Understanding its mechanisms, applications, and limitations is crucial for effectively designing and deploying transformer-based systems for complex text understanding tasks.

@@ -2,9 +2,11 @@
 
 \section{End of Sequence (\eos{}) Token}
 
-The End of Sequence token, denoted as \eos{}, serves as the termination signal in autoregressive generation, indicating when a sequence should conclude. This token is fundamental to controlling generation length and ensuring proper sequence boundaries in transformer models. Understanding the \eos{} token is crucial for practitioners working with generative models, as it directly affects generation quality, computational efficiency, and the natural flow of generated content.
+The End of Sequence token, denoted as \eos{}, serves as the termination signal in autoregressive generation, indicating when a sequence should conclude. Without a learned \eos{} token, models would be forced to rely on arbitrary length limits, often cutting off sentences mid-thought or rambling on nonsensically. The \eos{} token allows the model to learn the subtle art of knowing when to stop. This token is fundamental to controlling generation length and ensuring proper sequence boundaries in transformer models. Understanding the \eos{} token is crucial for practitioners working with generative models, as it directly affects generation quality, computational efficiency, and the natural flow of generated content.
 \begin{comment}
 Feedback: This is a clear opening. To immediately highlight its importance, you could contrast it with the alternative. For example: "Without a learned [EOS] token, models would be forced to rely on arbitrary length limits, often cutting off sentences mid-thought or rambling on nonsensically. The [EOS] token allows the model to learn the subtle art of knowing when to stop."
+
+STATUS: addressed - added contrast showing problems without EOS tokens and benefits of learned termination
 \end{comment}
 
 \subsection{Fundamental Concepts}
@@ -338,5 +340,9 @@ Several common issues arise when working with \eos{} tokens:
 
 \textbf{Problem}: Inconsistent termination quality across different generation contexts.
 \textbf{Solution}: Implement conditional \eos{} prediction or use context-aware generation strategies.
+
+\begin{comment}
+Feedback: Format the above problem-solution list properly. Currently they are single lines.
+\end{comment}
 
 The \eos{} token represents a sophisticated mechanism for controlling sequence termination in autoregressive generation. Understanding its theoretical foundations, training dynamics, and practical applications enables practitioners to build more effective and controllable generative models. Proper implementation of \eos{} tokens leads to more natural, complete, and computationally efficient generation across diverse applications.

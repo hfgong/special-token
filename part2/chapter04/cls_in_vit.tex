@@ -1,6 +1,6 @@
 % CLS Token in Vision Transformers Section
 
-\section{CLS Token in Vision Transformers}
+\section{\cls{} Token in Vision Transformers}
 
 The \cls{} token's adaptation from natural language processing to computer vision represents one of the most successful transfers of special token concepts across domains. In Vision Transformers\index{Vision Transformers (ViT)} (ViTs), the \cls{} token serves as a global image representation aggregator, learning to summarize visual information from patch embeddings\index{patch embeddings} for downstream classification tasks.
 
@@ -8,8 +8,8 @@ The \cls{} token's adaptation from natural language processing to computer visio
 
 In vision transformers, the \cls{} token operates on a fundamentally different input structure compared to NLP models. Instead of attending to word embeddings representing discrete semantic units, the visual \cls{} token must aggregate information from patch embeddings that represent spatial regions of an image.
 
-\begin{definition}[Visual CLS Token]
-A Visual CLS token is a learnable parameter vector prepended to the sequence of patch embeddings in a vision transformer. It serves as a global image representation that aggregates spatial information through self-attention mechanisms, ultimately providing a fixed-size feature vector for image classification and other global image understanding tasks.
+\begin{definition}[Visual \cls{} Token]
+A Visual \cls{} token is a learnable parameter vector prepended to the sequence of patch embeddings in a vision transformer. It serves as a global image representation that aggregates spatial information through self-attention mechanisms, ultimately providing a fixed-size feature vector for image classification and other global image understanding tasks.
 \end{definition}
 
 The mathematical formulation for visual \cls{} token processing follows the standard transformer architecture but operates on visual patch sequences:

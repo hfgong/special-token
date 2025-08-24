@@ -27,15 +27,9 @@ In autoregressive models, the \sos{} token establishes the foundation for the ge
 h_0 &= \text{Embed}(\text{\sos{}}) + \text{PositionEmbed}(0) \\
 p(x_1 | \text{\sos{}}) &= \text{Softmax}(\text{Transformer}(h_0) \cdot W_{\text{out}})
 \end{align}
+where $h_0$ represents the initial hidden state derived from the \sos{} token, and $p(x_1 | \text{\sos{}})$ is the probability distribution over the first generated token.
 
 In simple terms, the first equation shows that the model's initial ``thought'' ($h_0$) is the learned embedding for the \sos{} token, combined with its position information. The second equation shows that the probability of the very first word ($x_1$) is calculated by feeding this initial thought through the transformer and a final output layer. Every subsequent word will then be conditioned on this starting point.
-\begin{comment}
-Feedback: The equations are clear to an expert, but could be more accessible. Consider adding a plain-language walkthrough. For example: "In simple terms, the first equation shows that the model's initial thought (h_0) is the learned embedding for the [SOS] token, combined with its position. The second equation shows that the probability of the very first word (x_1) is calculated by feeding this initial thought through the transformer and a final output layer. Every subsequent word will then be conditioned on this starting point."
-
-STATUS: addressed - added plain-language explanation of the mathematical equations
-\end{comment}
-
-where $h_0$ represents the initial hidden state derived from the \sos{} token, and $p(x_1 | \text{\sos{}})$ is the probability distribution over the first generated token.
 
 \subsubsection{Attention Patterns with \sos{}}
 
@@ -128,8 +122,13 @@ In language generation tasks, the \sos{} token provides a consistent starting po
 \begin{itemize}
 \item \textbf{GPT Models}: Implicit \sos{} through context or explicit special tokens
 \item \textbf{T5 Models}: Task-specific prefixes that function as \sos{} equivalents
-\item \textbf{BART Models}: Denoising objectives with \sos{} initialization
+\item \textbf{BART Models}: BART (Bidirectional and Auto-Regressive Transformers) \citep{lewis2019bart} combines BERT-like bidirectional encoding with GPT-like autoregressive decoding. The \sos{} token initializes the decoder, enabling the model to reconstruct corrupted text sequences through denoising objectives
 \end{itemize}
+\begin{comment}
+Feedback: What is BART model? Elaborate more.
+
+STATUS: addressed - added detailed explanation of BART as bidirectional encoder with autoregressive decoder
+\end{comment}
 
 \subsubsection{Machine Translation}
 
@@ -138,7 +137,7 @@ Machine translation represents one of the most successful applications of \sos{}
 \begin{example}[Machine Translation with \sos{}]
 Consider English-to-French translation:
 \begin{align}
-\text{Source}: &\quad \text{"The cat sits on the mat"} \\
+\text{Source}: &\quad \text{``The cat sits on the mat"} \\
 \text{Target}: &\quad \text{\sos{} "Le chat est assis sur le tapis" \eos{}}
 \end{align}
 
@@ -155,13 +154,5 @@ Based on extensive research and practical experience, several best practices eme
 \item \textbf{Task-Specific Adaptation}: Adapt \sos{} token strategies to specific generation tasks. For conditional generation, experiment with concatenating a task-specific prompt \emph{before} the \sos{} token (e.g., \texttt{[Translate to French] [SOS] ...}) as this is often more effective than trying to modify the \sos{} embedding itself
 \item \textbf{Evaluation Integration}: Include \sos{} token effectiveness in model evaluation protocols
 \end{enumerate}
-\begin{comment}
-Feedback: This list is good but could be more actionable. For example:
-1.  **Consistent Placement**: "Ensure your data preprocessing pipeline is identical for training, validation, and inference to avoid subtle bugs where the [SOS] token is accidentally omitted."
-2.  **Appropriate Initialization**: "If adding a new [SOS] token to a pre-trained model, initialize its embedding with the average of all other token embeddings as a reasonable starting point, rather than random noise."
-3.  **Task-Specific Adaptation**: "For conditional generation, experiment with concatenating a task-specific prompt *before* the [SOS] token (e.g., `[Translate to French] [SOS] ...`) as this is often more effective than trying to modify the [SOS] embedding itself."
-
-STATUS: addressed - made all recommendations more actionable with specific implementation guidance
-\end{comment}
 
 The \sos{} token, while seemingly simple, represents a sophisticated mechanism for controlling and improving autoregressive generation. Understanding its theoretical foundations, implementation strategies, and practical applications enables practitioners to leverage this powerful tool effectively in their transformer models.

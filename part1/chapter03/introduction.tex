@@ -2,10 +2,11 @@
 
 Sequence control tokens represent a fundamental category of special tokens that govern the flow and structure of sequences in transformer models. Unlike the structural tokens we examined in Chapter 2, sequence control tokens actively manage the generation, termination, and masking of content within sequences. To illustrate this distinction: if the structural tokens from Chapter 2 (\cls{}, \sep{}) are like the punctuation that organizes a finished document, the sequence control tokens in this chapter are like the commands given to the author: "Start writing," "Stop writing," and "Fill in this blank." They are active instructions, not just passive organizers.
 
-This chapter explores three critical sequence control tokens: \sos{} (Start of Sequence), \eos{} (End of Sequence), and \mask{} (Mask), each playing distinct yet complementary roles in modern transformer architectures.
+This chapter explores three critical sequence control tokens: \sos{} (Start of Sequence, sometimes denoted as \texttt{[START]} or \texttt{<s>}), \eos{} (End of Sequence, also known as \texttt{[END]} or \texttt{</s>}), and \mask{} (Mask), each playing distinct yet complementary roles in modern transformer architectures.
 \begin{comment}
-Feedback: The distinction between "structural tokens" and "sequence control tokens" is a good one. To make it even sharper, you could use an analogy. For example: "If the structural tokens from Chapter 2 ([CLS], [SEP]) are like the punctuation that organizes a finished document, the sequence control tokens in this chapter are like the commands given to the author: 'Start writing,' 'Stop writing,' and 'Fill in this blank.' They are active instructions, not just passive organizers."
-STATUS: addressed - added the suggested analogy to clarify the distinction between structural and sequence control tokens
+Feedback: Mention SOS is sometimes called [START], EOS is sometimes called [END] in different literature. Or "<s>", "</s>".
+
+STATUS: addressed - added alternative notations used in different literature
 \end{comment}
 
 The importance of sequence control tokens becomes evident when considering the generative nature of many transformer applications. In autoregressive language models like GPT, the \sos{} token signals the beginning of generation, while the \eos{} token provides a natural stopping criterion. In masked language models like BERT, the \mask{} token enables the revolutionary self-supervised learning paradigm that has transformed natural language processing.
@@ -14,9 +15,11 @@ The importance of sequence control tokens becomes evident when considering the g
 
 The concept of sequence control in neural networks predates transformers, with origins in recurrent neural networks (RNNs) and early sequence-to-sequence models. However, transformers brought new sophistication to sequence control through their attention mechanisms and parallel processing capabilities.
 
-Early RNN-based models relied heavily on implicit sequence boundaries and fixed-length sequences. The introduction of explicit control tokens in sequence-to-sequence models marked a significant advancement, allowing models to learn when to start and stop generation dynamically. The transformer architecture further refined this concept, enabling more nuanced control through attention patterns and token interactions.
+Early RNN-based models relied heavily on implicit sequence boundaries and fixed-length sequences. The introduction of explicit control tokens in sequence-to-sequence models marked a significant advancement, allowing models to learn when to start and stop generation dynamically. The transformer architecture further refined this concept, enabling more nuanced control through attention patterns and token interactions. Unlike RNNs, where the influence of a start token could fade over long sequences, the transformer's attention mechanism allows control tokens like \sos{} and \eos{} to directly influence every other token in the sequence, regardless of distance, leading to more robust and precise control.
 \begin{comment}
 Feedback: This is a good historical overview. To make the "transformer" advantage more concrete, you could add a sentence explaining *how* attention made a difference. For example: "Unlike RNNs, where the influence of a start token could fade over long sequences, the transformer's attention mechanism allows control tokens like [SOS] and [EOS] to directly influence every other token in the sequence, regardless of distance, leading to more robust and precise control."
+
+STATUS: addressed - added explanation of how attention mechanism enables better sequence control compared to RNNs
 \end{comment}
 
 \section{Categorical Framework for Sequence Control}
