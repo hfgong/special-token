@@ -2,9 +2,11 @@
 
 \section{Start of Sequence (\sos{}) Token}
 
-The Start of Sequence token, commonly denoted as \sos{}, serves as the initialization signal for autoregressive generation in transformer models. This token plays a crucial role in conditioning the model's initial state and establishing the context for subsequent token generation. Understanding the \sos{} token is essential for practitioners working with generative models, as it directly influences the quality and consistency of generated content.
+The Start of Sequence token, commonly denoted as \sos{}, serves as the initialization signal for autoregressive generation in transformer models. Just as a runner needs a starting block, an autoregressive model needs a fixed, known starting point to begin the step-by-step process of generating a new sequence. The \sos{} token provides this unambiguous signal. This token plays a crucial role in conditioning the model's initial state and establishing the context for subsequent token generation.
 \begin{comment}
 Feedback: This is a good start. To immediately address a common point of confusion, you could add a sentence that explains *why* this is necessary. For example: "Just as a runner needs a starting block, an autoregressive model needs a fixed, known starting point to begin the step-by-step process of generating a new sequence. The [SOS] token provides this unambiguous signal."
+
+STATUS: addressed - added analogy explaining why SOS tokens are necessary as fixed starting points
 \end{comment}
 
 \subsection{Fundamental Concepts}
@@ -25,8 +27,12 @@ In autoregressive models, the \sos{} token establishes the foundation for the ge
 h_0 &= \text{Embed}(\text{\sos{}}) + \text{PositionEmbed}(0) \\
 p(x_1 | \text{\sos{}}) &= \text{Softmax}(\text{Transformer}(h_0) \cdot W_{\text{out}})
 \end{align}
+
+In simple terms, the first equation shows that the model's initial ``thought'' ($h_0$) is the learned embedding for the \sos{} token, combined with its position information. The second equation shows that the probability of the very first word ($x_1$) is calculated by feeding this initial thought through the transformer and a final output layer. Every subsequent word will then be conditioned on this starting point.
 \begin{comment}
 Feedback: The equations are clear to an expert, but could be more accessible. Consider adding a plain-language walkthrough. For example: "In simple terms, the first equation shows that the model's initial thought (h_0) is the learned embedding for the [SOS] token, combined with its position. The second equation shows that the probability of the very first word (x_1) is calculated by feeding this initial thought through the transformer and a final output layer. Every subsequent word will then be conditioned on this starting point."
+
+STATUS: addressed - added plain-language explanation of the mathematical equations
 \end{comment}
 
 where $h_0$ represents the initial hidden state derived from the \sos{} token, and $p(x_1 | \text{\sos{}})$ is the probability distribution over the first generated token.
@@ -144,9 +150,9 @@ The \sos{} token learns to encode source language features that influence French
 Based on extensive research and practical experience, several best practices emerge for \sos{} token usage:
 
 \begin{enumerate}
-\item \textbf{Consistent Placement}: Always place \sos{} tokens at sequence beginnings during training and generation
-\item \textbf{Appropriate Initialization}: Use reasonable initialization strategies for \sos{} embeddings
-\item \textbf{Task-Specific Adaptation}: Adapt \sos{} token strategies to specific generation tasks
+\item \textbf{Consistent Placement}: Always place \sos{} tokens at sequence beginnings during training and generation. Ensure your data preprocessing pipeline is identical for training, validation, and inference to avoid subtle bugs where the \sos{} token is accidentally omitted
+\item \textbf{Appropriate Initialization}: Use reasonable initialization strategies for \sos{} embeddings. If adding a new \sos{} token to a pre-trained model, initialize its embedding with the average of all other token embeddings as a reasonable starting point, rather than random noise
+\item \textbf{Task-Specific Adaptation}: Adapt \sos{} token strategies to specific generation tasks. For conditional generation, experiment with concatenating a task-specific prompt \emph{before} the \sos{} token (e.g., \texttt{[Translate to French] [SOS] ...}) as this is often more effective than trying to modify the \sos{} embedding itself
 \item \textbf{Evaluation Integration}: Include \sos{} token effectiveness in model evaluation protocols
 \end{enumerate}
 \begin{comment}
@@ -154,6 +160,8 @@ Feedback: This list is good but could be more actionable. For example:
 1.  **Consistent Placement**: "Ensure your data preprocessing pipeline is identical for training, validation, and inference to avoid subtle bugs where the [SOS] token is accidentally omitted."
 2.  **Appropriate Initialization**: "If adding a new [SOS] token to a pre-trained model, initialize its embedding with the average of all other token embeddings as a reasonable starting point, rather than random noise."
 3.  **Task-Specific Adaptation**: "For conditional generation, experiment with concatenating a task-specific prompt *before* the [SOS] token (e.g., `[Translate to French] [SOS] ...`) as this is often more effective than trying to modify the [SOS] embedding itself."
+
+STATUS: addressed - made all recommendations more actionable with specific implementation guidance
 \end{comment}
 
 The \sos{} token, while seemingly simple, represents a sophisticated mechanism for controlling and improving autoregressive generation. Understanding its theoretical foundations, implementation strategies, and practical applications enables practitioners to leverage this powerful tool effectively in their transformer models.

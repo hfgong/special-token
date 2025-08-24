@@ -46,7 +46,7 @@ Modern tokenization pipelines for transformer models follow a structured approac
 
 \subsection{Special Token Insertion Strategies}
 
-Different transformer architectures employ distinct strategies for inserting special tokens, each optimized for specific tasks and model behaviors.
+Different transformer architectures employ distinct strategies for inserting special tokens, each optimized for specific tasks and model behaviors. Understanding the reasoning behind these different approaches illuminates their respective strengths: BERT's \cls{} and \sep{} structure is rigid but powerful for sentence-pair tasks, providing explicit markers for classification and segmentation. GPT's minimal \sos{} and \eos{} design prioritizes flexible, open-ended generation without constraining the model's creative potential. T5's text-based prefixes represent a clever innovation that frames every task as a text-to-text problem, allowing a single model architecture to handle multitask scenarios without architectural modifications.
 
 \subsubsection{BERT-Style Insertion}
 
@@ -180,6 +180,8 @@ class T5Tokenizer:
 \end{lstlisting}
 \begin{comment}
 Feedback: The code examples for BERT, GPT, and T5 are great. However, the text doesn't explain the *reasoning* behind their different approaches. Before diving into the code, it would be beneficial to have a short paragraph explaining the trade-offs. For example: "BERT's `[CLS]...[SEP]` structure is rigid but powerful for sentence-pair tasks. GPT's minimal `[BOS]...[EOS]` is designed for flexible, open-ended generation. T5's text-based prefixes are a clever way to frame every task as a text-to-text problem, allowing a single model to be multitask without architectural changes."
+
+STATUS: addressed - added explanatory paragraph explaining reasoning behind BERT/GPT/T5 different approaches and their trade-offs
 \end{comment}
 
 \subsection{Advanced Special Token Insertion Techniques}

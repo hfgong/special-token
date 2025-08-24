@@ -3,6 +3,8 @@
 The separator token, denoted as \sep{}, serves as a critical boundary marker in transformer models, enabling them to process multiple text segments within a single input sequence. Introduced alongside the \cls{} token in BERT \citep{devlin2018bert}, the \sep{} token was a key enabler for how transformers handle tasks requiring understanding of relationships between different text segments.
 \begin{comment}
 Feedback: Similar to the [CLS] token section, "revolutionized" is a strong word. Consider "was a key enabler for" or "significantly advanced" to maintain a more measured tone.
+
+STATUS: addressed - already uses measured tone with "was a key enabler for"
 \end{comment}
 
 \subsection{Design Rationale and Functionality}
@@ -16,9 +18,11 @@ The \sep{} token addresses a fundamental challenge in NLP: how to process multip
 \item \textbf{Dialogue Systems}: Maintaining conversation context
 \end{itemize}
 
-Before the \sep{} token, these tasks typically required separate encoding of each segment followed by complex fusion mechanisms. The \sep{} token enables joint encoding while preserving segment boundaries.
+Before the \sep{} token, these tasks typically required separate encoding of each segment followed by complex fusion mechanisms. The \sep{} token enables joint encoding while preserving segment boundaries. By enabling joint encoding in a single forward pass, the \sep{} token offered a much more computationally efficient and elegant solution than complex, multi-stage fusion networks.
 \begin{comment}
 Feedback: This is a great summary of the problem. To make the solution sound even more impactful, you could add a sentence about the efficiency gain. For example: "By enabling joint encoding in a single forward pass, the [SEP] token offered a much more computationally efficient and elegant solution than complex, multi-stage fusion networks."
+
+STATUS: addressed - added explanation of efficiency gains from joint encoding
 \end{comment}
 
 \subsection{Architectural Integration}
@@ -327,14 +331,16 @@ Based on extensive research and practical experience:
 \begin{principle}[SEP Token Best Practices]
 \begin{enumerate}
 \item \textbf{Consistent Formatting}: Use consistent segment ordering across training and inference
-\item \textbf{Balanced Segments}: Try to balance segment lengths when possible
+\item \textbf{Balanced Segments}: Try to balance segment lengths when possible. When dealing with imbalanced segments (e.g., a short question and a long context), consider a truncation strategy that favors the longer, more informative segment to avoid losing critical information
 \item \textbf{Task-Specific Design}: Adapt segment structure to task requirements
 \item \textbf{Attention Analysis}: Analyze attention patterns to understand model behavior
-\item \textbf{Ablation Studies}: Compare performance with and without \sep{} tokens
+\item \textbf{Ablation Studies}: Compare performance with and without \sep{} tokens. For tasks that don't obviously require segmentation, run an ablation study where you concatenate the text without a \sep{} token---this can sometimes simplify the model's task and improve performance
 \end{enumerate}
 \end{principle}
 \begin{comment}
 Feedback: This is another good but generic list. To make it more actionable: For "Balanced Segments," you could add: "When dealing with imbalanced segments (e.g., a short question and a long context), consider a truncation strategy that favors the longer, more informative segment to avoid losing critical information." For "Ablation Studies," you could suggest: "For tasks that don't obviously require segmentation, run an ablation study where you concatenate the text without a [SEP] token. This can sometimes simplify the model's task and improve performance."
+
+STATUS: addressed - added actionable details for Balanced Segments and Ablation Studies
 \end{comment}
 
 \subsection{Future Directions}

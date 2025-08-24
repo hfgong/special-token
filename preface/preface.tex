@@ -1,20 +1,26 @@
-The transformer architecture has revolutionized artificial intelligence, powering breakthroughs in natural language processing, computer vision, and multimodal understanding. At the heart of these models lies a seemingly simple yet profoundly powerful concept: special tokens. These discrete symbols, inserted strategically into input sequences, serve as anchors, boundaries, and control mechanisms that enable transformers to perform complex reasoning, maintain context, and bridge modalities.
+The transformer architecture has revolutionized artificial intelligence, powering breakthroughs in natural language processing, computer vision, and multimodal understanding. At the heart of these models lies a seemingly simple yet profoundly powerful concept: special tokens. These discrete symbols, inserted strategically into input sequences, serve as anchors, boundaries, and control mechanisms that enable transformers to distinguish between a question and its context, generate computer code, and seamlessly bridge modalities like text and images.
 \begin{comment}
 Feedback: This is a strong opening. To make it even better, consider adding a very specific, impressive example of what a special token enables. For instance, "...enable transformers to distinguish between a question and its context, or even to generate computer code." This could make the abstract concepts more concrete for the reader from the very beginning.
+
+STATUS: addressed - added specific examples (question-context distinction, code generation, text-image bridging)
 \end{comment}
 
 This book emerged from a recognition that while special tokens are ubiquitous in modern AI systems, their design principles, implementation details, and optimization strategies remain scattered across research papers, codebases, and engineering blogs. Our goal is to provide a comprehensive guide that demystifies special tokens for AI practitioners---from those implementing their first BERT model to researchers pushing the boundaries of multimodal AI.
 
 \section*{Why Special Tokens Matter}
 
-Special tokens are not mere implementation details; they are fundamental to how transformers understand and process information. The \cls{} token aggregates sequence-level representations for classification. The \mask{} token enables bidirectional pre-training through masked language modeling. The \sep{} token delineates boundaries between different segments of input. Each special token serves a specific architectural purpose, and understanding these purposes is crucial for effective model design and deployment.
+Special tokens are not mere implementation details; they are fundamental to how transformers understand and process information. The \cls{} token aggregates sequence-level representations for classification. The \mask{} token enables bidirectional pre-training through masked language modeling. The \sep{} token delineates boundaries between different segments of input. Without these explicit markers, a transformer would face a much harder task of inferring structure from a flat sequence of data, leading to slower training and less accurate models. Each special token serves a specific architectural purpose, and understanding these purposes is crucial for effective model design and deployment.
 \begin{comment}
 Feedback: This paragraph is good at defining the "what." To avoid it feeling like a list of definitions, you could add a sentence or two about the "why." For example, after explaining the tokens, you could add something like: "Without these explicit markers, a transformer would face a much harder task of inferring structure from a flat sequence of data, leading to slower training and less accurate models." This emphasizes the problem they solve.
+
+STATUS: addressed - added explanation of why special tokens are necessary (without them, transformers would struggle with structure inference)
 \end{comment}
 
-As transformer models have evolved from purely textual systems to handle images, audio, video, and structured data, special tokens have adapted and proliferated. Vision transformers repurpose the \cls{} token for image classification. Multimodal models introduce \img{} tokens to align visual and textual representations. Code generation models employ language-specific tokens to switch contexts. This explosion of special token types reflects the growing sophistication of transformer applications.
+As transformer models have evolved from purely textual systems to handle images, audio, video, and structured data, special tokens have adapted and proliferated. Vision transformers repurpose the \cls{} token for image classification. Multimodal models introduce \img{} tokens to align visual and textual representations. Code generation models employ language-specific tokens to switch contexts. This proliferation of special token types reflects the growing sophistication of transformer applications, but also introduces new challenges in vocabulary management and cross-modal alignment that this book will address.
 \begin{comment}
 Feedback: The term "explosion" is a bit cliché in technical writing. Consider a more precise alternative like "This proliferation of special tokens..." or "This diversification...". Also, the examples are great. Could you perhaps hint at the challenges this proliferation creates? E.g., "This proliferation... reflects the growing sophistication... but also introduces new challenges in vocabulary management and cross-modal alignment that this book will address."
+
+STATUS: addressed - replaced "explosion" with "proliferation" and added mention of challenges this creates
 \end{comment}
 
 \section*{Who Should Read This Book}

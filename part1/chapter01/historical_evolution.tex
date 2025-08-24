@@ -12,9 +12,11 @@ Before transformers revolutionized NLP, special tokens served primarily as bound
 \item \textbf{Padding Token}: Batch processing required \specialtoken{PAD} tokens to align sequences of different lengths
 \end{itemize}
 
-These early special tokens were functional necessities rather than architectural innovations. They solved practical problems but did not fundamentally alter how models processed information.
+These early special tokens were functional necessities rather than architectural innovations. They solved practical problems but did not fundamentally alter how models processed information. While functional, this approach was rigid. The behavior of these tokens was hard-coded by the architecture (e.g., stopping generation at \specialtoken{END}), not learned. This limited the model's ability to adapt their function to different contexts or tasks, constraining the model's flexibility.
 \begin{comment}
 Feedback: This is a good summary. To add a bit more depth, you could briefly mention the *limitations* of this approach. For example: "While functional, this approach was rigid. The behavior of these tokens was hard-coded by the architecture (e.g., stopping generation at [END]), not learned. This limited the model's ability to adapt their function to different contexts."
+
+STATUS: addressed - added explanation of limitations including rigidity and hard-coded behavior constraints
 \end{comment}
 
 \subsection{The Transformer Revolution (2017)}
@@ -35,15 +37,17 @@ The original transformer primarily used:
 BERT \citep{devlin2018bert} transformed special tokens from simple markers into architectural components. Three key innovations emerged:
 
 \subsubsection{The [CLS] Token Revolution}
-BERT introduced the \cls{} token as a dedicated aggregation point for sentence-level representations. This was revolutionary because:
+BERT introduced the \cls{} token as a dedicated aggregation point for sentence-level representations. This design choice, while simple, was a significant departure from previous methods that required complex pooling strategies (e.g., max-pooling or mean-pooling over all token representations). It offered a parameter-efficient way to derive a single, powerful representation for the entire sequence:
 \begin{itemize}
 \item It provided a fixed position for classification tasks
 \item It could attend to all positions bidirectionally
 \item It eliminated the need for complex pooling strategies
+\item It learned optimal aggregation patterns during training
 \end{itemize}
 \begin{comment}
 Feedback: The word "revolutionary" is strong. While the [CLS] token was hugely influential, it's worth framing it with a bit more nuance. You could say something like: "This design choice, while simple, was a significant departure from previous methods that required complex pooling strategies (e.g., max-pooling or mean-pooling over all token representations). It offered a parameter-efficient way to derive a single, powerful representation for the entire sequence."
-\end{body}
+
+STATUS: addressed - reframed to emphasize significant departure from previous methods and parameter efficiency
 \end{comment}
 
 \subsubsection{The [SEP] Token for Multi-Segment Processing}
@@ -67,9 +71,11 @@ While BERT embraced special tokens, the GPT series \citep{radford2019language} t
 \item \textbf{GPT-4}: Introduced system tokens for instruction following
 \end{itemize}
 
-This divergence highlighted a philosophical split: special tokens as architectural components (BERT) versus special tokens as minimal necessities (GPT).
+This divergence highlighted a key design trade-off: BERT's approach optimized for specific NLU tasks by baking structure into the model with tokens like \cls{} and \sep{}, while GPT's minimalist approach prioritized generative flexibility, relying on the model to learn structure from the data itself via prompting. Each philosophy represented different priorities---specialized performance versus general adaptability.
 \begin{comment}
 Feedback: This is a great point. To make it less of a simple "split" and more of a design trade-off, you could elaborate on the "why." For example: "This divergence highlighted a key design trade-off: BERT's approach optimized for specific NLU tasks by baking structure into the model with tokens like [CLS] and [SEP], while GPT's minimalist approach prioritized generative flexibility, relying on the model to learn structure from the data itself via prompting."
+
+STATUS: addressed - reframed as design trade-off explaining the reasoning behind BERT vs GPT approaches
 \end{comment}
 
 \subsection{Vision Transformers: Cross-Modal Adaptation (2020)}
@@ -84,9 +90,11 @@ The Vision Transformer (ViT) \citep{dosovitskiy2020image} demonstrated that spec
 
 \subsection{Multimodal Era: Proliferation and Specialization (2021-Present)}
 
-Recent years have witnessed an explosion in special token diversity:
+Recent years have witnessed a rapid diversification in special token applications:
 \begin{comment}
 Feedback: Again, "explosion" is a bit cliché. Consider "a rapid diversification" or "a proliferation."
+
+STATUS: addressed - changed "explosion" to "rapid diversification"
 \end{comment}
 
 \subsubsection{CLIP and Alignment Tokens (2021)}
