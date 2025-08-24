@@ -1,6 +1,6 @@
 \section{Classification Token [CLS]}
 
-The classification token, denoted as \cls{}, stands as one of a highly influential innovations in transformer architecture. Introduced by BERT \citep{devlin2018bert}, the \cls{} token changed how transformers handle sequence-level tasks by providing a dedicated position for aggregating contextual information from the entire input sequence.
+The classification token\index{CLS token}, denoted as \cls{}, stands as one of a highly influential innovations in transformer architecture. Introduced by BERT\index{BERT} \citep{devlin2018bert}, the \cls{} token changed how transformers handle sequence-level tasks by providing a dedicated position for aggregating contextual information from the entire input sequence.
 \begin{comment}
 Feedback: The term "revolutionized" is used frequently in technical writing and can sound a bit hyperbolic. Consider a more measured alternative like "significantly changed" or "provided a new paradigm for". This maintains a more objective tone.
 
@@ -11,7 +11,7 @@ STATUS: addressed - text already uses "changed" instead of hyperbolic language
 
 The \cls{} token emerged from a fundamental challenge in applying transformers to classification tasks. Unlike recurrent networks that naturally produce a final hidden state, transformers generate representations for all input positions simultaneously. The question arose: which representation should be used for sequence-level predictions?
 
-Previous approaches relied on pooling strategies---averaging, max-pooling, or taking the last token's representation. However, these methods had limitations:
+Previous approaches relied on pooling strategies\index{pooling strategies}---averaging, max-pooling, or taking the last token's representation. However, these methods had limitations:
 
 \begin{itemize}
 \item \textbf{Average pooling} diluted important information across all positions

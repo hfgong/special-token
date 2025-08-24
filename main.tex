@@ -31,6 +31,8 @@
 \usepackage[backend=biber,style=authoryear,natbib=true]{biblatex}
 \addbibresource{references.bib}
 \usepackage{comment}
+\usepackage{makeidx}
+\makeindex
 
 % TikZ libraries
 \usetikzlibrary{shapes,arrows,positioning,calc,patterns,decorations.pathreplacing,chains,shadows}
@@ -112,6 +114,10 @@
 \maketitle
 
 \tableofcontents
+
+\listoffigures
+
+\lstlistoflistings
 
 \chapter{Preface}
 \input{preface/preface}
@@ -236,5 +242,7 @@
 % \input{part5/chapter14/open_problems}
 
 \printbibliography[heading=bibintoc,title={References}]
+
+\printindex
 
 \end{document}

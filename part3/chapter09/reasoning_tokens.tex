@@ -1,10 +1,10 @@
 \section{Reasoning and Chain-of-Thought Tokens}
 
-The advent of reasoning tokens marks a transformative milestone in artificial intelligence, enabling models to externalize and structure their thinking processes in ways that mirror human cognitive patterns. These specialized tokens create a framework for step-by-step reasoning, allowing models to break down complex problems, maintain logical consistency, and produce more accurate and interpretable outputs.
+The advent of reasoning tokens\index{reasoning tokens} marks a transformative milestone in artificial intelligence, enabling models to externalize and structure their thinking processes in ways that mirror human cognitive patterns. These specialized tokens create a framework for step-by-step reasoning\index{step-by-step reasoning}, allowing models to break down complex problems, maintain logical consistency, and produce more accurate and interpretable outputs.
 
 \subsection{The Thinking Revolution}
 
-The introduction of tokens like \specialtoken{think} represents a fundamental shift from opaque, single-step predictions to transparent, multi-step reasoning processes. This evolution addresses one of the most persistent challenges in AI: understanding not just what a model concludes, but how it arrives at those conclusions.
+The introduction of tokens like \specialtoken{think}\index{think token} represents a fundamental shift from opaque, single-step predictions to transparent, multi-step reasoning processes. This evolution addresses one of the most persistent challenges in AI: understanding not just what a model concludes, but how it arrives at those conclusions.
 
 Consider the difference between a model that directly outputs ``The answer is 42'' versus one that uses thinking tokens to show: ``\specialtoken{think} First, I need to identify the pattern in the sequence. Looking at the differences between consecutive terms... \specialtoken{/think}''. The latter provides insight into the reasoning process, enabling verification, debugging, and learning.
 
@@ -15,6 +15,7 @@ Consider the difference between a model that directly outputs ``The answer is 42
 The simplest form of reasoning tokens involves delimiting thinking sections from output:
 
 \begin{lstlisting}[language=Python, caption=Basic thinking token implementation]
+# Core structure (see code/thinking_tokenizer.py for complete implementation)
 class ThinkingTokenizer:
     def __init__(self, base_tokenizer):
         self.base_tokenizer = base_tokenizer
@@ -27,56 +28,18 @@ class ThinkingTokenizer:
         
     def encode_with_thinking(self, prompt):
         """Encode prompt to encourage thinking before answering"""
-        formatted_prompt = (
-            f"{prompt}\n"
-            f"{self.thinking_tokens['think_start']}\n"
-            f"Let me work through this step by step...\n"
-        )
-        return self.base_tokenizer.encode(formatted_prompt)
+        # Implementation details in external file
+        pass
     
     def separate_thinking_from_output(self, generated_text):
         """Extract thinking process and final output separately"""
-        import re
-        
-        # Extract thinking section
-        think_pattern = f"{re.escape(self.thinking_tokens['think_start'])}(.*?){re.escape(self.thinking_tokens['think_end'])}"
-        thinking_match = re.search(think_pattern, generated_text, re.DOTALL)
-        thinking = thinking_match.group(1).strip() if thinking_match else ""
-        
-        # Extract output section
-        output_pattern = f"{re.escape(self.thinking_tokens['output_start'])}(.*?){re.escape(self.thinking_tokens['output_end'])}"
-        output_match = re.search(output_pattern, generated_text, re.DOTALL)
-        output = output_match.group(1).strip() if output_match else ""
-        
-        # If no output tags, everything after thinking is output
-        if not output and thinking:
-            remaining = generated_text.split(self.thinking_tokens['think_end'])[-1].strip()
-            output = remaining
-        
-        return {
-            'thinking': thinking,
-            'output': output,
-            'full_response': generated_text
-        }
+        # Implementation details in external file
+        pass
     
     def format_for_training(self, question, thinking_steps, answer):
         """Format training data with explicit thinking"""
-        formatted = (
-            f"Question: {question}\n"
-            f"{self.thinking_tokens['think_start']}\n"
-        )
-        
-        for i, step in enumerate(thinking_steps, 1):
-            formatted += f"Step {i}: {step}\n"
-        
-        formatted += (
-            f"{self.thinking_tokens['think_end']}\n"
-            f"{self.thinking_tokens['output_start']}\n"
-            f"{answer}\n"
-            f"{self.thinking_tokens['output_end']}"
-        )
-        
-        return formatted
+        # Implementation details in external file
+        pass
 \end{lstlisting}
 
 \subsection{Chain-of-Thought Token Systems}
@@ -86,6 +49,7 @@ Chain-of-thought (CoT) reasoning extends beyond simple thinking tokens to create
 \subsubsection{Structured Step Tokens}
 
 \begin{lstlisting}[language=Python, caption=Chain-of-thought step tokenization]
+# Core structure (see code/chain_of_thought_tokenizer.py for complete implementation)
 class ChainOfThoughtTokenizer:
     def __init__(self, base_tokenizer):
         self.base_tokenizer = base_tokenizer
@@ -102,71 +66,18 @@ class ChainOfThoughtTokenizer:
         
     def encode_reasoning_chain(self, problem, max_steps=10):
         """Encode problem with chain-of-thought prompting"""
-        prompt = (
-            f"Problem: {problem}\n"
-            f"{self.cot_tokens['chain_start']}\n"
-            f"I'll solve this step by step.\n"
-        )
-        
-        # Add step tokens to guide reasoning
-        for i in range(1, min(max_steps + 1, 5)):
-            prompt += f"{self.cot_tokens['step']} {i}: \n"
-        
-        return self.base_tokenizer.encode(prompt)
+        # Implementation details in external file
+        pass
     
     def structure_reasoning_steps(self, steps):
         """Structure reasoning steps with appropriate tokens"""
-        structured = [self.cot_tokens['chain_start']]
-        
-        for i, step in enumerate(steps, 1):
-            # Main step marker
-            structured.append(f"{self.cot_tokens['step']} {i}:")
-            
-            # Classify step type and add appropriate token
-            if self._is_calculation(step):
-                structured.append(self.cot_tokens['calculation'])
-            elif self._is_verification(step):
-                structured.append(self.cot_tokens['verification'])
-            else:
-                structured.append(self.cot_tokens['reasoning'])
-            
-            structured.append(step)
-            
-            # Add substeps if the step is complex
-            substeps = self._extract_substeps(step)
-            for substep in substeps:
-                structured.append(self.cot_tokens['substep'])
-                structured.append(substep)
-        
-        # Add conclusion
-        structured.append(self.cot_tokens['conclusion'])
-        structured.append(self.cot_tokens['chain_end'])
-        
-        return structured
+        # Implementation details in external file
+        pass
     
     def _is_calculation(self, step):
         """Determine if step involves calculation"""
-        calc_keywords = ['calculate', 'compute', 'equals', '=', '+', '-', '*', '/']
-        return any(keyword in step.lower() for keyword in calc_keywords)
-    
-    def _is_verification(self, step):
-        """Determine if step involves verification"""
-        verify_keywords = ['check', 'verify', 'confirm', 'validate', 'ensure']
-        return any(keyword in step.lower() for keyword in verify_keywords)
-    
-    def _extract_substeps(self, step):
-        """Extract substeps from a complex step"""
-        # Simple heuristic: split on certain markers
-        markers = ['First,', 'Second,', 'Then,', 'Next,', 'Finally,']
-        substeps = []
-        
-        for marker in markers:
-            if marker in step:
-                parts = step.split(marker)
-                if len(parts) > 1:
-                    substeps.extend([part.strip() for part in parts[1:] if part.strip()])
-        
-        return substeps
+        # Implementation details in external file
+        pass
 \end{lstlisting}
 
 \subsection{Multi-Path Reasoning Tokens}
@@ -174,6 +85,7 @@ class ChainOfThoughtTokenizer:
 Complex problems often require exploring multiple reasoning paths:
 
 \begin{lstlisting}[language=Python, caption=Multi-path reasoning with branch tokens]
+# Core structure (see code/multi_path_reasoning_tokenizer.py for complete implementation)
 class MultiPathReasoningTokenizer:
     def __init__(self, base_tokenizer):
         self.base_tokenizer = base_tokenizer
@@ -189,55 +101,18 @@ class MultiPathReasoningTokenizer:
         
     def encode_multi_path_problem(self, problem):
         """Encode problem for multi-path exploration"""
-        prompt = (
-            f"Problem: {problem}\n"
-            f"I'll explore multiple solution paths:\n"
-            f"{self.branch_tokens['branch_start']}\n"
-        )
-        return self.base_tokenizer.encode(prompt)
+        # Implementation details in external file
+        pass
     
     def structure_reasoning_paths(self, paths):
         """Structure multiple reasoning paths with comparison"""
-        structured = []
-        
-        # Add each path
-        for i, path in enumerate(paths, 1):
-            structured.append(f"{self.branch_tokens['path']} {i}:")
-            structured.extend(path['steps'])
-            structured.append(f"{self.branch_tokens['confidence']} {path['confidence']}")
-        
-        # Add comparison section
-        structured.append(self.branch_tokens['compare'])
-        structured.append("Comparing the different approaches:")
-        
-        # Add path comparison logic
-        for i in range(len(paths)):
-            for j in range(i + 1, len(paths)):
-                comparison = self._compare_paths(paths[i], paths[j])
-                structured.append(f"Path {i+1} vs Path {j+1}: {comparison}")
-        
-        # Select best path
-        structured.append(self.branch_tokens['select'])
-        best_path = self._select_best_path(paths)
-        structured.append(f"Selected Path {best_path + 1} as most reliable")
-        
-        structured.append(self.branch_tokens['branch_end'])
-        
-        return structured
+        # Implementation details in external file
+        pass
     
     def _compare_paths(self, path1, path2):
         """Compare two reasoning paths"""
-        # Simplified comparison logic
-        if path1['confidence'] > path2['confidence']:
-            return f"Path 1 more confident ({path1['confidence']:.2f} vs {path2['confidence']:.2f})"
-        elif path2['confidence'] > path1['confidence']:
-            return f"Path 2 more confident ({path2['confidence']:.2f} vs {path1['confidence']:.2f})"
-        else:
-            return "Paths have similar confidence"
-    
-    def _select_best_path(self, paths):
-        """Select the best reasoning path"""
-        return max(range(len(paths)), key=lambda i: paths[i]['confidence'])
+        # Implementation details in external file
+        pass
 \end{lstlisting}
 
 \subsection{Self-Reflection and Verification Tokens}
@@ -245,6 +120,7 @@ class MultiPathReasoningTokenizer:
 Advanced reasoning systems include tokens for self-reflection and verification:
 
 \begin{lstlisting}[language=Python, caption=Self-reflection and verification tokens]
+# Core structure (see code/reflective_reasoning_tokenizer.py for complete implementation)
 class ReflectiveReasoningTokenizer:
     def __init__(self, base_tokenizer):
         self.base_tokenizer = base_tokenizer
@@ -260,96 +136,18 @@ class ReflectiveReasoningTokenizer:
         
     def encode_with_reflection(self, problem, initial_solution):
         """Encode problem with reflection on initial solution"""
-        prompt = (
-            f"Problem: {problem}\n"
-            f"Initial solution: {initial_solution}\n"
-            f"{self.reflection_tokens['reflect']}\n"
-            f"Let me review this solution:\n"
-        )
-        return self.base_tokenizer.encode(prompt)
+        # Implementation details in external file
+        pass
     
     def structure_reflective_reasoning(self, reasoning_steps, reflections):
         """Structure reasoning with reflection cycles"""
-        structured = []
-        
-        for i, (step, reflection) in enumerate(zip(reasoning_steps, reflections)):
-            # Original reasoning step
-            structured.append(f"Step {i+1}: {step}")
-            
-            # Reflection on the step
-            structured.append(self.reflection_tokens['reflect'])
-            structured.append(reflection['thought'])
-            
-            # Critique if issues found
-            if reflection.get('issues'):
-                structured.append(self.reflection_tokens['critique'])
-                for issue in reflection['issues']:
-                    structured.append(f"- Issue: {issue}")
-            
-            # Revision if needed
-            if reflection.get('revision'):
-                structured.append(self.reflection_tokens['revise'])
-                structured.append(f"Revised: {reflection['revision']}")
-            
-            # Confidence assessment
-            structured.append(self.reflection_tokens['confidence'])
-            structured.append(f"Confidence: {reflection.get('confidence', 'medium')}")
-            
-            # Mark uncertainties
-            if reflection.get('uncertainties'):
-                structured.append(self.reflection_tokens['uncertainty'])
-                for uncertainty in reflection['uncertainties']:
-                    structured.append(f"- Uncertain about: {uncertainty}")
-        
-        return structured
+        # Implementation details in external file
+        pass
     
     def validate_reasoning_chain(self, chain):
         """Validate a reasoning chain for consistency"""
-        validation_results = []
-        
-        validation_results.append(self.reflection_tokens['validate'])
-        
-        # Check for logical consistency
-        if self._check_logical_consistency(chain):
-            validation_results.append("✓ Logically consistent")
-        else:
-            validation_results.append("✗ Logical inconsistency detected")
-        
-        # Check for mathematical correctness
-        if self._check_mathematical_correctness(chain):
-            validation_results.append("✓ Mathematics verified")
-        else:
-            validation_results.append("✗ Mathematical error found")
-        
-        # Check assumptions
-        assumptions = self._extract_assumptions(chain)
-        if assumptions:
-            validation_results.append(self.reflection_tokens['assumption'])
-            for assumption in assumptions:
-                validation_results.append(f"- Assuming: {assumption}")
-        
-        return validation_results
-    
-    def _check_logical_consistency(self, chain):
-        """Check if reasoning chain is logically consistent"""
-        # Simplified logic check
-        return True  # Placeholder
-    
-    def _check_mathematical_correctness(self, chain):
-        """Verify mathematical operations in chain"""
-        # Simplified math check
-        return True  # Placeholder
-    
-    def _extract_assumptions(self, chain):
-        """Extract assumptions made in reasoning"""
-        assumptions = []
-        assumption_keywords = ['assume', 'suppose', 'given that', 'if we consider']
-        
-        for step in chain:
-            if any(keyword in step.lower() for keyword in assumption_keywords):
-                assumptions.append(step)
-        
-        return assumptions
+        # Implementation details in external file
+        pass
 \end{lstlisting}
 
 \subsection{Constitutional AI and Behavioral Tokens}
@@ -357,6 +155,7 @@ class ReflectiveReasoningTokenizer:
 Constitutional AI uses special tokens to embed behavioral principles directly into reasoning:
 
 \begin{lstlisting}[language=Python, caption=Constitutional AI principle tokens]
+# Core structure (see code/constitutional_reasoning_tokenizer.py for complete implementation)
 class ConstitutionalReasoningTokenizer:
     def __init__(self, base_tokenizer):
         self.base_tokenizer = base_tokenizer
@@ -376,87 +175,18 @@ class ConstitutionalReasoningTokenizer:
         
     def encode_with_principles(self, prompt):
         """Encode prompt with constitutional principles"""
-        formatted = (
-            f"{prompt}\n"
-            f"{self.principle_tokens['principle_check']}\n"
-            f"Checking response against principles:\n"
-            f"{self.principle_tokens['helpful']} - {self.principles['helpful']}\n"
-            f"{self.principle_tokens['harmless']} - {self.principles['harmless']}\n"
-            f"{self.principle_tokens['honest']} - {self.principles['honest']}\n"
-        )
-        return self.base_tokenizer.encode(formatted)
+        # Implementation details in external file
+        pass
     
     def check_response_principles(self, response):
         """Check if response adheres to constitutional principles"""
-        checks = {}
-        
-        # Check helpfulness
-        checks['helpful'] = self._check_helpfulness(response)
-        
-        # Check harmlessness
-        checks['harmless'] = self._check_harmlessness(response)
-        
-        # Check honesty
-        checks['honest'] = self._check_honesty(response)
-        
-        return checks
+        # Implementation details in external file
+        pass
     
     def revise_for_principles(self, original_response, principle_violations):
         """Revise response to better adhere to principles"""
-        revision_prompt = [self.principle_tokens['revision_needed']]
-        
-        for principle, violation in principle_violations.items():
-            if violation:
-                revision_prompt.append(
-                    f"Revising for {principle}: {self.principles[principle]}"
-                )
-        
-        # Add revision logic here
-        revised_response = self._apply_principle_revision(
-            original_response, 
-            principle_violations
-        )
-        
-        revision_prompt.append(self.principle_tokens['approved'])
-        revision_prompt.append(revised_response)
-        
-        return revision_prompt
-    
-    def _check_helpfulness(self, response):
-        """Check if response is helpful"""
-        helpful_indicators = ['help', 'assist', 'solution', 'answer', 'explain']
-        return any(indicator in response.lower() for indicator in helpful_indicators)
-    
-    def _check_harmlessness(self, response):
-        """Check if response is harmless"""
-        harmful_indicators = ['dangerous', 'illegal', 'harmful', 'malicious']
-        return not any(indicator in response.lower() for indicator in harmful_indicators)
-    
-    def _check_honesty(self, response):
-        """Check if response acknowledges uncertainty when appropriate"""
-        uncertainty_indicators = ['not sure', 'might be', 'possibly', 'uncertain']
-        absolute_claims = ['definitely', 'certainly', 'absolutely', 'guaranteed']
-        
-        # Simple heuristic: look for balance
-        has_uncertainty = any(ind in response.lower() for ind in uncertainty_indicators)
-        has_absolute = any(claim in response.lower() for claim in absolute_claims)
-        
-        return has_uncertainty or not has_absolute
-    
-    def _apply_principle_revision(self, response, violations):
-        """Apply principle-based revisions to response"""
-        revised = response
-        
-        if violations.get('helpful'):
-            revised = f"Let me provide a more helpful response: {revised}"
-        
-        if violations.get('harmless'):
-            revised = "[Content revised for safety]"
-        
-        if violations.get('honest'):
-            revised = f"I should clarify that {revised}"
-        
-        return revised
+        # Implementation details in external file
+        pass
 \end{lstlisting}
 
 \subsection{Metacognitive Reasoning Tokens}
@@ -464,6 +194,7 @@ class ConstitutionalReasoningTokenizer:
 Metacognitive tokens enable models to reason about their own reasoning:
 
 \begin{lstlisting}[language=Python, caption=Metacognitive reasoning tokens]
+# Core structure (see code/metacognitive_tokenizer.py for complete implementation)
 class MetacognitiveTokenizer:
     def __init__(self, base_tokenizer):
         self.base_tokenizer = base_tokenizer
@@ -479,92 +210,18 @@ class MetacognitiveTokenizer:
         
     def encode_with_metacognition(self, problem):
         """Encode problem with metacognitive prompting"""
-        prompt = (
-            f"Problem: {problem}\n"
-            f"{self.meta_tokens['meta_start']}\n"
-            f"{self.meta_tokens['strategy']} Selecting problem-solving approach...\n"
-        )
-        return self.base_tokenizer.encode(prompt)
+        # Implementation details in external file
+        pass
     
     def structure_metacognitive_reasoning(self, problem_type, reasoning_process):
         """Structure reasoning with metacognitive monitoring"""
-        structured = []
-        
-        # Strategy selection
-        structured.append(self.meta_tokens['strategy'])
-        strategy = self._select_strategy(problem_type)
-        structured.append(f"Selected strategy: {strategy}")
-        
-        # Monitor reasoning progress
-        for i, step in enumerate(reasoning_process):
-            structured.append(f"Step {i+1}: {step}")
-            
-            # Metacognitive monitoring
-            structured.append(self.meta_tokens['monitor'])
-            monitoring = self._monitor_progress(step, i, len(reasoning_process))
-            structured.append(monitoring)
-            
-            # Evaluate if adaptation needed
-            if self._needs_adaptation(monitoring):
-                structured.append(self.meta_tokens['adapt'])
-                adaptation = self._adapt_strategy(strategy, monitoring)
-                structured.append(f"Adapting approach: {adaptation}")
-        
-        # Final evaluation
-        structured.append(self.meta_tokens['evaluate'])
-        evaluation = self._evaluate_solution(reasoning_process)
-        structured.append(evaluation)
-        
-        # Confidence assessment
-        structured.append(self.meta_tokens['confidence'])
-        confidence = self._assess_confidence(evaluation)
-        structured.append(f"Overall confidence: {confidence}")
-        
-        structured.append(self.meta_tokens['meta_end'])
-        
-        return structured
+        # Implementation details in external file
+        pass
     
     def _select_strategy(self, problem_type):
         """Select appropriate problem-solving strategy"""
-        strategies = {
-            'mathematical': 'Step-by-step calculation with verification',
-            'logical': 'Deductive reasoning with premise checking',
-            'creative': 'Brainstorming with evaluation',
-            'analytical': 'Breaking down into components'
-        }
-        return strategies.get(problem_type, 'General problem-solving')
-    
-    def _monitor_progress(self, step, current, total):
-        """Monitor reasoning progress"""
-        progress = (current + 1) / total
-        if progress < 0.3:
-            return "Early stage: Establishing foundation"
-        elif progress < 0.7:
-            return "Mid stage: Developing solution"
-        else:
-            return "Final stage: Converging on answer"
-    
-    def _needs_adaptation(self, monitoring):
-        """Determine if strategy adaptation is needed"""
-        adaptation_triggers = ['stuck', 'error', 'unclear', 'complex']
-        return any(trigger in monitoring.lower() for trigger in adaptation_triggers)
-    
-    def _adapt_strategy(self, current_strategy, monitoring):
-        """Adapt problem-solving strategy"""
-        return f"Switching from {current_strategy} to more detailed analysis"
-    
-    def _evaluate_solution(self, reasoning_process):
-        """Evaluate the quality of the solution"""
-        return "Solution appears complete and logically sound"
-    
-    def _assess_confidence(self, evaluation):
-        """Assess confidence in the solution"""
-        if 'complete' in evaluation and 'sound' in evaluation:
-            return "High (90%)"
-        elif 'partial' in evaluation:
-            return "Medium (60%)"
-        else:
-            return "Low (30%)"
+        # Implementation details in external file
+        pass
 \end{lstlisting}
 
 \subsection{Training Strategies for Reasoning Tokens}

@@ -1,6 +1,6 @@
 \section{Tool Interaction and API Tokens}
 
-The integration of external tools and APIs into language models through specialized tokens represents a pivotal evolution in AI capabilities. Tool interaction tokens transform language models from isolated reasoning engines into orchestrators of complex, multi-system workflows, enabling them to access real-time information, perform calculations, manipulate data, and interact with the physical world through connected systems.
+The integration of external tools and APIs\index{API integration} into language models through specialized tokens represents a pivotal evolution in AI capabilities. Tool interaction tokens\index{tool interaction tokens} transform language models from isolated reasoning engines into orchestrators of complex, multi-system workflows, enabling them to access real-time information, perform calculations, manipulate data, and interact with the physical world through connected systems.
 
 \subsection{The Tool-Use Paradigm Shift}
 
@@ -23,6 +23,7 @@ This paradigm shift transforms AI from a passive question-answering system to an
 The simplest form of tool interaction involves tokens that delimit tool calls:
 
 \begin{lstlisting}[language=Python, caption=Basic tool invocation token system]
+# Core structure (see code/tool_interaction_tokenizer.py for complete implementation)
 class ToolInteractionTokenizer:
     def __init__(self, base_tokenizer, available_tools):
         self.base_tokenizer = base_tokenizer
@@ -39,105 +40,23 @@ class ToolInteractionTokenizer:
         
     def format_tool_call(self, tool_name, parameters):
         """Format a tool call with appropriate tokens"""
-        if tool_name not in self.available_tools:
-            raise ValueError(f"Tool {tool_name} not available")
-        
-        formatted = (
-            f"{self.tool_tokens['tool_call_start']}\n"
-            f"{self.tool_tokens['tool_name']} {tool_name}\n"
-            f"{self.tool_tokens['parameters']} {json.dumps(parameters)}\n"
-            f"{self.tool_tokens['tool_call_end']}"
-        )
-        
-        return formatted
+        # Implementation details in external file
+        pass
     
     def parse_model_output_for_tools(self, model_output):
         """Parse model output to extract tool calls"""
-        import re
-        import json
-        
-        tool_calls = []
-        
-        # Pattern to match tool calls
-        pattern = (
-            f"{re.escape(self.tool_tokens['tool_call_start'])}"
-            f".*?"
-            f"{re.escape(self.tool_tokens['tool_call_end'])}"
-        )
-        
-        matches = re.findall(pattern, model_output, re.DOTALL)
-        
-        for match in matches:
-            # Extract tool name
-            tool_pattern = f"{re.escape(self.tool_tokens['tool_name'])}\\s+(\\w+)"
-            tool_match = re.search(tool_pattern, match)
-            tool_name = tool_match.group(1) if tool_match else None
-            
-            # Extract parameters
-            params_pattern = f"{re.escape(self.tool_tokens['parameters'])}\\s+(\\{{.*?\\}})"
-            params_match = re.search(params_pattern, match, re.DOTALL)
-            
-            if params_match:
-                try:
-                    parameters = json.loads(params_match.group(1))
-                except json.JSONDecodeError:
-                    parameters = {}
-            else:
-                parameters = {}
-            
-            if tool_name:
-                tool_calls.append({
-                    'tool': tool_name,
-                    'parameters': parameters
-                })
-        
-        return tool_calls
+        # Implementation details in external file
+        pass
     
     def execute_tool_call(self, tool_name, parameters):
         """Execute a tool call and return formatted result"""
-        try:
-            # Get the tool function
-            tool_func = self.available_tools[tool_name]
-            
-            # Execute the tool
-            result = tool_func(**parameters)
-            
-            # Format successful result
-            formatted_result = (
-                f"{self.tool_tokens['result_start']}\n"
-                f"{json.dumps(result, indent=2)}\n"
-                f"{self.tool_tokens['result_end']}"
-            )
-            
-        except Exception as e:
-            # Format error result
-            formatted_result = (
-                f"{self.tool_tokens['error']}\n"
-                f"Tool execution failed: {str(e)}\n"
-                f"{self.tool_tokens['result_end']}"
-            )
-        
-        return formatted_result
+        # Implementation details in external file
+        pass
     
     def create_tool_augmented_prompt(self, user_query, tool_results=None):
         """Create prompt with tool usage context"""
-        prompt = f"User Query: {user_query}\n\n"
-        
-        # Add available tools description
-        prompt += "Available tools:\n"
-        for tool_name, tool_func in self.available_tools.items():
-            if hasattr(tool_func, '__doc__'):
-                prompt += f"- {tool_name}: {tool_func.__doc__}\n"
-        
-        # Add previous tool results if any
-        if tool_results:
-            prompt += "\nPrevious tool results:\n"
-            for result in tool_results:
-                prompt += result + "\n"
-        
-        prompt += "\nResponse (use tools as needed):\n"
-        
-        return prompt
+        # Implementation details in external file
+        pass
 \end{lstlisting}
 
 \subsection{Structured API Call Tokens}
@@ -145,6 +64,7 @@ class ToolInteractionTokenizer:
 More sophisticated systems use structured tokens for complex API interactions:
 
 \begin{lstlisting}[language=Python, caption=Structured API call tokenization]
+# Core structure (see code/api_call_tokenizer.py for complete implementation)
 class APICallTokenizer:
     def __init__(self, base_tokenizer):
         self.base_tokenizer = base_tokenizer
@@ -159,86 +79,18 @@ class APICallTokenizer:
             'status': '[STATUS]',
             'auth': '[AUTH]'
         }
-        
+    
     def format_api_call(self, endpoint, method='GET', headers=None, body=None, auth=None):
         """Format an API call with structured tokens"""
-        formatted = [self.api_tokens['api_start']]
-        
-        # Add endpoint
-        formatted.append(f"{self.api_tokens['endpoint']} {endpoint}")
-        
-        # Add HTTP method
-        formatted.append(f"{self.api_tokens['method']} {method}")
-        
-        # Add headers if present
-        if headers:
-            formatted.append(f"{self.api_tokens['headers']} {json.dumps(headers)}")
-        
-        # Add authentication if present
-        if auth:
-            formatted.append(f"{self.api_tokens['auth']} [REDACTED]")
-        
-        # Add body for POST/PUT requests
-        if body and method in ['POST', 'PUT', 'PATCH']:
-            formatted.append(f"{self.api_tokens['body']} {json.dumps(body)}")
-        
-        formatted.append(self.api_tokens['api_end'])
-        
-        return '\n'.join(formatted)
+        pass
     
     def parse_api_response(self, response, status_code):
         """Parse and format API response with tokens"""
-        formatted = [
-            self.api_tokens['response'],
-            f"{self.api_tokens['status']} {status_code}"
-        ]
-        
-        if 200 <= status_code < 300:
-            # Successful response
-            formatted.append(json.dumps(response, indent=2))
-        else:
-            # Error response
-            formatted.append(f"[ERROR] API call failed with status {status_code}")
-            if response:
-                formatted.append(json.dumps(response, indent=2))
-        
-        return '\n'.join(formatted)
+        pass
     
     def create_api_chain(self, api_calls):
         """Create a chain of dependent API calls"""
-        chain = []
-        results = {}
-        
-        for i, call in enumerate(api_calls):
-            # Substitute variables from previous results
-            if 'depends_on' in call:
-                for dep_idx, dep_field in call['depends_on'].items():
-                    if dep_idx in results:
-                        # Replace placeholder with actual value
-                        placeholder = f"${{result_{dep_idx}.{dep_field}}}"
-                        actual_value = results[dep_idx].get(dep_field, '')
-                        
-                        # Update endpoint or body with actual value
-                        if 'endpoint' in call:
-                            call['endpoint'] = call['endpoint'].replace(
-                                placeholder, str(actual_value)
-                            )
-                        if 'body' in call:
-                            call['body'] = json.loads(
-                                json.dumps(call['body']).replace(
-                                    placeholder, str(actual_value)
-                                )
-                            )
-            
-            # Format the API call
-            formatted_call = self.format_api_call(**call)
-            chain.append(formatted_call)
-            
-            # Simulate execution and store result
-            # In real implementation, this would actually call the API
-            results[i] = {'simulated': 'result'}
-        
-        return chain
+        pass
 \end{lstlisting}
 
 \subsection{Function Calling Tokens}
@@ -246,6 +98,7 @@ class APICallTokenizer:
 Function calling tokens enable models to invoke specific functions with typed parameters:
 
 \begin{lstlisting}[language=Python, caption=Function calling token system]
+# Core structure (see code/function_calling_tokenizer.py for complete implementation)
 class FunctionCallingTokenizer:
     def __init__(self, base_tokenizer, function_registry):
         self.base_tokenizer = base_tokenizer
@@ -260,138 +113,22 @@ class FunctionCallingTokenizer:
             'async': '[ASYNC]',
             'await': '[AWAIT]'
         }
-        
+    
     def format_function_call(self, func_name, *args, **kwargs):
         """Format a function call with type information"""
-        if func_name not in self.function_registry:
-            raise ValueError(f"Function {func_name} not registered")
-        
-        func_info = self.function_registry[func_name]
-        
-        formatted = [
-            self.func_tokens['call'],
-            f"{self.func_tokens['name']} {func_name}"
-        ]
-        
-        # Add type information
-        if 'return_type' in func_info:
-            formatted.append(f"{self.func_tokens['type']} {func_info['return_type']}")
-        
-        # Add positional arguments
-        if args:
-            formatted.append(f"{self.func_tokens['args']} {list(args)}")
-        
-        # Add keyword arguments
-        if kwargs:
-            formatted.append(f"{self.func_tokens['kwargs']} {kwargs}")
-        
-        # Mark if async
-        if func_info.get('is_async', False):
-            formatted.append(self.func_tokens['async'])
-        
-        return '\n'.join(formatted)
+        pass
     
     def validate_function_call(self, func_name, args, kwargs):
         """Validate function call against signature"""
-        import inspect
-        
-        if func_name not in self.function_registry:
-            return False, "Function not found"
-        
-        func = self.function_registry[func_name]['function']
-        sig = inspect.signature(func)
-        
-        try:
-            # Check if arguments match signature
-            bound = sig.bind(*args, **kwargs)
-            bound.apply_defaults()
-            return True, "Valid call"
-        except TypeError as e:
-            return False, str(e)
+        pass
     
     def execute_function_safely(self, func_name, args, kwargs):
         """Execute function with safety checks"""
-        # Validate first
-        is_valid, message = self.validate_function_call(func_name, args, kwargs)
-        
-        if not is_valid:
-            return {
-                'error': True,
-                'message': message
-            }
-        
-        func_info = self.function_registry[func_name]
-        func = func_info['function']
-        
-        # Apply safety restrictions
-        if func_info.get('requires_confirmation', False):
-            # In real implementation, would ask for user confirmation
-            pass
-        
-        if func_info.get('rate_limited', False):
-            # Check rate limits
-            pass
-        
-        try:
-            # Execute function
-            if func_info.get('is_async', False):
-                # Handle async execution
-                import asyncio
-                result = asyncio.run(func(*args, **kwargs))
-            else:
-                result = func(*args, **kwargs)
-            
-            return {
-                'error': False,
-                'result': result,
-                'type': type(result).__name__
-            }
-            
-        except Exception as e:
-            return {
-                'error': True,
-                'message': str(e),
-                'type': 'exception'
-            }
+        pass
     
     def create_function_chain(self, chain_spec):
         """Create a chain of function calls with data flow"""
-        results = []
-        context = {}
-        
-        for step in chain_spec:
-            func_name = step['function']
-            
-            # Resolve arguments from context
-            resolved_args = []
-            for arg in step.get('args', []):
-                if isinstance(arg, str) and arg.startswith('$'):
-                    # Reference to previous result
-                    var_name = arg[1:]
-                    if var_name in context:
-                        resolved_args.append(context[var_name])
-                    else:
-                        resolved_args.append(arg)
-                else:
-                    resolved_args.append(arg)
-            
-            # Execute function
-            result = self.execute_function_safely(
-                func_name,
-                resolved_args,
-                step.get('kwargs', {})
-            )
-            
-            # Store result in context
-            if 'store_as' in step:
-                context[step['store_as']] = result.get('result')
-            
-            results.append({
-                'step': step,
-                'result': result
-            })
-        
-        return results
+        pass
 \end{lstlisting}
 
 \subsection{Database and Query Tokens}
@@ -399,6 +136,7 @@ class FunctionCallingTokenizer:
 Specialized tokens for database interactions:
 
 \begin{lstlisting}[language=Python, caption=Database query tokens]
+# Core structure (see code/database_query_tokenizer.py for complete implementation)
 class DatabaseQueryTokenizer:
     def __init__(self, base_tokenizer):
         self.base_tokenizer = base_tokenizer
@@ -415,90 +153,22 @@ class DatabaseQueryTokenizer:
             'commit': '[COMMIT]',
             'rollback': '[ROLLBACK]'
         }
-        
+    
     def format_sql_query(self, query, params=None, transaction=False):
         """Format SQL query with safety tokens"""
-        formatted = []
-        
-        if transaction:
-            formatted.append(self.db_tokens['transaction'])
-        
-        formatted.extend([
-            self.db_tokens['query_start'],
-            f"{self.db_tokens['sql']} {query}"
-        ])
-        
-        if params:
-            # Use parameterized queries for safety
-            formatted.append(f"[PARAMS] {params}")
-        
-        formatted.append(self.db_tokens['query_end'])
-        
-        return '\n'.join(formatted)
+        pass
     
     def format_nosql_query(self, collection, operation, filter_doc=None, update_doc=None):
         """Format NoSQL query with tokens"""
-        formatted = [
-            self.db_tokens['query_start'],
-            f"{self.db_tokens['nosql']}",
-            f"{self.db_tokens['collection']} {collection}",
-            f"[OPERATION] {operation}"
-        ]
-        
-        if filter_doc:
-            formatted.append(f"[FILTER] {json.dumps(filter_doc)}")
-        
-        if update_doc and operation in ['update', 'replace']:
-            formatted.append(f"[UPDATE] {json.dumps(update_doc)}")
-        
-        formatted.append(self.db_tokens['query_end'])
-        
-        return '\n'.join(formatted)
+        pass
     
     def parse_query_result(self, result, query_type='sql'):
         """Parse and format query results"""
-        formatted = [self.db_tokens['result_set']]
-        
-        if query_type == 'sql':
-            # Format as table
-            if result and len(result) > 0:
-                # Get column names
-                columns = list(result[0].keys())
-                formatted.append(f"[COLUMNS] {columns}")
-                
-                # Add row count
-                formatted.append(f"{self.db_tokens['row_count']} {len(result)}")
-                
-                # Add first few rows
-                for i, row in enumerate(result[:5]):
-                    formatted.append(f"[ROW_{i}] {row}")
-                
-                if len(result) > 5:
-                    formatted.append(f"... and {len(result) - 5} more rows")
-            else:
-                formatted.append("[EMPTY_RESULT]")
-                
-        elif query_type == 'nosql':
-            # Format as documents
-            formatted.append(f"[DOCUMENT_COUNT] {len(result)}")
-            for i, doc in enumerate(result[:3]):
-                formatted.append(f"[DOC_{i}] {json.dumps(doc, indent=2)}")
-            
-            if len(result) > 3:
-                formatted.append(f"... and {len(result) - 3} more documents")
-        
-        return '\n'.join(formatted)
+        pass
     
     def create_transaction_block(self, queries):
         """Create a transaction block with multiple queries"""
-        transaction = [
-            self.db_tokens['transaction'],
-            "[BEGIN]"
-        ]
-        
-        for i, query in enumerate(queries):
-            transaction.append(f"[STEP_{i}]")
-            transaction.append(self.format_sql_query(query['sql'], query.get('params')))
+        pass
             
             # Add validation check
             if 'validate' in query:
@@ -517,6 +187,7 @@ class DatabaseQueryTokenizer:
 Tokens for file system operations:
 
 \begin{lstlisting}[language=Python, caption=File system operation tokens]
+# Core structure (see code/filesystem_tokenizer.py for complete implementation)
 class FileSystemTokenizer:
     def __init__(self, base_tokenizer, sandbox_path="/tmp/sandbox"):
         self.base_tokenizer = base_tokenizer
@@ -534,69 +205,14 @@ class FileSystemTokenizer:
             'size': '[SIZE]',
             'modified': '[MODIFIED]'
         }
-        
+    
     def format_file_operation(self, operation, path, content=None):
         """Format file operation with safety checks"""
-        import os
-        
-        # Ensure path is within sandbox
-        full_path = os.path.join(self.sandbox_path, path)
-        if not full_path.startswith(self.sandbox_path):
-            raise ValueError("Path escapes sandbox")
-        
-        formatted = [
-            self.fs_tokens[operation],
-            f"{self.fs_tokens['path']} {path}"
-        ]
-        
-        if operation in ['write', 'append'] and content:
-            # Limit content size
-            max_size = 1024 * 1024  # 1MB
-            if len(content) > max_size:
-                content = content[:max_size] + "\n[TRUNCATED]"
-            
-            formatted.append(f"{self.fs_tokens['content']}")
-            formatted.append(content)
-        
-        return '\n'.join(formatted)
+        pass
     
     def format_directory_listing(self, path, recursive=False):
         """Format directory listing with metadata"""
-        import os
-        from datetime import datetime
-        
-        full_path = os.path.join(self.sandbox_path, path)
-        
-        listing = [
-            self.fs_tokens['list'],
-            f"{self.fs_tokens['path']} {path}"
-        ]
-        
-        try:
-            for item in os.listdir(full_path):
-                item_path = os.path.join(full_path, item)
-                stat = os.stat(item_path)
-                
-                item_info = {
-                    'name': item,
-                    'type': 'DIR' if os.path.isdir(item_path) else 'FILE',
-                    'size': stat.st_size,
-                    'modified': datetime.fromtimestamp(stat.st_mtime).isoformat()
-                }
-                
-                listing.append(f"[ITEM] {json.dumps(item_info)}")
-                
-                if recursive and os.path.isdir(item_path):
-                    # Recursively list subdirectories
-                    sublisting = self.format_directory_listing(
-                        os.path.join(path, item),
-                        recursive=True
-                    )
-                    listing.append(sublisting)
-                    
-        except PermissionError:
-            listing.append("[ERROR] Permission denied")
-        except FileNotFoundError:
+        pass
             listing.append("[ERROR] Path not found")
         
         return '\n'.join(listing)
@@ -607,6 +223,7 @@ class FileSystemTokenizer:
 Tokens for web interaction and data extraction:
 
 \begin{lstlisting}[language=Python, caption=Web scraping and browser automation tokens]
+# Core structure (see code/web_scraping_tokenizer.py for complete implementation)
 class WebScrapingTokenizer:
     def __init__(self, base_tokenizer):
         self.base_tokenizer = base_tokenizer
@@ -623,70 +240,22 @@ class WebScrapingTokenizer:
             'url': '[URL]',
             'element': '[ELEMENT]'
         }
-        
+    
     def format_navigation(self, url, wait_for=None):
         """Format web navigation action"""
-        formatted = [
-            self.web_tokens['navigate'],
-            f"{self.web_tokens['url']} {url}"
-        ]
-        
-        if wait_for:
-            formatted.append(f"{self.web_tokens['wait']} {wait_for}")
-        
-        return '\n'.join(formatted)
+        pass
     
     def format_interaction(self, action, selector, value=None):
         """Format web interaction action"""
-        formatted = [
-            self.web_tokens[action],
-            f"{self.web_tokens['selector']} {selector}"
-        ]
-        
-        if value:
-            formatted.append(f"[VALUE] {value}")
-        
-        return '\n'.join(formatted)
+        pass
     
     def format_extraction(self, selectors, extract_type='text'):
         """Format data extraction from web page"""
-        formatted = [
-            self.web_tokens['extract'],
-            f"[EXTRACT_TYPE] {extract_type}"
-        ]
-        
-        for name, selector in selectors.items():
-            formatted.append(f"[FIELD] {name} -> {selector}")
-        
-        return '\n'.join(formatted)
+        pass
     
     def create_scraping_workflow(self, steps):
         """Create a complete web scraping workflow"""
-        workflow = []
-        
-        for i, step in enumerate(steps):
-            workflow.append(f"[STEP_{i}]")
-            
-            if step['action'] == 'navigate':
-                workflow.append(self.format_navigation(
-                    step['url'],
-                    step.get('wait_for')
-                ))
-            elif step['action'] in ['click', 'type', 'select']:
-                workflow.append(self.format_interaction(
-                    step['action'],
-                    step['selector'],
-                    step.get('value')
-                ))
-            elif step['action'] == 'extract':
-                workflow.append(self.format_extraction(
-                    step['selectors'],
-                    step.get('type', 'text')
-                ))
-            elif step['action'] == 'screenshot':
-                workflow.append(f"{self.web_tokens['screenshot']} {step.get('filename', 'screenshot.png')}")
-            
-            # Add validation if specified
+        pass
             if 'validate' in step:
                 workflow.append(f"[VALIDATE] {step['validate']}")
         
@@ -698,6 +267,7 @@ class WebScrapingTokenizer:
 Complex tasks often require orchestrating multiple tools:
 
 \begin{lstlisting}[language=Python, caption=Multi-tool orchestration system]
+# Core structure (see code/multi_tool_orchestrator.py for complete implementation)
 class MultiToolOrchestrator:
     def __init__(self, tokenizers):
         self.tokenizers = tokenizers  # Dict of tool-specific tokenizers
@@ -711,93 +281,30 @@ class MultiToolOrchestrator:
             'variable': '[VAR]',
             'checkpoint': '[CHECKPOINT]'
         }
-        
+    
     def create_workflow(self, workflow_spec):
         """Create a multi-tool workflow from specification"""
-        workflow = [self.orchestration_tokens['workflow_start']]
-        
-        for task in workflow_spec['tasks']:
-            if task['type'] == 'parallel':
-                workflow.append(self.format_parallel_tasks(task['subtasks']))
-            elif task['type'] == 'sequential':
-                workflow.append(self.format_sequential_tasks(task['subtasks']))
-            elif task['type'] == 'conditional':
-                workflow.append(self.format_conditional_task(task))
-            elif task['type'] == 'loop':
-                workflow.append(self.format_loop_task(task))
-            else:
-                workflow.append(self.format_single_task(task))
-        
-        workflow.append(self.orchestration_tokens['workflow_end'])
-        
-        return '\n'.join(workflow)
+        pass
     
     def format_parallel_tasks(self, tasks):
         """Format tasks to run in parallel"""
-        formatted = [self.orchestration_tokens['parallel']]
-        
-        for i, task in enumerate(tasks):
-            formatted.append(f"[THREAD_{i}]")
-            formatted.append(self.format_single_task(task))
-        
-        formatted.append("[WAIT_ALL]")
-        
-        return '\n'.join(formatted)
+        pass
     
     def format_sequential_tasks(self, tasks):
         """Format tasks to run sequentially"""
-        formatted = [self.orchestration_tokens['sequential']]
-        
-        for i, task in enumerate(tasks):
-            formatted.append(f"[STEP_{i}]")
-            formatted.append(self.format_single_task(task))
-            
-            # Add checkpoint after each task
-            if task.get('checkpoint', False):
-                formatted.append(f"{self.orchestration_tokens['checkpoint']} step_{i}")
-        
-        return '\n'.join(formatted)
+        pass
     
     def format_conditional_task(self, task):
         """Format conditional task execution"""
-        formatted = [
-            f"{self.orchestration_tokens['conditional']} {task['condition']}",
-            "[THEN]",
-            self.format_single_task(task['then_task'])
-        ]
-        
-        if 'else_task' in task:
-            formatted.extend([
-                "[ELSE]",
-                self.format_single_task(task['else_task'])
-            ])
-        
-        formatted.append("[END_IF]")
-        
-        return '\n'.join(formatted)
+        pass
     
     def format_loop_task(self, task):
         """Format loop task execution"""
-        formatted = [
-            f"{self.orchestration_tokens['loop']} {task['iteration_type']}"
-        ]
-        
-        if task['iteration_type'] == 'for':
-            formatted.append(f"[RANGE] {task['range']}")
-        elif task['iteration_type'] == 'while':
-            formatted.append(f"[CONDITION] {task['condition']}")
-        elif task['iteration_type'] == 'foreach':
-            formatted.append(f"[ITEMS] {task['items']}")
-        
-        formatted.append("[DO]")
-        formatted.append(self.format_single_task(task['body']))
-        formatted.append("[END_LOOP]")
-        
-        return '\n'.join(formatted)
+        pass
     
     def format_single_task(self, task):
         """Format a single tool task"""
-        tool_type = task['tool']
+        pass
         
         if tool_type in self.tokenizers:
             tokenizer = self.tokenizers[tool_type]
