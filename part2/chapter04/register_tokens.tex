@@ -3,8 +3,13 @@
 \section{Register Tokens}
 
 Register tokens represent a recent innovation in vision transformer design, introduced to address specific computational and representational challenges that emerge in large-scale visual models. Unlike traditional special tokens that serve explicit functional roles, register tokens act as auxiliary learnable parameters that improve model capacity and training dynamics without directly participating in the final prediction.
+
+If a transformer layer is like a committee meeting, and the patch tokens are the members discussing the image, register tokens are like extra whiteboards in the room. They aren't members and don't get a final vote, but they provide a shared space where committee members can jot down intermediate thoughts, calculations, or summaries, leading to a more organized and effective discussion.
+
 \begin{comment}
 Feedback: This is a good, technical introduction. To make it more intuitive, you could use an analogy. For example: "If a transformer layer is like a committee meeting, and the patch tokens are the members discussing the image, register tokens are like extra whiteboards in the room. They aren't members and don't get a final vote, but they provide a shared space where committee members can jot down intermediate thoughts, calculations, or summaries, leading to a more organized and effective discussion."
+
+STATUS: addressed - added committee meeting analogy to make register tokens more intuitive
 \end{comment}
 
 The concept of register tokens stems from observations that vision transformers, particularly at larger scales, can benefit from additional "workspace" tokens that provide the model with extra computational flexibility and help stabilize attention patterns during training.
@@ -20,13 +25,15 @@ A Register token is a learnable parameter vector that participates in transforme
 Register tokens provide several theoretical and practical benefits:
 
 \begin{enumerate}
-\item \textbf{Attention Sink Mitigation}: Large attention weights can concentrate on specific positions, creating computational bottlenecks.
+\item \textbf{Attention Sink Mitigation}: Some studies found that in the absence of dedicated "scratch space," some patch tokens would spontaneously become "attention sinks," attracting a large amount of attention from other tokens. Register tokens provide a dedicated, non-content-based place for this global information to be stored, freeing up the patch tokens to focus on representing their local features
 \item \textbf{Representation Capacity}: Additional parameters increase model expressiveness without changing output dimensionality
 \item \textbf{Training Stability}: Extra tokens can absorb noise and provide more stable gradient flows
 \item \textbf{Inference Efficiency}: Register tokens can be optimized for specific computational patterns
 \end{enumerate}
 \begin{comment}
 It's worth explaining the first point a bit more. "Some studies found that in the absence of dedicated 'scratch space,' some patch tokens would spontaneously become 'attention sinks,' attracting a large amount of attention from other tokens. Register tokens provide a dedicated, non-content-based place for this global information to be stored, freeing up the patch tokens to focus on representing their local features."
+
+STATUS: addressed - expanded explanation of attention sink mitigation with detailed description of the problem and solution
 \end{comment}
 
 \subsection{Architectural Integration}

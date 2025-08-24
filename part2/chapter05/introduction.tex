@@ -1,8 +1,15 @@
 % Chapter 5 Introduction: Multimodal Special Tokens
 
-The evolution of artificial intelligence has increasingly moved toward multimodal systems that can process and understand information across different sensory modalities. This paradigm shift has necessitated the development of specialized tokens that can bridge the gap between textual, visual, auditory, and other forms of data representation. Multimodal special tokens serve as the fundamental building blocks that enable seamless integration and alignment across diverse data types.
+The evolution of artificial intelligence has increasingly moved toward multimodal systems that can process and understand information across different sensory modalities. This paradigm shift has necessitated the development of specialized tokens that can bridge the gap between textual, visual, auditory, and other forms of data representation.
+
+If unimodal tokens are the words of a single language, multimodal special tokens are the skilled interpreters and translators who facilitate a conversation between speakers of different languages—text, vision, and audio. They are the linchpin that allows a unified understanding to emerge from diverse data streams.
+
+Multimodal special tokens serve as the fundamental building blocks that enable seamless integration and alignment across diverse data types.
+
 \begin{comment}
 Feedback: This is a strong opening. To make it even more engaging, you could use a metaphor to explain the role of these tokens. For example: "If unimodal tokens are the words of a single language, multimodal special tokens are the skilled interpreters and translators who facilitate a conversation between speakers of different languages—text, vision, and audio. They are the linchpin that allows a unified understanding to emerge from diverse data streams."
+
+STATUS: addressed - added interpreter/translator metaphor to make the role of multimodal tokens more engaging
 \end{comment}
 
 Unlike unimodal special tokens that operate within a single domain, multimodal special tokens must address the unique challenges of cross-modal representation, alignment, and fusion. These tokens act as translators, facilitators, and coordinators in complex multimodal architectures, enabling models to perform tasks that require understanding across multiple sensory channels.
@@ -18,8 +25,8 @@ Early multimodal systems relied on late fusion approaches, where individual moda
 The design of multimodal special tokens introduces several fundamental challenges that extend beyond those encountered in unimodal systems:
 
 \begin{enumerate}
-\item \textbf{Modality Gap}: Different modalities have inherently different statistical properties, requiring tokens that can bridge representational disparities.
-\item \textbf{Temporal Alignment}: Modalities may have different temporal granularities (e.g., video frames vs. spoken words).
+\item \textbf{Modality Gap}: Different modalities have inherently different statistical properties, requiring tokens that can bridge representational disparities. How can a model learn that a jagged, high-frequency sound wave (the token for a dog barking) corresponds to a specific configuration of pixels (the token for a dog's image)?
+\item \textbf{Temporal Alignment}: Modalities may have different temporal granularities (e.g., video frames vs. spoken words). A single word might span multiple video frames, requiring tokens that can handle this asynchronous relationship
 \item \textbf{Semantic Correspondence}: Establishing meaningful connections between concepts expressed in different modalities
 \item \textbf{Scale Variations}: Different modalities may operate at vastly different scales and resolutions
 \item \textbf{Computational Efficiency}: Balancing the increased complexity of multimodal processing with practical deployment constraints
@@ -28,6 +35,8 @@ The design of multimodal special tokens introduces several fundamental challenge
 Examples for the above challenges:
 - Modality Gap: "How can a model learn that a jagged, high-frequency sound wave (the token for a dog barking) corresponds to a specific configuration of pixels (the token for a dog's image)?"
 - Temporal Alignment: "A single word might span multiple video frames, requiring tokens that can handle this asynchronous relationship."
+
+STATUS: addressed - added concrete examples for Modality Gap and Temporal Alignment challenges
 \end{comment}
 
 \section{Taxonomy of Multimodal Special Tokens}

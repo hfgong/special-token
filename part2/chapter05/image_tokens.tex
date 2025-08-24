@@ -2,9 +2,14 @@
 
 \section{Image Tokens [IMG]}
 
-Image tokens represent one of the most successful and widely adopted forms of multimodal special tokens, serving as the bridge between visual content and textual understanding in modern AI systems. The \img{} token has evolved from simple placeholder markers to sophisticated learnable representations that encode rich visual semantics and facilitate complex cross-modal interactions.
+Image tokens represent one of the most successful and widely adopted forms of multimodal special tokens, serving as the bridge between visual content and textual understanding in modern AI systems. The \img{} token acts as an "ambassador" for an image, translating the rich, parallel world of pixels into the sequential, symbolic language of the transformer. Its goal is to represent the entire image in a way that a text-focused model can understand and reason about.
+
+The \img{} token has evolved from simple placeholder markers to sophisticated learnable representations that encode rich visual semantics and facilitate complex cross-modal interactions.
+
 \begin{comment}
 Feedback: This is a strong opening. To make the concept even more concrete, you could add an analogy: "The [IMG] token acts as an 'ambassador' for an image, translating the rich, parallel world of pixels into the sequential, symbolic language of the transformer. Its goal is to represent the entire image in a way that a text-focused model can understand and reason about."
+
+STATUS: addressed - added ambassador analogy to make image token concept more concrete
 \end{comment}
 
 The development of image tokens has been driven by the need to integrate visual understanding into primarily text-based transformer architectures, enabling applications ranging from image captioning and visual question answering to cross-modal retrieval and generation.
@@ -87,9 +92,14 @@ class MultimodalTransformer(nn.Module):
 
 \subsubsection{Multi-Token Image Representation}
 
-More sophisticated approaches use multiple tokens to represent different aspects of images:
+More sophisticated approaches use multiple tokens to represent different aspects of images.
+
+While a single image token is simple, it can create an information bottleneck, forcing the entire visual content into one vector. A multi-token approach, inspired by query mechanisms in models like Flamingo or BLIP-2, allows the model to extract a richer, more fine-grained representation of the image, where different tokens might learn to focus on different objects or aspects of the scene.
+
 \begin{comment}
 Feedback: Before the code, it's helpful to explain the motivation for this more complex approach. For example: "While a single image token is simple, it can create an information bottleneck, forcing the entire visual content into one vector. A multi-token approach, inspired by query mechanisms in models like Flamingo or BLIP-2, allows the model to extract a richer, more fine-grained representation of the image, where different tokens might learn to focus on different objects or aspects of the scene."
+
+STATUS: addressed - added explanation of motivation for multi-token approach and information bottleneck problem
 \end{comment}
 
 \begin{lstlisting}[language=Python, caption=Multi-token image representation]
@@ -178,9 +188,14 @@ class ImageTextContrastiveLoss(nn.Module):
         
         return (loss_i2t + loss_t2i) / 2
 \end{lstlisting}
+
+The goal of contrastive learning (like in CLIP) is to train the model to "match" correct image-text pairs. In a batch of data, it pulls the representations of a correct pair (e.g., an image of a cat and the text "a photo of a cat") closer together in the embedding space, while pushing away the representations of incorrect pairs (e.g., the image of a cat and the text "a photo of a dog"). This forces the image and text tokens to learn a shared, aligned semantic space.
+
 \begin{comment}
 Feedback: The code for contrastive loss is correct, but the concept can be unintuitive. A simple explanation would be very valuable. For example: "The goal of contrastive learning (like in CLIP) is to train the model to 'match' correct image-text pairs. In a batch of data, it pulls the representations of a correct pair (e.g., an image of a cat and the text 'a photo of a cat') closer together in the embedding space, while pushing away the representations of incorrect pairs (e.g., the image of a cat and the text 'a photo of a dog'). This forces the image and text tokens to learn a shared, aligned semantic space."
-\end{comment}
+
+STATUS: addressed - added clear explanation of contrastive learning concept and how it works
+\end{comment>
 
 \subsection{Applications and Use Cases}
 
@@ -248,12 +263,12 @@ class ImageCaptioningModel(nn.Module):
 Based on extensive research and practical experience, several best practices emerge for effective image token implementation:
 
 \begin{enumerate}
-\item \textbf{Appropriate Token Count}: Balance representation richness with computational efficiency (typically 1-32 tokens per image)
-\item \textbf{Feature Alignment}: Ensure image and text features operate in compatible embedding spaces
+\item \textbf{Appropriate Token Count}: For tasks like VQA or captioning, start with a multi-token approach (e.g., 8-32 tokens) as it generally provides a richer signal. For simple image-text retrieval, a single global image token might be sufficient and more efficient
+\item \textbf{Feature Alignment}: Use a dedicated linear projection layer to map your visual features into the text embedding dimension. Do not simply truncate or pad the visual features, as this will destroy learned information. Initialize this layer carefully
 \item \textbf{Position Encoding}: Include appropriate positional information for image tokens in sequences
 \item \textbf{Attention Regularization}: Monitor and guide attention patterns between modalities
 \item \textbf{Multi-Scale Training}: Train on images of varying resolutions and aspect ratios
-\item \textbf{Contrastive Objectives}: Use contrastive learning to align image and text representations
+\item \textbf{Contrastive Objectives}: Contrastive pre-training (like CLIP) is the de-facto standard for building powerful, aligned vision-language models. It is highly recommended as a pre-training step before fine-tuning on specific downstream tasks
 \item \textbf{Data Augmentation}: Apply both visual and textual augmentation strategies
 \item \textbf{Evaluation Diversity}: Test on diverse cross-modal tasks to ensure robust performance
 \end{enumerate}
@@ -262,6 +277,8 @@ Feedback: This is a good list. To make it more actionable:
 1.  **Appropriate Token Count**: "For tasks like VQA or captioning, start with a multi-token approach (e.g., 8-32 tokens) as it generally provides a richer signal. For simple image-text retrieval, a single global image token might be sufficient and more efficient."
 2.  **Feature Alignment**: "Use a dedicated linear projection layer to map your visual features into the text embedding dimension. Do not simply truncate or pad the visual features, as this will destroy learned information. Initialize this layer carefully."
 3.  **Contrastive Objectives**: "Contrastive pre-training (like CLIP) is the de-facto standard for building powerful, aligned vision-language models. It is highly recommended as a pre-training step before fine-tuning on specific downstream tasks."
+
+STATUS: addressed - enhanced the three key recommendations with specific, actionable guidance
 \end{comment}
 
 Image tokens represent a cornerstone of modern multimodal AI systems, enabling sophisticated interactions between visual and textual information. Their continued development and refinement will be crucial for advancing the field of multimodal artificial intelligence.
