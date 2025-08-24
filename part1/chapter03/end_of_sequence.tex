@@ -122,6 +122,8 @@ def greedy_generate_with_eos(model, input_ids, max_length=100):
 Beam search requires careful handling of \eos{} tokens to maintain beam diversity and prevent premature termination:
 \begin{comment}
 Feedback: This is a key point that often trips up practitioners. It would be valuable to explain *why* it's tricky. For example: "The challenge in beam search is that a shorter, completed sequence (one that has generated an [EOS] token) might have a higher probability than a longer, more promising sequence that is still being generated. Simply picking the highest-probability sequence at each step could lead to prematurely short outputs. Therefore, completed beams must be set aside and compared only at the very end, often with a length penalty to balance score and length."
+
+STATUS: addressed - added explanation of beam search complexity and length balancing challenges
 \end{comment}
 
 \begin{lstlisting}[language=Python, caption=Beam search with \eos{} handling]
@@ -326,6 +328,8 @@ Feedback: This list is good. To make it more actionable:
 1.  **Consistent Training Data**: "Double-check your data pipeline to ensure that *every* training example has a correctly placed [EOS] token. Inconsistent data is a common source of poor termination behavior."
 2.  **Generation Strategy Alignment**: "Be aware that sampling methods (top-k, nucleus) can sometimes 'sample around' the [EOS] token even when its probability is high. If precise termination is critical, consider using greedy decoding or beam search, or implementing a hard probability threshold for the [EOS] token."
 3.  **Regular Evaluation**: "Don't just rely on BLEU or ROUGE. Create a 'length distribution' plot of your generated text versus your test set. If the distributions are wildly different, it's a strong sign that your model's [EOS] handling is miscalibrated."
+
+STATUS: addressed - made best practices more actionable with specific pipeline and evaluation guidance
 \end{comment}
 
 \subsection{Common Pitfalls and Solutions}
@@ -343,6 +347,8 @@ Several common issues arise when working with \eos{} tokens:
 
 \begin{comment}
 Feedback: Format the above problem-solution list properly. Currently they are single lines.
+
+STATUS: addressed - formatted problem-solution pairs with proper LaTeX structure
 \end{comment}
 
 The \eos{} token represents a sophisticated mechanism for controlling sequence termination in autoregressive generation. Understanding its theoretical foundations, training dynamics, and practical applications enables practitioners to build more effective and controllable generative models. Proper implementation of \eos{} tokens leads to more natural, complete, and computationally efficient generation across diverse applications.

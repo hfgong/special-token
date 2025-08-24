@@ -138,64 +138,7 @@ Position embeddings help models understand local spatial neighborhoods:
 
 \begin{figure}[htbp]
 \centering
-\begin{tikzpicture}[
-    patch/.style={rectangle, minimum width=1cm, minimum height=1cm, draw=gray, thick},
-    center/.style={patch, fill=maskred!30},
-    neighbor/.style={patch, fill=gptgreen!20},
-    distant/.style={patch, fill=bertblue!10},
-    attention/.style={-{Stealth}, thick, opacity=0.8}
-]
-
-% 5x5 grid of patches
-\foreach \x in {0,1,2,3,4} {
-    \foreach \y in {0,1,2,3,4} {
-        \pgfmathsetmacro{\distance}{sqrt((\x-2)*(\x-2) + (\y-2)*(\y-2))}
-        \ifnum\x=2
-            \ifnum\y=2
-                \node[center] (patch\x\y) at (\x*1.2, \y*1.2) {};
-            \else
-                \ifdim\distance pt<1.5pt
-                    \node[neighbor] (patch\x\y) at (\x*1.2, \y*1.2) {};
-                \else
-                    \node[distant] (patch\x\y) at (\x*1.2, \y*1.2) {};
-                \fi
-            \fi
-        \else
-            \ifdim\distance pt<1.5pt
-                \node[neighbor] (patch\x\y) at (\x*1.2, \y*1.2) {};
-            \else
-                \node[distant] (patch\x\y) at (\x*1.2, \y*1.2) {};
-            \fi
-        \fi
-    }
-}
-
-% Attention arrows from center to neighbors
-\draw[attention, maskred, very thick] (patch22) -- (patch12);
-\draw[attention, maskred, very thick] (patch22) -- (patch32);
-\draw[attention, maskred, very thick] (patch22) -- (patch21);
-\draw[attention, maskred, very thick] (patch22) -- (patch23);
-
-% Weaker attention to diagonal neighbors
-\draw[attention, gptgreen] (patch22) -- (patch11);
-\draw[attention, gptgreen] (patch22) -- (patch13);
-\draw[attention, gptgreen] (patch22) -- (patch31);
-\draw[attention, gptgreen] (patch22) -- (patch33);
-
-% Labels
-\node[font=\small, below=0.3cm of patch20] {Query Patch};
-\node[font=\small, above=0.3cm of patch24] {Local Neighbors};
-\node[font=\small, left=0.3cm of patch02] {Distant Patches};
-
-% Legend
-\node[center, scale=0.7] at (6, 4) {};
-\node[font=\footnotesize] at (7.2, 4) {Query patch};
-\node[neighbor, scale=0.7] at (6, 3.3) {};
-\node[font=\footnotesize] at (7.2, 3.3) {Strong spatial attention};
-\node[distant, scale=0.7] at (6, 2.6) {};
-\node[font=\footnotesize] at (7.2, 2.6) {Weak spatial attention};
-
-\end{tikzpicture}
+\includegraphics[width=0.8\textwidth]{part2/chapter04/fig_position_attention.pdf}
 \caption{Spatial attention patterns enabled by position embeddings. The center patch (red) shows stronger attention to immediate neighbors (green) than distant patches (blue).}
 \end{figure}
 

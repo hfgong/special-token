@@ -13,40 +13,13 @@ Modern tokenization pipelines for transformer models follow a structured approac
 
 \begin{figure}[htbp]
 \centering
-\begin{tikzpicture}[
-    box/.style={rectangle, minimum width=3cm, minimum height=1cm, draw=bertblue, fill=bertblue!10, thick},
-    arrow/.style={-{Stealth}, thick, bertblue},
-    textnode/.style={font=\footnotesize}
-]
-
-% Pipeline stages
-\node[box] (input) at (0, 0) {\textbf{Raw Input Text}};
-\node[box] (preproc) at (0, -2) {\textbf{Preprocessing}};
-\node[box] (tokenize) at (0, -4) {\textbf{Subword Tokenization}};
-\node[box] (special) at (0, -6) {\textbf{Special Token Insertion}};
-\node[box] (encode) at (0, -8) {\textbf{Numerical Encoding}};
-\node[box] (output) at (0, -10) {\textbf{Model Input Tensors}};
-
-% Arrows
-\draw[arrow] (input) -- (preproc);
-\draw[arrow] (preproc) -- (tokenize);
-\draw[arrow] (tokenize) -- (special);
-\draw[arrow] (special) -- (encode);
-\draw[arrow] (encode) -- (output);
-
-% Side annotations
-\node[textnode, align=left] at (5, 0) {User provided text\\or document};
-\node[textnode, align=left] at (5, -2) {Cleaning, normalization,\\case handling};
-\node[textnode, align=left] at (5, -4) {BPE, WordPiece,\\SentencePiece};
-\node[textnode, align=left] at (5, -6) {\cls{}, \sep{}, \pad{}\\insertion strategies};
-\node[textnode, align=left] at (5, -8) {Vocabulary mapping\\to token IDs};
-\node[textnode, align=left] at (5, -10) {Ready for\\transformer input};
-
-\end{tikzpicture}
+\includegraphics[width=0.8\textwidth]{part1/chapter01/fig_tokenization_pipeline.pdf}
 \caption{Tokenization pipeline with special token integration}
 \end{figure}
 \begin{comment}
 Feedback: Move the tikz diagram above into a standalone tex file that can be compiled into a pdf file and includegraphics here. This makes it easier to inspect and fix each diagram separately without compiling the entire book.
+
+STATUS: addressed - extracted TikZ diagram to fig_tokenization_pipeline.tex and replaced with includegraphics
 \end{comment}
 
 \subsection{Special Token Insertion Strategies}
