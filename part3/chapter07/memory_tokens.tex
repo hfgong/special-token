@@ -1,2 +1,264 @@
-\section{Memory Tokens}
-% TODO: Content to be added
+\section{Memory and Retrieval Tokens}
+
+Memory tokens represent a fundamental advancement in extending transformer models beyond their inherent context window limitations. These specialized tokens enable models to access, store, and retrieve information from external memory systems, bridging the gap between parametric knowledge stored in model weights and non-parametric knowledge accessed dynamically during inference.
+
+\subsection{The Memory Challenge in Transformers}
+
+Traditional transformer models are constrained by their fixed context windows, typically ranging from hundreds to thousands of tokens. This limitation becomes problematic for applications requiring long-term memory, extensive knowledge retrieval, or processing of very long documents. Memory tokens address these constraints by providing structured interfaces to external memory systems.
+
+Consider the challenge of maintaining conversation context across hundreds of turns, or accessing specific facts from a large knowledge base. Without memory tokens, models must either:
+\begin{itemize}
+\item Truncate older context, losing potentially important information
+\item Store all relevant information in parameters, leading to massive model sizes
+\item Use inefficient retrieval mechanisms that don't integrate naturally with the transformer architecture
+\end{itemize}
+
+\subsection{Retrieval-Augmented Generation (RAG) Tokens}
+
+RAG systems introduced the concept of using special tokens to delineate retrieved context from the original query, enabling models to distinguish between parametric and non-parametric knowledge sources.
+
+\subsubsection{Context Boundary Tokens}
+
+RAG implementations typically use boundary tokens to mark retrieved information:
+
+\begin{lstlisting}[language=Python, caption=RAG context token implementation]
+class RAGTokenizer:
+    def __init__(self, base_tokenizer):
+        self.base_tokenizer = base_tokenizer
+        self.special_tokens = {
+            'context_start': '[RETRIEVED_CONTEXT]',
+            'context_end': '[/RETRIEVED_CONTEXT]',
+            'external_kb': '[EXTERNAL_KB]',
+            'doc_boundary': '[DOC_SEP]'
+        }
+    
+    def format_rag_input(self, query, retrieved_docs, max_context_length=512):
+        """Format query with retrieved context using special tokens"""
+        
+        # Start with context boundary
+        formatted_input = self.special_tokens['context_start']
+        
+        # Add retrieved documents with separators
+        for doc in retrieved_docs:
+            formatted_input += f" {self.special_tokens['external_kb']} {doc}"
+            formatted_input += f" {self.special_tokens['doc_boundary']}"
+        
+        # End context section
+        formatted_input += f" {self.special_tokens['context_end']}"
+        
+        # Add original query
+        formatted_input += f" {query}"
+        
+        return self.base_tokenizer.encode(formatted_input)
+    
+    def extract_generated_response(self, generated_text):
+        """Extract response while filtering out memory tokens"""
+        # Remove memory tokens from generated output
+        cleaned_text = generated_text
+        for token in self.special_tokens.values():
+            cleaned_text = cleaned_text.replace(token, "")
+        
+        return cleaned_text.strip()
+\end{lstlisting}
+
+\subsubsection{Knowledge Source Attribution}
+
+Advanced RAG systems use tokens to indicate the source and reliability of retrieved information:
+
+\begin{lstlisting}[language=Python, caption=Knowledge source attribution tokens]
+class AttributedRAGTokenizer(RAGTokenizer):
+    def __init__(self, base_tokenizer):
+        super().__init__(base_tokenizer)
+        self.attribution_tokens = {
+            'high_confidence': '[HIGH_CONF]',
+            'medium_confidence': '[MED_CONF]',
+            'low_confidence': '[LOW_CONF]',
+            'source_wiki': '[WIKI_SOURCE]',
+            'source_academic': '[ACADEMIC_SOURCE]',
+            'source_news': '[NEWS_SOURCE]'
+        }
+    
+    def format_attributed_context(self, query, retrieved_docs_with_metadata):
+        """Format context with source attribution and confidence scores"""
+        formatted_input = self.special_tokens['context_start']
+        
+        for doc_info in retrieved_docs_with_metadata:
+            doc_text = doc_info['text']
+            confidence = doc_info['confidence']
+            source_type = doc_info['source_type']
+            
+            # Add confidence token
+            if confidence > 0.8:
+                conf_token = self.attribution_tokens['high_confidence']
+            elif confidence > 0.5:
+                conf_token = self.attribution_tokens['medium_confidence']
+            else:
+                conf_token = self.attribution_tokens['low_confidence']
+            
+            # Add source type token
+            source_token = self.attribution_tokens.get(f'source_{source_type}', '[UNKNOWN_SOURCE]')
+            
+            formatted_input += f" {conf_token} {source_token} {doc_text} {self.special_tokens['doc_boundary']}"
+        
+        formatted_input += f" {self.special_tokens['context_end']} {query}"
+        
+        return self.base_tokenizer.encode(formatted_input)
+\end{lstlisting}
+
+\subsection{Memorizing Transformers}
+
+Memorizing Transformers introduced the concept of explicit memory tokens that can access large external memory banks, extending the effective context length far beyond the standard transformer window.
+
+\subsubsection{Memory Access Tokens}
+
+The \specialtoken{MEM} token serves as a gateway to external memory, allowing models to retrieve relevant information based on the current context:
+
+\begin{lstlisting}[language=Python, caption=Memory access token implementation]
+class MemorizingTransformerTokenizer:
+    def __init__(self, base_tokenizer, memory_bank_size=1000000):
+        self.base_tokenizer = base_tokenizer
+        self.memory_bank_size = memory_bank_size
+        self.memory_tokens = {
+            'memory_access': '[MEM]',
+            'memory_write': '[MEM_WRITE]',
+            'memory_read': '[MEM_READ]',
+            'memory_query': '[MEM_QUERY]'
+        }
+    
+    def insert_memory_access(self, text, memory_positions):
+        """Insert memory access tokens at specified positions"""
+        tokens = self.base_tokenizer.tokenize(text)
+        
+        # Insert memory access tokens at relevant positions
+        for pos in sorted(memory_positions, reverse=True):
+            if pos < len(tokens):
+                tokens.insert(pos, self.memory_tokens['memory_access'])
+        
+        return self.base_tokenizer.convert_tokens_to_ids(tokens)
+    
+    def format_memory_query(self, query, memory_context_size=100):
+        """Format input to include memory query tokens"""
+        formatted_query = (
+            f"{self.memory_tokens['memory_query']} "
+            f"{query} "
+            f"{self.memory_tokens['memory_read']}"
+        )
+        
+        return self.base_tokenizer.encode(formatted_query)
+\end{lstlisting}
+
+\subsection{Long-Term Memory Patterns}
+
+Modern applications require sophisticated patterns for managing long-term memory through special tokens:
+
+\subsubsection{Hierarchical Memory Organization}
+
+\begin{lstlisting}[language=Python, caption=Hierarchical memory token system]
+class HierarchicalMemoryTokenizer:
+    def __init__(self, base_tokenizer):
+        self.base_tokenizer = base_tokenizer
+        self.hierarchy_tokens = {
+            'episodic_memory': '[EPISODIC]',      # Recent conversational memory
+            'semantic_memory': '[SEMANTIC]',      # Factual knowledge
+            'procedural_memory': '[PROCEDURAL]',  # How-to knowledge
+            'working_memory': '[WORKING]',        # Current context
+            'long_term_storage': '[LT_STORE]',    # Permanent storage
+            'short_term_buffer': '[ST_BUFFER]'    # Temporary buffer
+        }
+    
+    def organize_memory_context(self, memories_by_type, current_query):
+        """Organize different types of memories with appropriate tokens"""
+        formatted_input = ""
+        
+        # Add long-term semantic knowledge
+        if 'semantic' in memories_by_type:
+            formatted_input += f"{self.hierarchy_tokens['semantic_memory']} "
+            for fact in memories_by_type['semantic']:
+                formatted_input += f"{fact} "
+        
+        # Add episodic (conversational) memory
+        if 'episodic' in memories_by_type:
+            formatted_input += f"{self.hierarchy_tokens['episodic_memory']} "
+            for episode in memories_by_type['episodic']:
+                formatted_input += f"{episode} "
+        
+        # Add current working memory context
+        formatted_input += f"{self.hierarchy_tokens['working_memory']} {current_query}"
+        
+        return self.base_tokenizer.encode(formatted_input)
+\end{lstlisting}
+
+\subsection{Memory Consolidation and Forgetting}
+
+Advanced memory token systems implement mechanisms for memory consolidation and selective forgetting:
+
+\begin{lstlisting}[language=Python, caption=Memory consolidation with special tokens]
+class ConsolidatingMemoryTokenizer:
+    def __init__(self, base_tokenizer):
+        self.base_tokenizer = base_tokenizer
+        self.consolidation_tokens = {
+            'consolidate': '[CONSOLIDATE]',
+            'forget': '[FORGET]',
+            'prioritize': '[PRIORITY]',
+            'archive': '[ARCHIVE]',
+            'important': '[IMPORTANT]',
+            'temporary': '[TEMP]'
+        }
+    
+    def mark_for_consolidation(self, memory_items, importance_scores):
+        """Mark memories for consolidation based on importance"""
+        consolidated_memories = []
+        
+        for memory, score in zip(memory_items, importance_scores):
+            if score > 0.8:
+                # High importance - mark as important and consolidate
+                marked_memory = (
+                    f"{self.consolidation_tokens['important']} "
+                    f"{self.consolidation_tokens['consolidate']} "
+                    f"{memory}"
+                )
+            elif score > 0.5:
+                # Medium importance - consolidate but mark as archivable
+                marked_memory = (
+                    f"{self.consolidation_tokens['consolidate']} "
+                    f"{self.consolidation_tokens['archive']} "
+                    f"{memory}"
+                )
+            else:
+                # Low importance - mark as temporary
+                marked_memory = (
+                    f"{self.consolidation_tokens['temporary']} "
+                    f"{self.consolidation_tokens['forget']} "
+                    f"{memory}"
+                )
+            
+            consolidated_memories.append(marked_memory)
+        
+        return consolidated_memories
+\end{lstlisting}
+
+\subsection{Implementation Considerations}
+
+When implementing memory tokens, several key considerations emerge:
+
+\begin{enumerate}
+\item \textbf{Token Budget Management}: Memory tokens consume valuable context space, requiring careful balance between memory capacity and immediate context
+\item \textbf{Retrieval Efficiency}: Memory access should be computationally efficient and not significantly slow down inference
+\item \textbf{Memory Coherence}: Retrieved memories must be relevant and coherent with the current context
+\item \textbf{Privacy and Security}: Memory systems must handle sensitive information appropriately
+\item \textbf{Scalability}: Memory token systems should scale to large memory banks and high query volumes
+\end{enumerate}
+
+\subsection{Evaluation Metrics for Memory Tokens}
+
+Assessing the effectiveness of memory token systems requires specialized metrics:
+
+\begin{itemize}
+\item \textbf{Memory Retrieval Accuracy}: Percentage of relevant memories successfully retrieved
+\item \textbf{Memory Utilization Efficiency}: Ratio of useful to total retrieved memories
+\item \textbf{Long-term Consistency}: Consistency of responses across long conversations or document processing
+\item \textbf{Forgetting Curve Adherence}: How well the system mimics natural forgetting patterns
+\item \textbf{Context Integration Quality}: How smoothly retrieved memories integrate with immediate context
+\end{itemize}
+
+Memory tokens represent a critical advancement in making transformer models more capable of handling real-world applications that require persistent memory and knowledge access. As these systems continue to evolve, we can expect even more sophisticated approaches to emerge, further bridging the gap between the limited context windows of current transformers and the expansive memory requirements of human-level AI systems.

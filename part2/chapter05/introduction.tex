@@ -67,6 +67,17 @@ Application-oriented tokens for specific multimodal tasks:
 \item \specialtoken{RETRIEVE} tokens for cross-modal retrieval
 \end{itemize}
 
+\subsection{Personalization and Identity Tokens}
+Specialized tokens for subject-specific generation and identity preservation:
+\begin{itemize}
+\item \specialtoken{V} tokens for DreamBooth subject personalization
+\item \specialtoken{S*} tokens for Textual Inversion concept learning
+\item \specialtoken{modifier} tokens for style and attribute control
+\item \specialtoken{identity} tokens for consistent character generation
+\end{itemize}
+
+These tokens represent a revolutionary advancement in multimodal AI, enabling models to learn and generate content featuring specific individuals, objects, or artistic styles from just a few example images. The breakthrough came with DreamBooth's approach of using unique identifier tokens like \texttt{[V]} to bind textual descriptions to visual concepts, allowing prompts such as ``A photo of [V] person riding a bicycle'' to generate personalized content while maintaining the subject's distinctive features.
+
 \section{Architectural Patterns for Multimodal Integration}
 
 Modern multimodal architectures employ various patterns for integrating special tokens across modalities:
