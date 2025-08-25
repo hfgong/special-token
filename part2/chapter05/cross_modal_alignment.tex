@@ -2,7 +2,7 @@
 
 \section{Cross-Modal Alignment Tokens}
 
-Cross-modal alignment tokens represent specialized mechanisms for establishing correspondences and relationships between different modalities within multimodal transformer architectures. These tokens serve as bridges that enable models to understand how information expressed in one modality relates to information in another, facilitating tasks such as cross-modal retrieval, multimodal reasoning, and aligned generation.
+Cross-modal alignment tokens represent specialized mechanisms for establishing correspondences and relationships between different modalities within multimodal transformer architectures \citep{radford2021learning, li2022blip}. These tokens serve as bridges that enable models to understand how information expressed in one modality relates to information in another, facilitating tasks such as cross-modal retrieval, multimodal reasoning, and aligned generation \citep{li2023blip2, girdhar2023imagebind}.
 \begin{comment}
 Feedback: This is a good definition. To make it more intuitive, you could use an analogy: "If modality-specific tokens ([IMG], [AUDIO]) are like nouns representing 'what' is in the input, alignment tokens are like verbs and prepositions, representing the relationships 'between' them. They learn to answer questions like 'Is this sound *coming from* that object?' or 'Does this text *describe* that image?'"
 \end{comment}
@@ -11,7 +11,7 @@ Unlike modality-specific tokens that represent content within a single domain, a
 
 \subsection{Fundamentals of Cross-Modal Alignment}
 
-Cross-modal alignment addresses the fundamental challenge of establishing semantic correspondences between heterogeneous data types that may have different statistical properties, temporal characteristics, and representational structures.
+Cross-modal alignment addresses the fundamental challenge of establishing semantic correspondences between heterogeneous data types that may have different statistical properties, temporal characteristics, and representational structures \citep{chen2020simple, wang2022ofa}.
 
 \begin{definition}[Cross-Modal Alignment Token]
 A Cross-Modal Alignment token is a specialized learnable token that encodes relationships and correspondences between different modalities. It facilitates semantic alignment, temporal synchronization, and cross-modal reasoning within multimodal transformer architectures.

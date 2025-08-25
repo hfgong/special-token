@@ -2,9 +2,9 @@
 
 \section{Image Tokens [IMG]}
 
-Image tokens represent one of the most successful and widely adopted forms of multimodal special tokens, serving as the bridge between visual content and textual understanding in modern AI systems. The \img{} token acts as an "ambassador" for an image, translating the rich, parallel world of pixels into the sequential, symbolic language of the transformer. Its goal is to represent the entire image in a way that a text-focused model can understand and reason about.
+Image tokens represent one of the most successful and widely adopted forms of multimodal special tokens, serving as the bridge between visual content and textual understanding in modern AI systems \citep{radford2021learning, li2022blip}. The \img{} token acts as an "ambassador" for an image, translating the rich, parallel world of pixels into the sequential, symbolic language of the transformer. Its goal is to represent the entire image in a way that a text-focused model can understand and reason about.
 
-The \img{} token has evolved from simple placeholder markers to sophisticated learnable representations that encode rich visual semantics and facilitate complex cross-modal interactions.
+The \img{} token has evolved from simple placeholder markers to sophisticated learnable representations that encode rich visual semantics and facilitate complex cross-modal interactions \citep{alayrac2022flamingo, li2023blip2}.
 
 \begin{comment}
 Feedback: This is a strong opening. To make the concept even more concrete, you could add an analogy: "The [IMG] token acts as an 'ambassador' for an image, translating the rich, parallel world of pixels into the sequential, symbolic language of the transformer. Its goal is to represent the entire image in a way that a text-focused model can understand and reason about."
@@ -12,7 +12,7 @@ Feedback: This is a strong opening. To make the concept even more concrete, you 
 STATUS: addressed - added ambassador analogy to make image token concept more concrete
 \end{comment}
 
-The development of image tokens has been driven by the need to integrate visual understanding into primarily text-based transformer architectures, enabling applications ranging from image captioning and visual question answering to cross-modal retrieval and generation.
+The development of image tokens has been driven by the need to integrate visual understanding into primarily text-based transformer architectures \citep{dosovitskiy2020image}, enabling applications ranging from image captioning and visual question answering \citep{liu2023visual} to cross-modal retrieval and generation \citep{ramesh2022hierarchical, saharia2022photorealistic}.
 
 \subsection{Fundamental Concepts and Design Principles}
 

@@ -2,12 +2,12 @@
 
 \section{Video Frame Tokens}
 
-Video frame tokens represent the temporal extension of image tokens, enabling transformer architectures to process sequential visual information across time. Unlike static image tokens that capture spatial relationships within a single frame, video tokens must encode both spatial and temporal dependencies, making them fundamental for video understanding, generation, and multimodal video-text tasks.
+Video frame tokens represent the temporal extension of image tokens, enabling transformer architectures to process sequential visual information across time \citep{zellers2021merlot, zhang2023video}. Unlike static image tokens that capture spatial relationships within a single frame, video tokens must encode both spatial and temporal dependencies, making them fundamental for video understanding, generation, and multimodal video-text tasks \citep{akbari2021vatt}.
 \begin{comment}
 Feedback: This is a good start. To emphasize the core challenge, you could add: "The primary difficulty in designing video tokens is managing the explosion of data: a few seconds of video can contain hundreds of high-resolution frames. Therefore, the central goal is to create representations that capture the essential motion and semantic changes over time without becoming computationally intractable."
 \end{comment}
 
-The challenge of video representation lies in balancing the rich temporal information with computational efficiency, as videos contain orders of magnitude more data than static images. Video frame tokens serve as compressed temporal representations that maintain essential motion dynamics while remaining compatible with transformer architectures.
+The challenge of video representation lies in balancing the rich temporal information with computational efficiency, as videos contain orders of magnitude more data than static images \citep{driess2023palm}. Video frame tokens serve as compressed temporal representations that maintain essential motion dynamics while remaining compatible with transformer architectures.
 
 \subsection{Temporal Video Representation}
 

@@ -174,47 +174,36 @@
 % Part III: Advanced Special Token Techniques
 \part{Advanced Special Token Techniques}
 
-\chapter{Special Token Design and Implementation}
-% Design foundations
+\chapter{Custom Special Token Design}
 \input{part3/chapter07/introduction}
 \input{part3/chapter07/design_principles}
-\input{part3/chapter07/evaluation_methods}
-% Implementation details from Chapter 10
-\input{part4/chapter10/tokenizer_modification}
-\input{part4/chapter10/embedding_design}
-\input{part4/chapter10/position_encoding}
-% Implementation strategies
 \input{part3/chapter07/implementation_strategies}
+\input{part3/chapter07/evaluation_methods}
+\input{part3/chapter07/memory_tokens}
+\input{part3/chapter07/tool_interaction_tokens}
 
-\chapter{Special Token Optimization and Training}
+\chapter{Special Token Optimization}
 \input{part3/chapter08/introduction}
 \input{part3/chapter08/embedding_optimization}
 \input{part3/chapter08/attention_mechanisms}
 \input{part3/chapter08/computational_efficiency}
-% Training strategies
+
+\chapter{Training with Special Tokens}
+\input{part3/chapter09/introduction}
 \input{part3/chapter09/pretraining_strategies}
 \input{part3/chapter09/fine_tuning}
 \input{part3/chapter09/evaluation_metrics}
-% Attention optimization from Chapter 10
-\input{part4/chapter10/attention_masks}
-
-\chapter{Advanced Special Token Techniques}
-\input{part3/chapter09/introduction}
-% Advanced token types from Chapter 7
-\input{part3/chapter07/memory_tokens}
-\input{part3/chapter07/tool_interaction_tokens}
-\input{part3/chapter07/adapter_tokens}
-\input{part3/chapter07/task_specific_prompts}
-% Advanced control and reasoning tokens from Chapter 8
-\input{part3/chapter08/chain_of_thought}
-\input{part3/chapter08/control_tokens}
-\input{part3/chapter08/tool_use_tokens}
-% Advanced techniques from Chapter 9
 \input{part3/chapter09/reasoning_tokens}
-\input{part3/chapter09/sparse_attention}
-\input{part3/chapter09/dynamic_selection}
-\input{part3/chapter09/token_pruning}
-\input{part3/chapter09/token_recycling}
+
+% Part IV: Practical Implementation
+\part{Practical Implementation}
+
+\chapter{Implementation Guidelines}
+\input{part4/chapter10/introduction}
+\input{part4/chapter10/tokenizer_modification}
+\input{part4/chapter10/embedding_design}
+\input{part4/chapter10/attention_masks}
+\input{part4/chapter10/position_encoding}
 
 % Part IV continued: Chapters 11-12 commented out for future expansion
 % TODO: Uncomment as content is developed

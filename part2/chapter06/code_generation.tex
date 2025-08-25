@@ -2,12 +2,12 @@
 
 \section{Code Generation Models}
 
-Code generation models represent one of the most successful applications of transformer architectures to domain-specific tasks, enabling AI systems to understand, generate, and manipulate source code across multiple programming languages. The unique challenges of code processing—including strict syntactic requirements, complex semantic relationships, and the need for executable output—have driven the development of specialized tokens that capture the structural and semantic properties of programming languages.
+Code generation models represent one of the most successful applications of transformer architectures to domain-specific tasks, enabling AI systems to understand, generate, and manipulate source code across multiple programming languages \citep{chen2021evaluating, nijkamp2022codegen}. The unique challenges of code processing—including strict syntactic requirements, complex semantic relationships, and the need for executable output—have driven the development of specialized tokens that capture the structural and semantic properties of programming languages \citep{li2022competition, wang2023codet5}.
 \begin{comment}
 Feedback: This is a strong introduction. To make the core challenge more vivid, you could add: "Unlike natural language, which is often ambiguous and flexible, code is a formal language where a single misplaced character can render the entire sequence invalid. This unforgiving nature requires special tokens that can explicitly represent the rigid syntax and deep, non-local dependencies inherent in programming."
 \end{comment}
 
-Unlike natural language, code has precise syntactic rules, hierarchical structures, and execution semantics that must be preserved for the output to be functional. This necessitates special tokens that understand programming constructs, maintain syntactic correctness, and enable sophisticated code understanding and generation capabilities.
+Unlike natural language, code has precise syntactic rules, hierarchical structures, and execution semantics that must be preserved for the output to be functional \citep{roziere2023code}. This necessitates special tokens that understand programming constructs, maintain syntactic correctness, and enable sophisticated code understanding and generation capabilities.
 
 \subsection{Programming Language Special Tokens}
 

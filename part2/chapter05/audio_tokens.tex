@@ -2,9 +2,9 @@
 
 \section{Audio Tokens [AUDIO]}
 
-Audio tokens represent a sophisticated extension of multimodal special tokens into the auditory domain, enabling transformer architectures to process and understand acoustic information alongside visual and textual modalities. Unlike text with its clear word boundaries or images with their defined patches, audio is a continuous, high-frequency signal where information is encoded in subtle changes over time. The central task of an audio token is to discretize this fluid stream of information into meaningful chunks that a transformer can reason about.
+Audio tokens represent a sophisticated extension of multimodal special tokens into the auditory domain, enabling transformer architectures to process and understand acoustic information alongside visual and textual modalities \citep{baevski2020wav2vec, akbari2021vatt}. Unlike text with its clear word boundaries or images with their defined patches, audio is a continuous, high-frequency signal where information is encoded in subtle changes over time. The central task of an audio token is to discretize this fluid stream of information into meaningful chunks that a transformer can reason about.
 
-The \specialtoken{AUDIO} token serves as a bridge between the continuous, temporal nature of audio signals and the discrete, sequence-based processing paradigm of modern AI systems.
+The \specialtoken{AUDIO} token serves as a bridge between the continuous, temporal nature of audio signals and the discrete, sequence-based processing paradigm of modern AI systems \citep{borsos2023audiolm, huang2023audiogpt}.
 
 \begin{comment}
 Feedback: This is a strong start. To immediately frame the core challenge, you could add: "Unlike text with its clear word boundaries or images with their defined patches, audio is a continuous, high-frequency signal where information is encoded in subtle changes over time. The central task of an audio token is to discretize this fluid stream of information into meaningful chunks that a transformer can reason about."
@@ -36,7 +36,7 @@ The design of effective audio tokens involves several key considerations:
 
 Before integration into multimodal transformers, audio signals require sophisticated preprocessing to extract meaningful features that can be encoded as tokens.
 
-Raw audio waveforms are sampled at very high rates (e.g., 16,000+ samples per second), resulting in extremely long sequences that are computationally infeasible for standard transformers. Therefore, the first step is always to convert the raw audio into a more compressed and meaningful feature representation, such as a spectrogram, which captures the frequency content over time.
+Raw audio waveforms are sampled at very high rates (e.g., 16,000+ samples per second), resulting in extremely long sequences that are computationally infeasible for standard transformers \citep{baevski2020wav2vec}. Therefore, the first step is always to convert the raw audio into a more compressed and meaningful feature representation, such as a spectrogram, which captures the frequency content over time \citep{kong2020diffwave, conneau2020unsupervised}.
 
 \begin{comment}
 Feedback: It would be helpful to briefly explain *why* raw audio is not used. For example: "Raw audio waveforms are sampled at very high rates (e.g., 16,000+ samples per second), resulting in extremely long sequences that are computationally infeasible for standard transformers. Therefore, the first step is always to convert the raw audio into a more compressed and meaningful feature representation, such as a spectrogram, which captures the frequency content over time."
