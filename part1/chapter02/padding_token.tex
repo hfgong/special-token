@@ -45,38 +45,67 @@ Feedback: The distinction between left and right padding is important but not fu
 STATUS: addressed - added explanation of left vs right padding implications for different model architectures
 \end{comment}
 
-\begin{lstlisting}[language=Python, caption=Padding Implementation]
+\begin{lstlisting}[language=Python, caption={Padding implementation with batch processing analysis}]
 import torch
 from transformers import BertTokenizer
 
 tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
 
-# Sample texts of different lengths
+# Sample texts with deliberately different lengths to illustrate padding
 texts = [
-    "Hello world",
-    "The quick brown fox jumps over the lazy dog",
-    "AI is amazing"
+    "Hello world",                                          # Short: ~4 tokens
+    "The quick brown fox jumps over the lazy dog",          # Medium: ~12 tokens  
+    "AI is amazing"                                         # Short: ~5 tokens
 ]
 
-# Tokenize and pad
-inputs = tokenizer(texts, padding=True, truncation=True, 
-                  return_tensors='pt', max_length=128)
+print("=== BEFORE PADDING ===")
+for i, text in enumerate(texts):
+    # Tokenize individually to see original lengths
+    individual_tokens = tokenizer.tokenize(text)
+    print(f"Text {i+1} ('{text}'):")
+    print(f"  Length: {len(individual_tokens)} tokens")
+    print(f"  Tokens: {individual_tokens}")
 
-print("Input IDs shape:", inputs['input_ids'].shape)
-print("Attention mask shape:", inputs['attention_mask'].shape)
+# The key challenge: batching requires uniform tensor dimensions
+print(f"\nProblem: Cannot create tensor from sequences of different lengths!")
 
-# Examine padding
+# Solution: Tokenize with padding - creates uniform batch dimensions
+inputs = tokenizer(texts, 
+                   padding=True,        # Pad to longest in batch
+                   truncation=True,     # Truncate if > max_length
+                   return_tensors='pt', # Return PyTorch tensors
+                   max_length=128)
+
+print(f"\n=== AFTER PADDING ===")
+print(f"Batch input shape: {inputs['input_ids'].shape}")  # [batch_size, seq_len]
+print(f"Attention mask shape: {inputs['attention_mask'].shape}")
+print(f"All sequences now have length: {inputs['input_ids'].shape[1]}")
+
+# Detailed analysis of padding for each sequence
 for i, text in enumerate(texts):
     tokens = tokenizer.convert_ids_to_tokens(inputs['input_ids'][i])
-    mask = inputs['attention_mask'][i]
+    attention_mask = inputs['attention_mask'][i]
     
-    print(f"\nText {i+1}: {text}")
-    print(f"Tokens: {tokens[:15]}...")  # Show first 15 tokens
-    print(f"Mask:   {mask[:15].tolist()}...")
+    # Count real vs padding tokens
+    real_tokens = attention_mask.sum().item()
+    pad_tokens = (attention_mask == 0).sum().item()
     
-    # Count padding tokens
-    pad_count = (inputs['input_ids'][i] == tokenizer.pad_token_id).sum()
-    print(f"Padding tokens: {pad_count}")
+    print(f"\nText {i+1}: '{text}'")
+    print(f"  Real tokens: {real_tokens}, Padding tokens: {pad_tokens}")
+    print(f"  Tokenized: {tokens[:real_tokens]} + {pad_tokens}×[PAD]")
+    print(f"  Attention:  {attention_mask.tolist()}")
+    print(f"  Memory efficiency: {real_tokens}/{len(tokens)} = {real_tokens/len(tokens):.1%}")
+
+# Demonstrate the computational cost of padding
+total_positions = inputs['input_ids'].numel()
+actual_content = inputs['attention_mask'].sum().item()
+padding_overhead = total_positions - actual_content
+
+print(f"\n=== COMPUTATIONAL COST ===")
+print(f"Total positions processed: {total_positions}")
+print(f"Actual content positions: {actual_content}")
+print(f"Wasted padding positions: {padding_overhead}")
+print(f"Padding overhead: {padding_overhead/total_positions:.1%}")
 \end{lstlisting}
 
 \subsection{Attention Masking}
@@ -234,33 +263,42 @@ Proper masking ensures gradients don't flow through padding positions:
 \subsubsection{Dynamic Padding}
 Instead of static maximum length, adapt padding to each batch:
 
-\begin{lstlisting}[language=Python]
-def dynamic_batch_padding(sequences, tokenizer):
-    """Create batches with minimal padding."""
-    # Sort by length for efficient batching
-    sorted_sequences = sorted(sequences, key=len)
-    
-    batches = []
-    current_batch = []
-    current_max_len = 0
-    
-    for seq in sorted_sequences:
-        if not current_batch or len(seq) <= current_max_len * 1.2:  # 20% tolerance
-            current_batch.append(seq)
-            current_max_len = max(current_max_len, len(seq))
-        else:
-            # Process current batch
-            if current_batch:
-                batches.append(pad_batch(current_batch, tokenizer))
-            current_batch = [seq]
-            current_max_len = len(seq)
-    
-    # Process final batch
-    if current_batch:
-        batches.append(pad_batch(current_batch, tokenizer))
-    
-    return batches
+\begin{algorithm}[h]
+\caption{Dynamic Batch Padding with Length Bucketing}
+\begin{algorithmic}[1]
+\Require $S = \{s_1, s_2, \ldots, s_n\}$ (sequences to batch)
+\Require $\tau = 1.2$ (tolerance factor for length variation)
+\Require $\textsc{Tokenizer}$ (tokenizer with padding capability)
 
+\State $S_{sorted} \gets \textsc{Sort}(S, \text{key}=\text{length})$ \Comment{Sort by sequence length}
+\State $\mathcal{B} \gets \emptyset$ \Comment{List of batches}
+\State $B_{current} \gets \emptyset$ \Comment{Current batch being constructed}
+\State $\ell_{max} \gets 0$ \Comment{Maximum length in current batch}
+
+\For{$s \in S_{sorted}$}
+    \If{$B_{current} = \emptyset$ \textbf{or} $|s| \leq \tau \times \ell_{max}$} \Comment{Sequence fits in current batch}
+        \State $B_{current} \gets B_{current} \cup \{s\}$
+        \State $\ell_{max} \gets \max(\ell_{max}, |s|)$
+    \Else \Comment{Start new batch}
+        \If{$B_{current} \neq \emptyset$}
+            \State $\mathcal{B} \gets \mathcal{B} \cup \{\textsc{PadBatch}(B_{current}, \textsc{Tokenizer})\}$
+        \EndIf
+        \State $B_{current} \gets \{s\}$
+        \State $\ell_{max} \gets |s|$
+    \EndIf
+\EndFor
+
+\If{$B_{current} \neq \emptyset$} \Comment{Process final batch}
+    \State $\mathcal{B} \gets \mathcal{B} \cup \{\textsc{PadBatch}(B_{current}, \textsc{Tokenizer})\}$
+\EndIf
+
+\State \Return $\mathcal{B}$
+\end{algorithmic}
+\end{algorithm}
+
+This algorithm minimizes padding overhead by grouping sequences of similar lengths together, allowing each batch to be padded only to its longest sequence rather than a global maximum length.
+
+\begin{lstlisting}[language=Python, caption={Helper function for batch padding}]
 def pad_batch(sequences, tokenizer):
     """Pad a batch to the longest sequence in the batch."""
     max_len = max(len(seq) for seq in sequences)

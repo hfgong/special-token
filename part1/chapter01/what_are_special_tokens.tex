@@ -52,14 +52,38 @@ When you tokenize text with a BERT tokenizer, it automatically wraps your input 
 
 % Complete tokenizer configuration example available at:
 % code/part1/chapter01/tokenizer_special_tokens_demo.py
-\begin{lstlisting}[language=Python, caption={Automatic special token insertion}]
+\begin{lstlisting}[language=Python, caption={Automatic special token insertion with detailed inspection}]
 from transformers import AutoTokenizer
 
+# Load BERT tokenizer - note this automatically includes special token rules
 tokenizer = AutoTokenizer.from_pretrained("bert-base-uncased")
+
+# Simple text input - no special tokens visible to user
 text = "Hello world"
-encoded = tokenizer(text)
-decoded = tokenizer.decode(encoded['input_ids'])
-print(decoded)  # Output: [CLS] hello world [SEP]
+print(f"Original text: '{text}'")
+
+# Tokenization automatically applies special token insertion rules
+encoded = tokenizer(text, return_tensors='pt')
+print(f"Token IDs: {encoded['input_ids'][0].tolist()}")
+
+# Decode to see the inserted special tokens
+decoded = tokenizer.decode(encoded['input_ids'][0])
+print(f"Decoded with special tokens: '{decoded}'")
+# Output: '[CLS] hello world [SEP]'
+
+# Inspect individual tokens to understand the structure
+tokens = tokenizer.convert_ids_to_tokens(encoded['input_ids'][0])
+print(f"Individual tokens: {tokens}")
+# Output: ['[CLS]', 'hello', 'world', '[SEP]']
+
+# Show token type IDs to understand segment boundaries
+print(f"Token type IDs: {encoded['token_type_ids'][0].tolist()}")
+# Output: [0, 0, 0, 0] - all belong to first segment
+
+# Special tokens have dedicated IDs in the vocabulary
+print(f"CLS token ID: {tokenizer.cls_token_id}")
+print(f"SEP token ID: {tokenizer.sep_token_id}")
+print(f"Vocabulary size: {len(tokenizer)}")
 \end{lstlisting}
 
 This automatic insertion is crucial because it ensures that every input sequence has the proper structure that the pre-trained model expects, maintaining consistency between training and inference.

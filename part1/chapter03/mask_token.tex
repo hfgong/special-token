@@ -34,32 +34,39 @@ The standard MLM training procedure follows these steps:
 \item \textbf{Loss Computation}: Calculate cross-entropy loss only on masked positions
 \end{enumerate}
 
-\begin{lstlisting}[language=Python, caption=Basic MLM training procedure]
-def create_mlm_sample(tokens, tokenizer, mask_prob=0.15):
-    """Create MLM training sample with MASK tokens"""
-    tokens = tokens.copy()
-    labels = [-100] * len(tokens)  # -100 indicates non-masked positions
-    
-    # Select positions to mask
-    mask_indices = random.sample(
-        range(len(tokens)), 
-        int(len(tokens) * mask_prob)
-    )
-    
-    for idx in mask_indices:
-        original_token = tokens[idx]
-        labels[idx] = original_token  # Store original for loss computation
-        
-        # Apply masking strategy
-        rand = random.random()
-        if rand < 0.8:
-            tokens[idx] = tokenizer.mask_token_id  # Replace with [MASK]
-        elif rand < 0.9:
-            tokens[idx] = random.randint(0, tokenizer.vocab_size - 1)  # Random token
-        # else: keep original token (10% case)
-    
-    return tokens, labels
+\begin{algorithm}[h]
+\caption{MLM Sample Creation with 80/10/10 Masking Strategy}
+\begin{algorithmic}[1]
+\Require $\mathbf{x} = [x_1, x_2, \ldots, x_n]$ (input token sequence)
+\Require $p_{mask} = 0.15$ (masking probability)
+\Require $V$ (vocabulary size)
+\Require $\text{MASK\_ID}$ (mask token identifier)
 
+\State $\mathbf{x}_{masked} \gets \mathbf{x}$ \Comment{Copy input sequence}
+\State $\mathbf{y} \gets [-100, -100, \ldots, -100]$ \Comment{Initialize labels (ignore non-masked)}
+\State $N_{mask} \gets \lfloor n \times p_{mask} \rfloor$ \Comment{Number of positions to mask}
+\State $\mathcal{I} \gets \textsc{RandomSample}(\{1, 2, \ldots, n\}, N_{mask})$ \Comment{Select positions to mask}
+
+\For{$i \in \mathcal{I}$} \Comment{Process each selected position}
+    \State $y_i \gets x_i$ \Comment{Store original token for loss computation}
+    \State $r \gets \textsc{Random}()$ \Comment{Draw random number $r \in [0, 1)$}
+    
+    \If{$r < 0.8$} \Comment{80\% of time: replace with [MASK]}
+        \State $x_{masked,i} \gets \text{MASK\_ID}$
+    \ElsIf{$r < 0.9$} \Comment{10\% of time: replace with random token}
+        \State $x_{masked,i} \gets \textsc{RandomInt}(1, V)$
+    \Else \Comment{10\% of time: keep original token}
+        \State $x_{masked,i} \gets x_i$ 
+    \EndIf
+\EndFor
+
+\State \Return $\mathbf{x}_{masked}, \mathbf{y}$
+\end{algorithmic}
+\end{algorithm}
+
+This algorithm implements the canonical BERT masking strategy: 80\% replacement with [MASK], 10\% with random tokens, and 10\% unchanged to prevent train/test mismatch.
+
+\begin{lstlisting}[language=Python, caption={MLM loss computation for masked positions}]
 def compute_mlm_loss(model, input_ids, labels):
     """Compute MLM loss only on masked positions"""
     outputs = model(input_ids)

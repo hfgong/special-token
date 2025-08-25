@@ -38,31 +38,75 @@ $h_{\cls{}} = \text{Attention}(\cls{}, \{x_1, x_2, \ldots, x_n\})$
 
 where the attention mechanism allows \cls{} to selectively focus on relevant parts of the input sequence based on the task requirements.
 
-\begin{lstlisting}[language=Python, caption=CLS Token Processing]
+\begin{lstlisting}[language=Python, caption={CLS token processing and sequence-level aggregation}]
 import torch
 from transformers import BertModel, BertTokenizer
 
+# Load pre-trained BERT model and tokenizer
 tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
 model = BertModel.from_pretrained('bert-base-uncased')
 
-# Input text
+# Example text for sentiment classification
 text = "The movie was excellent"
+print(f"Input text: '{text}'")
 
-# Tokenization automatically adds [CLS] and [SEP]
+# Tokenization automatically prepends [CLS] and appends [SEP]
 inputs = tokenizer(text, return_tensors='pt')
-print(f"Tokens: {tokenizer.convert_ids_to_tokens(inputs['input_ids'][0])}")
-# Output: ['[CLS]', 'the', 'movie', 'was', 'excellent', '[SEP]']
+tokens = tokenizer.convert_ids_to_tokens(inputs['input_ids'][0])
+print(f"Tokenized sequence: {tokens}")
+print(f"Token IDs: {inputs['input_ids'][0].tolist()}")
 
-# Forward pass
-outputs = model(**inputs)
-last_hidden_states = outputs.last_hidden_state
+# The CLS token is always at position 0
+cls_token_id = inputs['input_ids'][0, 0].item()
+print(f"CLS token ID: {cls_token_id} (should be {tokenizer.cls_token_id})")
 
-# CLS token representation (first token)
-cls_representation = last_hidden_states[0, 0, :]  # Shape: [768]
-print(f"CLS representation shape: {cls_representation.shape}")
+# Forward pass through BERT - CLS token attends to all other tokens
+print(f"\n=== BERT PROCESSING ===")
+with torch.no_grad():  # No gradients needed for inference
+    outputs = model(**inputs, output_attentions=True)
 
-# This representation can be used for classification
-classification_logits = torch.nn.Linear(768, 2)(cls_representation)  # Binary classification
+last_hidden_states = outputs.last_hidden_state  # [batch, seq_len, hidden_size]
+attention_weights = outputs.attentions          # Attention patterns from all layers
+
+print(f"Hidden states shape: {last_hidden_states.shape}")
+print(f"Number of attention layers: {len(attention_weights)}")
+
+# Extract CLS representation - this is the "summary" of the entire sequence
+cls_representation = last_hidden_states[0, 0, :]  # [hidden_size] = [768]
+print(f"\nCLS representation shape: {cls_representation.shape}")
+
+# Compare CLS with other token representations
+word_representations = last_hidden_states[0, 1:-1, :]  # Exclude [CLS] and [SEP]
+print(f"Individual word representations shape: {word_representations.shape}")
+
+# The CLS token has aggregated information from all positions
+print(f"CLS representation mean: {cls_representation.mean():.3f}")
+print(f"CLS representation std:  {cls_representation.std():.3f}")
+
+# Analyze how CLS attention differs from word tokens (using final layer)
+final_attention = attention_weights[-1][0]  # [heads, seq_len, seq_len]
+cls_attention_pattern = final_attention[:, 0, :].mean(0)  # Average over heads
+
+print(f"\n=== CLS ATTENTION ANALYSIS ===")
+print(f"CLS attention to each position:")
+for i, (token, attention) in enumerate(zip(tokens, cls_attention_pattern)):
+    print(f"  {token:>12}: {attention:.3f}")
+
+# Demonstrate classification usage
+print(f"\n=== CLASSIFICATION APPLICATION ===")
+num_classes = 3  # Positive, Negative, Neutral sentiment
+classifier_head = torch.nn.Linear(768, num_classes)
+
+# The CLS representation encodes the entire sequence's meaning
+classification_logits = classifier_head(cls_representation)
+probabilities = torch.softmax(classification_logits, dim=0)
+
+sentiment_labels = ['Negative', 'Neutral', 'Positive']
+print(f"Classification probabilities:")
+for label, prob in zip(sentiment_labels, probabilities):
+    print(f"  {label:>8}: {prob:.3f}")
+
+print(f"\nPredicted sentiment: {sentiment_labels[probabilities.argmax()]}")
 \end{lstlisting}
 
 \subsection{Pooling Strategies and Alternatives}

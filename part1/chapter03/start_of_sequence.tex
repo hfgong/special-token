@@ -57,16 +57,32 @@ def prepare_sequence(text, tokenizer):
     sos_sequence = [tokenizer.sos_token_id] + tokens
     return sos_sequence
 
-def generate(model, sos_token_id, max_length=100):
-    sequence = [sos_token_id]
-    for _ in range(max_length):
-        logits = model(sequence)
-        next_token = sample(logits[-1])
-        sequence.append(next_token)
-        if next_token == tokenizer.eos_token_id:
-            break
-    return sequence[1:]  # Remove SOS token
-\end{lstlisting}
+\begin{algorithm}[h]
+\caption{Autoregressive Generation with SOS Token}
+\begin{algorithmic}[1]
+\Require $M$ (trained language model)
+\Require $\text{SOS\_ID}$ (start-of-sequence token identifier)
+\Require $\text{EOS\_ID}$ (end-of-sequence token identifier)
+\Require $L_{max} = 100$ (maximum generation length)
+
+\State $\mathbf{s} \gets [\text{SOS\_ID}]$ \Comment{Initialize sequence with SOS token}
+
+\For{$t = 1, 2, \ldots, L_{max}$} \Comment{Autoregressive generation loop}
+    \State $\boldsymbol{\ell} \gets M(\mathbf{s})$ \Comment{Forward pass through model}
+    \State $\ell_{next} \gets \boldsymbol{\ell}_{|\mathbf{s}|}$ \Comment{Get logits for next token position}
+    \State $x_{next} \gets \textsc{Sample}(\ell_{next})$ \Comment{Sample next token from distribution}
+    \State $\mathbf{s} \gets \mathbf{s} \circ [x_{next}]$ \Comment{Append to sequence}
+    
+    \If{$x_{next} = \text{EOS\_ID}$} \Comment{Check for natural stopping}
+        \State \textbf{break}
+    \EndIf
+\EndFor
+
+\State \Return $\mathbf{s}[2:]$ \Comment{Remove SOS token from output}
+\end{algorithmic}
+\end{algorithm}
+
+This algorithm demonstrates the canonical autoregressive generation pattern: start with SOS, iteratively predict and append tokens, and terminate upon EOS or maximum length.
 
 \subsubsection{Conditional Generation with \sos{}}
 

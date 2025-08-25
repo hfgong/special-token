@@ -258,30 +258,38 @@ Successful masked image modeling requires careful training strategies to achieve
 
 Progressive masking gradually increases masking difficulty during training:
 
-\begin{lstlisting}[language=Python, caption=Progressive masking curriculum for stable training]
-class ProgressiveMaskingScheduler:
-    def __init__(self, initial_ratio=0.25, final_ratio=0.75, total_steps=100000):
-        self.initial_ratio = initial_ratio
-        self.final_ratio = final_ratio
-        self.total_steps = total_steps
+\begin{algorithm}[h]
+\caption{Progressive Masking Curriculum with Cosine Annealing}
+\begin{algorithmic}[1]
+\Require $r_{init} = 0.25$ (initial masking ratio)
+\Require $r_{final} = 0.75$ (final masking ratio)
+\Require $T = 100000$ (total training steps)
+
+\Function{GetMaskingRatio}{$t$} \Comment{$t$ is current training step}
+    \If{$t \geq T$} \Comment{Training complete}
+        \State \Return $r_{final}$
+    \EndIf
     
-    def get_mask_ratio(self, step):
-        """Get current masking ratio based on training progress."""
-        if step >= self.total_steps:
-            return self.final_ratio
-        
-        progress = step / self.total_steps
-        # Cosine annealing schedule
-        ratio = self.final_ratio + 0.5 * (self.initial_ratio - self.final_ratio) * \
-                (1 + math.cos(math.pi * progress))
-        
-        return ratio
+    \State $\text{progress} \gets t / T$ \Comment{Training progress as fraction}
+    \State $\text{cosine\_factor} \gets \frac{1}{2}(1 + \cos(\pi \times \text{progress}))$ \Comment{Cosine annealing}
+    \State $r \gets r_{final} + (r_{init} - r_{final}) \times \text{cosine\_factor}$
+    \State \Return $r$
+\EndFunction
 
-# Usage in training loop
-scheduler = ProgressiveMaskingScheduler()
+\Statex
+\textbf{Training Loop:}
+\For{$t = 1, 2, \ldots, T$}
+    \State $r_{current} \gets \textsc{GetMaskingRatio}(t)$ \Comment{Get current masking ratio}
+    \State Apply masking with ratio $r_{current}$ to current batch
+    \State Perform forward and backward pass
+    \State Update model parameters
+\EndFor
+\end{algorithmic}
+\end{algorithm}
 
-for step, batch in enumerate(dataloader):
-    current_mask_ratio = scheduler.get_mask_ratio(step)
+This progressive curriculum starts with easier masking (25\% of patches) and gradually increases to the final challenging level (75\% of patches) using a cosine annealing schedule for stable training dynamics.
+
+\begin{lstlisting}[language=Python, caption={Training loop with progressive masking}]
     x_masked, mask, ids_restore = random_masking(batch, current_mask_ratio)
     
     # Forward pass and loss computation
