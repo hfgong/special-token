@@ -48,14 +48,12 @@ The book follows a logical progression from foundations to frontiers:
 
 \textbf{Part II} explores domain-specific applications, examining how special tokens enable vision transformers, multimodal models, and specialized systems for code generation and scientific computing.
 
-\textbf{Part III} delves into advanced techniques, including learnable soft tokens, generation control mechanisms, and efficiency optimizations through token pruning and merging.
+\textbf{Part III} delves into advanced techniques, including learnable soft tokens, generation control mechanisms, and efficiency optimizations through token pruning and merging, as well as practical implementation guidance for custom token design and fine-tuning strategies.
 \begin{comment}
 Feedback: The description for Part III is a bit vague with "learnable soft tokens, generation control mechanisms". Can you be more specific? For example: "...delves into advanced techniques, such as using special tokens to steer text generation, implementing learnable 'soft prompts' for parameter-efficient fine-tuning, and optimizing inference speed through token pruning and merging."
+
+STATUS: addressed - expanded Part III to include practical implementation content previously in Part IV
 \end{comment}
-
-\textbf{Part IV} provides practical implementation guidance, covering custom token design, fine-tuning strategies, and debugging methodologies with real-world code examples.
-
-% \textbf{Part V} looks toward the future, discussing emerging trends like dynamic tokens, theoretical advances, and open research challenges.
 
 \section*{A Living Document}
 
@@ -63,6 +61,12 @@ The field of transformer architectures evolves rapidly. New special token types 
 \begin{comment}
 Feedback: This is a standard disclaimer. To make it more engaging, you could invite the reader to participate. For example: "We invite readers to join the conversation on the book's accompanying GitHub repository, where we will post updates and discuss new developments in the field." This turns a static statement into an active invitation.
 \end{comment}
+
+\section*{About the Writing Process}
+
+This book was written with significant assistance from Claude CLI, Anthropic's command-line interface for Claude. The writing process was guided by a specialized \href{https://github.com/hfgong/book-writer-agent}{book-writer-agent}, which helped structure the content, maintain consistency across chapters, and ensure comprehensive coverage of special token concepts. This human-AI collaboration demonstrates the practical application of AI assistance in technical writing and represents a new paradigm for creating educational content.
+
+The combination of human expertise in special tokens with Claude's language capabilities and the book-writer-agent's structural guidance enabled rapid iteration on complex technical concepts while maintaining academic rigor and pedagogical clarity.
 
 \section*{Acknowledgments}
 
