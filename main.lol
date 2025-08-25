@@ -74,13 +74,13 @@
 \contentsline {lstlisting}{\numberline {6.4}Core structure (see external file for complete implementation)}{137}{lstlisting.6.4}%
 \contentsline {lstlisting}{\numberline {6.5}Unit-aware scientific computing tokens}{137}{lstlisting.6.5}%
 \contentsline {lstlisting}{\numberline {6.6}Scientific paper analysis with specialized tokens}{138}{lstlisting.6.6}%
-\contentsline {lstlisting}{\numberline {6.7}Core structure (see external file for complete implementation)}{139}{lstlisting.6.7}%
+\contentsline {lstlisting}{\numberline {6.7}Core structure (see external file for complete implementation)}{140}{lstlisting.6.7}%
 \contentsline {lstlisting}{\numberline {6.8}Data transformation and ETL tokenization}{140}{lstlisting.6.8}%
 \contentsline {lstlisting}{\numberline {6.9}Natural language to SQL generation system}{140}{lstlisting.6.9}%
 \contentsline {lstlisting}{\numberline {6.10}Set-of-Mark implementation for GUI understanding}{142}{lstlisting.6.10}%
 \contentsline {lstlisting}{\numberline {6.11}Single token bounding box encoding}{144}{lstlisting.6.11}%
 \contentsline {lstlisting}{\numberline {6.12}Grid-based spatial tokenization}{145}{lstlisting.6.12}%
-\contentsline {lstlisting}{\numberline {6.13}Hierarchical interface tokenization}{146}{lstlisting.6.13}%
+\contentsline {lstlisting}{\numberline {6.13}Hierarchical interface tokenization}{147}{lstlisting.6.13}%
 \contentsline {lstlisting}{\numberline {6.14}ScreenAI-style interface understanding}{148}{lstlisting.6.14}%
 \contentsline {lstlisting}{\numberline {6.15}Web automation with special tokens}{150}{lstlisting.6.15}%
 \contentsline {lstlisting}{\numberline {6.16}Accessibility-aware GUI tokens}{151}{lstlisting.6.16}%
