@@ -46,26 +46,23 @@ STATUS: addressed - added advanced examples including persona switching, reasoni
 
 \subsection{Technical Implementation}
 
-From an implementation perspective, special tokens are integrated at multiple levels of the transformer pipeline:
+From an implementation perspective, special tokens are integrated at multiple levels of the transformer pipeline. The most fundamental integration occurs at the tokenizer level, where special tokens are automatically inserted according to model-specific conventions.
 
-\begin{lstlisting}[language=Python, caption=Tokenizer Configuration]
+When you tokenize text with a BERT tokenizer, it automatically wraps your input with \cls{} at the beginning and \sep{} at the end. This happens transparently—you don't need to manually add these tokens. The tokenizer knows that BERT expects this specific format and handles it for you.
+
+% Complete tokenizer configuration example available at:
+% code/part1/chapter01/tokenizer_special_tokens_demo.py
+\begin{lstlisting}[language=Python, caption={Automatic special token insertion}]
 from transformers import AutoTokenizer
 
 tokenizer = AutoTokenizer.from_pretrained("bert-base-uncased")
-
-# Special tokens and their IDs
-print(f"[CLS] token: {tokenizer.cls_token} (ID: {tokenizer.cls_token_id})")
-print(f"[SEP] token: {tokenizer.sep_token} (ID: {tokenizer.sep_token_id})")
-print(f"[MASK] token: {tokenizer.mask_token} (ID: {tokenizer.mask_token_id})")
-print(f"[PAD] token: {tokenizer.pad_token} (ID: {tokenizer.pad_token_id})")
-
-# Automatic special token insertion
 text = "Hello world"
 encoded = tokenizer(text)
 decoded = tokenizer.decode(encoded['input_ids'])
-print(f"Encoded with special tokens: {decoded}")
-# Output: [CLS] hello world [SEP]
+print(decoded)  # Output: [CLS] hello world [SEP]
 \end{lstlisting}
+
+This automatic insertion is crucial because it ensures that every input sequence has the proper structure that the pre-trained model expects, maintaining consistency between training and inference.
 
 \subsection{Embedding Space Properties}
 

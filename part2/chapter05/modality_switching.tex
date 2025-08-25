@@ -64,65 +64,26 @@ class ImplementationReference:
 Feedback: Before the code, it's helpful to explain the core training strategy in simple terms. For example: "The key to training a model to switch between modalities is to force it to be robust to missing information. The most common technique is **modality dropout**, where during training, one or more modalities are randomly dropped from the input. This prevents the model from becoming overly reliant on any single modality and forces it to learn how to make the best possible prediction with whatever information it has available. This, in turn, trains the switching mechanism to identify which available modalities are most useful."
 \end{comment}
 
-\begin{lstlisting}[language=Python, caption=Training with modality dropout and switching]
-class ModalityDropoutTrainer:
-    def __init__(self, model, optimizer, device):
-        self.model = model
-        self.optimizer = optimizer
-        self.device = device
-        
-    def train_with_modality_dropout(self, dataloader, dropout_prob=0.3):
-        """Train with random modality dropout to encourage robust switching."""
-        
-        self.model.train()
-        total_loss = 0
-        
-        for batch in dataloader:
-            text_ids = batch['text_ids'].to(self.device)
-            images = batch['images'].to(self.device)
-            audio_features = batch['audio_features'].to(self.device)
-            labels = batch['labels'].to(self.device)
-            
-            # Random modality dropout
-            if torch.rand(1).item() < dropout_prob:
-                text_ids = None
-            if torch.rand(1).item() < dropout_prob:
-                images = None
-            if torch.rand(1).item() < dropout_prob:
-                audio_features = None
-            
-            # Ensure at least one modality is available
-            if text_ids is None and images is None and audio_features is None:
-                # Randomly restore one modality
-                choice = torch.randint(0, 3, (1,)).item()
-                if choice == 0:
-                    text_ids = batch['text_ids'].to(self.device)
-                elif choice == 1:
-                    images = batch['images'].to(self.device)
-                else:
-                    audio_features = batch['audio_features'].to(self.device)
-            
-            # Forward pass
-            outputs = self.model(text_ids, images, audio_features)
-            
-            # Compute loss
-            classification_loss = F.cross_entropy(outputs['output'], labels)
-            
-            # Modality balance regularization
-            modality_importance = outputs['modality_importance']
-            balance_loss = torch.var(modality_importance, dim=1).mean()
-            
-            total_loss_batch = classification_loss + 0.01 * balance_loss
-            
-            # Backward pass
-            self.optimizer.zero_grad()
-            total_loss_batch.backward()
-            self.optimizer.step()
-            
-            total_loss += total_loss_batch.item()
-        
-        return total_loss / len(dataloader)
-\end{lstlisting}
+The key to training effective modality switching is **modality dropout**—randomly removing one or more modalities during training to force the model to adapt. This prevents over-reliance on any single modality and encourages robust switching behavior.
+
+% Complete ModalityDropoutTrainer implementation available at:
+% code/part2/chapter05/modality_dropout_trainer.py
+
+\textbf{Training Algorithm:}
+\begin{enumerate}
+\item For each training batch with text, images, and audio inputs:
+\item \textbf{Apply Random Dropout}: With probability $p$ (typically 0.3), set each modality to None
+\item \textbf{Ensure Availability}: If all modalities are dropped, randomly restore one to prevent degenerate cases
+\item \textbf{Forward Pass}: Process the remaining available modalities through the switching model
+\item \textbf{Compute Composite Loss}: 
+   \begin{itemize}
+   \item Classification loss for the main task
+   \item Balance regularization to prevent attention collapse on single modalities
+   \end{itemize}
+\item \textbf{Update}: Backpropagate and update model parameters
+\end{enumerate}
+
+The balance regularization term encourages the model to distribute attention across available modalities rather than focusing exclusively on one, promoting more robust switching behavior. This approach creates a model that gracefully degrades when modalities are missing and can dynamically emphasize the most informative modality for each input.
 
 \subsection{Best Practices for Modality Switching}
 

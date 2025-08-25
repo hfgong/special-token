@@ -288,25 +288,31 @@ The \mask{} token presents unique training challenges that require specialized o
 
 Curriculum learning can improve MLM training by gradually increasing masking difficulty:
 
-\begin{lstlisting}[language=Python, caption=Curriculum masking]
-class CurriculumMasking:
-    def __init__(self, initial_prob=0.05, final_prob=0.15, warmup_steps=10000):
-        self.initial_prob = initial_prob
-        self.final_prob = final_prob
-        self.warmup_steps = warmup_steps
-        self.current_step = 0
-    
-    def get_mask_prob(self):
-        if self.current_step < self.warmup_steps:
-            # Linear increase from initial to final probability
-            progress = self.current_step / self.warmup_steps
-            return self.initial_prob + (self.final_prob - self.initial_prob) * progress
-        else:
-            return self.final_prob
-    
-    def step(self):
-        self.current_step += 1
-\end{lstlisting}
+\begin{algorithm}[h]
+\caption{Curriculum Masking for Progressive MLM Training}
+\begin{algorithmic}[1]
+\Require $p_{init} = 0.05$ (initial masking probability)
+\Require $p_{final} = 0.15$ (final masking probability)  
+\Require $T_{warmup} = 10000$ (warmup steps)
+\State $t \gets 0$ \Comment{Current training step}
+
+\Function{GetMaskingProbability}{}
+    \If{$t < T_{warmup}$}
+        \State $\text{progress} \gets t / T_{warmup}$ \Comment{Linear warmup schedule}
+        \State \Return $p_{init} + (p_{final} - p_{init}) \times \text{progress}$
+    \Else
+        \State \Return $p_{final}$ \Comment{Full masking probability after warmup}
+    \EndIf
+\EndFunction
+
+\Function{Step}{}
+    \State $t \gets t + 1$ \Comment{Increment training step counter}
+\EndFunction
+
+\end{algorithmic}
+\end{algorithm}
+
+This curriculum approach gradually increases masking difficulty, allowing the model to first learn from easier prediction tasks before progressing to the full 15\% masking ratio used in standard MLM training.
 
 \subsubsection{Dynamic Masking}
 

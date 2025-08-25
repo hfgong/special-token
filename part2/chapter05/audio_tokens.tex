@@ -70,64 +70,31 @@ Integrating audio tokens into multimodal transformers requires careful architect
 
 \subsubsection{Audio Encoder Design}
 
-\begin{lstlisting}[language=Python, caption=Audio encoder for generating audio tokens]
-class AudioEncoder(nn.Module):
-    def __init__(self, input_dim, embed_dim=768, num_layers=6, num_heads=8):
-        super().__init__()
-        
-        self.input_projection = nn.Linear(input_dim, embed_dim)
-        
-        # Positional encoding for temporal sequences
-        self.positional_encoding = PositionalEncoding(embed_dim, max_len=2000)
-        
-        # Transformer encoder layers
-        encoder_layer = nn.TransformerEncoderLayer(
-            d_model=embed_dim,
-            nhead=num_heads,
-            dim_feedforward=embed_dim * 4,
-            dropout=0.1,
-            batch_first=True
-        )
-        self.transformer_encoder = nn.TransformerEncoder(
-            encoder_layer, 
-            num_layers=num_layers
-        )
-        
-        # Layer normalization
-        self.layer_norm = nn.LayerNorm(embed_dim)
-        
-    def forward(self, audio_features, attention_mask=None):
-        # Project to embedding dimension
-        x = self.input_projection(audio_features)
-        
-        # Add positional encoding
-        x = self.positional_encoding(x)
-        
-        # Transformer encoding
-        x = self.transformer_encoder(x, src_key_padding_mask=attention_mask)
-        
-        # Layer normalization
-        x = self.layer_norm(x)
-        
-        return x
+The key challenge in designing an audio encoder is converting the continuous, high-frequency audio signals into discrete token representations that can participate in transformer attention mechanisms. The encoder must handle temporal sequences of audio features while maintaining the ability to interact with tokens from other modalities.
 
-class PositionalEncoding(nn.Module):
-    def __init__(self, embed_dim, max_len=5000):
-        super().__init__()
-        
-        pe = torch.zeros(max_len, embed_dim)
-        position = torch.arange(0, max_len, dtype=torch.float).unsqueeze(1)
-        
-        div_term = torch.exp(torch.arange(0, embed_dim, 2).float() * 
-                           (-math.log(10000.0) / embed_dim))
-        
-        pe[:, 0::2] = torch.sin(position * div_term)
-        pe[:, 1::2] = torch.cos(position * div_term)
-        
-        self.register_buffer('pe', pe.unsqueeze(0))
+The audio encoder follows a three-stage process:
+\begin{enumerate}
+\item \textbf{Feature Projection}: Convert raw audio features (like mel-spectrograms) to the transformer's embedding dimension
+\item \textbf{Temporal Encoding}: Add positional information to capture the sequential nature of audio
+\item \textbf{Context Building}: Use transformer layers to build contextual representations that can serve as audio tokens
+\end{enumerate}
+
+% Complete AudioEncoder implementation available at:
+% code/part2/chapter05/audio_encoder_architecture.py
+
+\begin{lstlisting}[language=Python, caption={Audio encoder architectural overview}]
+class AudioEncoder(nn.Module):
+    """Convert audio features to transformer-compatible token representations"""
+    def __init__(self, input_dim, embed_dim=768, num_layers=6):
+        self.input_projection = nn.Linear(input_dim, embed_dim)
+        self.positional_encoding = PositionalEncoding(embed_dim)
+        self.transformer_encoder = nn.TransformerEncoder(...)
     
-    def forward(self, x):
-        return x + self.pe[:, :x.size(1)]
+    def forward(self, audio_features):
+        # Project → Add positions → Transform → Return audio tokens
+        return self.transformer_encoder(
+            self.positional_encoding(
+                self.input_projection(audio_features)))
 \end{lstlisting}
 
 \subsubsection{Multi-Modal Integration with Audio}
