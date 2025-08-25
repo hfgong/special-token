@@ -30,6 +30,9 @@
 \usepackage{enumitem}
 \usepackage[backend=biber,style=authoryear,natbib=true]{biblatex}
 \addbibresource{references.bib}
+
+% Suppress note field in bibliography output while keeping it in .bib for reference
+\AtEveryBibitem{\clearfield{note}}
 \usepackage{comment}
 \usepackage{makeidx}
 \makeindex

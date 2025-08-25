@@ -1,8 +1,8 @@
 % Chapter 9 Introduction: Advanced Special Token Techniques
 
-This chapter explores cutting-edge special token techniques that push the boundaries of what transformers can achieve. Building upon the foundational design and optimization principles covered in previous chapters, we now examine specialized token types and advanced methodologies that enable sophisticated capabilities such as multi-step reasoning, dynamic computation, and adaptive model behavior.
+This chapter explores cutting-edge special token techniques that push the boundaries of what transformers can achieve \citep{wei2022chain, schick2023toolformer}. Building upon the foundational design and optimization principles covered in previous chapters, we now examine specialized token types and advanced methodologies that enable sophisticated capabilities such as multi-step reasoning, dynamic computation, and adaptive model behavior \citep{kojima2022large, yao2024tree}.
 
-The techniques presented here represent the forefront of special token research and development, showcasing how creative token design can unlock entirely new model capabilities. From memory tokens that provide persistent storage across sequences to chain-of-thought tokens that enable explicit reasoning processes, these advanced techniques demonstrate the vast potential of special tokens to extend transformer architectures beyond their original limitations.
+The techniques presented here represent the forefront of special token research and development, showcasing how creative token design can unlock entirely new model capabilities \citep{zhou2022least}. From memory tokens that provide persistent storage across sequences to chain-of-thought tokens that enable explicit reasoning processes, these advanced techniques demonstrate the vast potential of special tokens to extend transformer architectures beyond their original limitations \citep{qin2023tool, patil2023gorilla}.
 
 \begin{comment}
 Feedback: This is a strong opening. To make it more engaging, you could frame it as the "nurturing" phase. For example: "If designing a special token is like creating a new tool, training is the process of teaching the model how to use it. A powerful tool is useless in untrained hands. This chapter explores the specialized training techniques required to cultivate the full potential of special tokens, transforming them from simple placeholders into powerful functional components of the model's reasoning process."
@@ -27,19 +27,19 @@ Advanced special token techniques can be organized into several categories based
 
 \subsection{Memory and State Management}
 
-These techniques enable transformers to maintain information across sequence boundaries or processing steps, including memory tokens, state tokens, and context preservation mechanisms. They address the fundamental limitation of transformers' fixed context windows.
+These techniques enable transformers to maintain information across sequence boundaries or processing steps, including memory tokens, state tokens, and context preservation mechanisms \citep{beltagy2020longformer}. They address the fundamental limitation of transformers' fixed context windows.
 
 \subsection{Reasoning and Computation Enhancement}
 
-This category encompasses tokens that facilitate explicit reasoning processes, such as chain-of-thought tokens, reasoning step markers, and computational control tokens that guide multi-step problem solving.
+This category encompasses tokens that facilitate explicit reasoning processes, such as chain-of-thought tokens, reasoning step markers, and computational control tokens that guide multi-step problem solving \citep{wei2022chain, kojima2022large}.
 
 \subsection{Tool Integration and External Interaction}
 
-These techniques enable models to interact with external systems, APIs, and tools through specialized tokens that manage input/output formatting, tool selection, and result integration.
+These techniques enable models to interact with external systems, APIs, and tools through specialized tokens that manage input/output formatting, tool selection, and result integration \citep{schick2023toolformer, qin2023tool, patil2023gorilla}.
 
 \subsection{Dynamic Architecture and Efficiency}
 
-Advanced techniques for adaptive computation, including sparse attention patterns, dynamic token selection, token pruning strategies, and context-aware model behavior modification.
+Advanced techniques for adaptive computation, including sparse attention patterns, dynamic token selection, token pruning strategies, and context-aware model behavior modification \citep{child2019generating, fedus2022switch, kitaev2020reformer}.
 
 \section{Chapter Organization}
 

@@ -2,7 +2,7 @@
 
 \section{Pretraining Strategies}
 
-Pretraining forms the foundation for effective special token development, establishing the basic representations and functional capabilities that will be refined during subsequent training phases. Unlike standard language model pretraining that focuses primarily on next-token prediction, pretraining with special tokens requires carefully designed strategies that facilitate the emergence of specialized functions while maintaining broad language understanding capabilities. This section presents comprehensive approaches for pretraining transformer models with special tokens.
+Pretraining forms the foundation for effective special token development, establishing the basic representations and functional capabilities that will be refined during subsequent training phases. Unlike standard language model pretraining that focuses primarily on next-token prediction, pretraining with special tokens requires specialized strategies that explicitly train their intended functions. This section presents targeted approaches for pretraining special tokens effectively.
 \begin{comment}
 Feedback: Before diving into the specifics, it's helpful to frame the core challenge. For example: "The main challenge in pretraining special tokens is that they are often 'meta-level' instructions that are not naturally present in raw text. A standard pretraining objective like next-token prediction doesn't explicitly teach a [CLS] token how to summarize, or a [SEP] token how to separate concepts. Therefore, specialized pretraining strategies are needed to create learning signals that directly encourage these desired functions."
 \end{comment}
@@ -51,14 +51,14 @@ Different special tokens require different types of learning signals to develop 
 
 Multi-task pretraining can provide diverse learning signals that encourage the development of robust and generalizable special token representations.
 
-\subsection{Data Augmentation for Special Tokens}
+\subsection{Special Token-Specific Training Objectives}
 
-Effective data augmentation strategies can provide additional learning signals specifically designed to enhance special token function development.
+Beyond standard language modeling, special tokens benefit from targeted training objectives that directly encourage their intended functions.
 
-\subsubsection{Synthetic Task Generation}
+\subsubsection{Function-Specific Auxiliary Tasks}
 
-Synthetic tasks can be generated to provide targeted learning experiences for specific special token functions.
+Auxiliary tasks can be designed to specifically train special token functions. For example, sentence classification tasks for \cls{} tokens or boundary prediction tasks for \sep{} tokens.
 
-\subsubsection{Data Transformation Strategies}
+\subsubsection{Self-Supervised Special Token Tasks}
 
-Existing datasets can be transformed to create additional training signals that specifically benefit special token development.
+Self-supervised tasks can be created from existing text to provide learning signals for special tokens without requiring additional labeled data.

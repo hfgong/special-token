@@ -2,11 +2,11 @@
 
 \section{Implementation Strategies}
 
-The successful implementation of custom special tokens requires careful consideration of initialization strategies, training integration, architectural modifications, and deployment considerations. This section provides comprehensive guidance for translating custom token designs into practical implementations that achieve desired performance improvements while maintaining system stability and efficiency.
+The successful implementation of custom special tokens requires careful consideration of initialization strategies, training integration, architectural modifications, and deployment considerations \citep{liu2019roberta, rogers2020primer}. This section provides comprehensive guidance for translating custom token designs into practical implementations that achieve desired performance improvements while maintaining system stability and efficiency.
 
 \subsection{Embedding Initialization Strategies}
 
-The initialization of custom token embeddings significantly impacts training dynamics, convergence behavior, and final performance. Effective initialization strategies consider the token's intended function, the structure of the existing embedding space, and the characteristics of the target domain.
+The initialization of custom token embeddings significantly impacts training dynamics, convergence behavior, and final performance \citep{reif2019visualizing, ethayarajh2019contextual}. Effective initialization strategies consider the token's intended function, the structure of the existing embedding space, and the characteristics of the target domain.
 \begin{comment}
 Feedback: Before linking to the code, it's crucial to explain the core idea. For example: "A key decision is how to initialize the embedding for a new token. A poor initialization can destabilize training. The two main strategies are:
 1.  **Random Initialization**: Simple, but can slow down convergence as the model has to learn the token's meaning from scratch. It's important to use a small standard deviation to avoid large initial gradients.

@@ -1,2 +1,15 @@
-\section{Sparse Attention}
-% TODO: Content to be added
+\section{Sparse Attention for Special Tokens}
+
+Sparse attention mechanisms can significantly improve the efficiency of special token processing by reducing the quadratic complexity of standard attention while maintaining the functional effectiveness of special tokens \citep{child2019generating, beltagy2020longformer}.
+
+\subsection{Special Token-Aware Sparse Patterns}
+
+Rather than applying generic sparse attention patterns, special token-aware patterns can optimize both efficiency and functionality. For example, a \cls{} token might use a global attention pattern while other tokens use local patterns.
+
+\subsection{Dynamic Sparsity Based on Token Type}
+
+Different special tokens can use different levels of sparsity based on their functional requirements. Tokens that require global information aggregation may use denser attention patterns, while structural tokens like \sep{} may use very sparse patterns.
+
+\subsection{Implementation Considerations}
+
+Implementing sparse attention for special tokens requires careful consideration of the interaction between sparsity patterns and token functionality to ensure that efficiency gains don't compromise model performance.

@@ -2,21 +2,31 @@
 
 \section{Computational Efficiency}
 
-The computational efficiency of special tokens directly impacts the practical deployment and scalability of transformer models. While special tokens provide significant functional benefits, they also introduce computational overhead through increased vocabulary sizes, additional attention computations, and more complex processing pathways. This section presents comprehensive strategies for optimizing the computational efficiency of special tokens while maintaining or enhancing their functional effectiveness.
+The computational efficiency of special tokens directly impacts the practical deployment and scalability of transformer models. While special tokens provide significant functional benefits, they also introduce computational overhead through increased vocabulary sizes, additional attention computations, and more complex processing pathways. This section presents targeted strategies for optimizing special token computational efficiency while maintaining their functional effectiveness.
 
-\subsection{Computational Overhead Analysis}
+\subsection{Special Token-Specific Overhead Analysis}
 
-Understanding the computational costs associated with special tokens is essential for effective optimization. These costs manifest across multiple dimensions of the computational pipeline.
-\begin{comment}
-Feedback: Before linking to the code, it's crucial to explain the core strategies for efficiency. For example: "Optimizing the efficiency of special tokens typically involves reducing the effective sequence length that the transformer has to process. The main strategies to achieve this are:
-1.  **Token Pruning**: Identifying and removing special tokens (or content tokens) that are redundant or have low importance for the downstream task. This is often done in the later layers of the model.
-2.  **Token Merging**: Combining the embeddings of several special tokens (or a special token and its neighbors) into a single, more compact representation.
-3.  **Efficient Attention Patterns**: Designing custom attention masks that prevent special tokens from attending to all other tokens, replacing the expensive global attention with a cheaper sparse or local attention pattern."
-\end{comment}
+Special tokens introduce unique computational costs that differ from regular content tokens. Understanding these costs is essential for targeted optimization.
 
-\subsubsection{Attention Computation Overhead}
+\subsubsection{Vocabulary Size Impact}
 
-Special tokens participate in attention computations as both sources and targets, contributing to the quadratic scaling of attention complexity.
+Each additional special token increases the embedding table size and output projection computations. For models with large vocabularies, even a small number of special tokens can have measurable impact on memory usage and inference speed.
+
+\subsubsection{Attention Pattern Complexity}
+
+Special tokens often require different attention patterns than content tokens. For example, a \cls{} token may need to attend to all positions in the sequence, while a \sep{} token may only need local attention. These specialized patterns can be optimized for efficiency.
+
+\subsection{Efficiency Optimization Strategies}
+
+Optimizing special token efficiency requires targeted approaches that consider their unique roles and interaction patterns.
+
+\subsubsection{Selective Attention Computation}
+
+Rather than computing full attention for all special tokens, selective computation can focus resources where they have the greatest functional impact.
+
+\subsubsection{Special Token Pooling}
+
+Multiple special tokens with similar functions can be pooled or merged to reduce computational overhead while maintaining representational capacity.
 
 \begin{lstlisting}[language=Python, caption={Comprehensive computational efficiency optimization framework}]
 # Complete implementation available at:

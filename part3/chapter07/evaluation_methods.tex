@@ -2,7 +2,7 @@
 
 \section{Evaluation Methods}
 
-The evaluation of custom special tokens requires comprehensive methodologies that assess both their functional effectiveness and their integration quality within transformer architectures. Unlike standard model evaluation that focuses primarily on task performance, custom token evaluation must consider architectural impact, training dynamics, computational efficiency, and interpretability. This section presents systematic approaches for evaluating custom special tokens across multiple dimensions.
+The evaluation of custom special tokens requires comprehensive methodologies that assess both their functional effectiveness and their integration quality within transformer architectures \citep{wang2019glue, strubell2019energy}. Unlike standard model evaluation that focuses primarily on task performance, custom token evaluation must consider architectural impact, training dynamics, computational efficiency, and interpretability \citep{hewitt2019structural, jawahar2019does}. This section presents systematic approaches for evaluating custom special tokens across multiple dimensions.
 \begin{comment}
 Feedback: Before diving into the specifics, it's helpful to establish the core questions a good evaluation should answer. For example: "A robust evaluation framework for a custom token should answer three key questions:
 1.  **Does it work?** (Ablation Studies): Does the token actually improve performance on the target task compared to a model without it?
@@ -16,7 +16,7 @@ Functional effectiveness measures how well custom tokens achieve their intended 
 
 \subsubsection{Task-Specific Performance Metrics}
 
-Custom tokens should demonstrably improve performance on their target tasks compared to baseline models without the custom tokens.
+Custom tokens should demonstrably improve performance on their target tasks compared to baseline models without the custom tokens \citep{wang2019glue}.
 
 The most fundamental technique for evaluating a custom token is the \textbf{ablation study}. This involves training and evaluating at least two model variants:
 \begin{itemize}

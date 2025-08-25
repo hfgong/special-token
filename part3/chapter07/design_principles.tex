@@ -2,15 +2,15 @@
 
 \section{Design Principles}
 
-The development of effective custom special tokens requires adherence to fundamental design principles that ensure both theoretical soundness and practical utility. These principles guide the design process from initial conceptualization through implementation and deployment, providing a framework for creating tokens that enhance rather than complicate transformer architectures.
+The development of effective custom special tokens requires adherence to fundamental design principles that ensure both theoretical soundness and practical utility \citep{vaswani2017attention, tenney2019bert}. These principles guide the design process from initial conceptualization through implementation and deployment, providing a framework for creating tokens that enhance rather than complicate transformer architectures.
 
 \subsection{Mathematical Foundation and Embedding Space Considerations}
 
-Custom special tokens must be designed with careful consideration of the mathematical properties that govern transformer behavior and attention mechanisms.
+Custom special tokens must be designed with careful consideration of the mathematical properties that govern transformer behavior and attention mechanisms \citep{clark2019what, michel2019sixteen}.
 
 \subsubsection{Embedding Space Coherence}
 
-Custom tokens should occupy meaningful positions within the existing embedding space, maintaining geometric relationships that support effective attention computation.
+Custom tokens should occupy meaningful positions within the existing embedding space, maintaining geometric relationships that support effective attention computation \citep{reif2019visualizing, ethayarajh2019contextual}.
 \begin{comment}
 Feedback: This is a good principle, but it's abstract. A concrete example would help. For instance: "A practical application of this principle is in initialization. Instead of initializing a new custom token with pure random noise, it's often better to initialize it with the average of the embeddings of semantically related words. For example, a new `<LEGAL_ARGUMENT>` token could be initialized with the average of the embeddings for 'therefore', 'because', and 'pursuant to'. This gives the model a better starting point and can speed up training."
 \end{comment}
@@ -35,7 +35,7 @@ class ImplementationReference:
 
 \subsubsection{Attention Pattern Compatibility}
 
-Custom tokens must be designed to support rather than interfere with effective attention pattern formation.
+Custom tokens must be designed to support rather than interfere with effective attention pattern formation \citep{voita2019analyzing, tenney2019what}.
 
 \begin{lstlisting}[language=Python, caption={Attention pattern analysis for custom token design}]
 # Complete implementation available at:

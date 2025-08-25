@@ -1,2 +1,15 @@
-\section{Token Pruning}
-% TODO: Content to be added
+\section{Special Token Pruning and Selection}
+
+Token pruning for special tokens involves the selective removal or deactivation of special tokens that are not contributing effectively to model performance. Unlike content token pruning, special token pruning must consider the structural and functional roles these tokens play in the architecture.
+
+\subsection{Dynamic Special Token Selection}
+
+Rather than using all available special tokens for every input, dynamic selection can choose which special tokens are needed based on the specific task or input characteristics. This reduces computational overhead while maintaining model capabilities.
+
+\subsection{Layer-wise Special Token Pruning}
+
+Special tokens may be more important in certain layers than others. Layer-wise pruning can remove special tokens from computations where they provide minimal benefit, focusing their usage where they have the greatest impact.
+
+\subsection{Task-Adaptive Special Token Usage}
+
+Different tasks may benefit from different sets of special tokens. Task-adaptive usage allows models to optimize their special token configuration based on the specific requirements of each task.

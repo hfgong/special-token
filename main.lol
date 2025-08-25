@@ -86,7 +86,7 @@
 \contentsline {lstlisting}{\numberline {6.16}Accessibility-aware GUI tokens}{151}{lstlisting.6.16}%
 \contentsline {lstlisting}{\numberline {7.1}Embedding space analysis for custom token design}{158}{lstlisting.7.1}%
 \contentsline {lstlisting}{\numberline {7.2}Attention pattern analysis for custom token design}{159}{lstlisting.7.2}%
-\contentsline {lstlisting}{\numberline {7.3}Comprehensive evaluation framework for custom tokens}{161}{lstlisting.7.3}%
+\contentsline {lstlisting}{\numberline {7.3}Comprehensive evaluation framework for custom tokens}{162}{lstlisting.7.3}%
 \contentsline {lstlisting}{\numberline {7.4}Safe vocabulary extension for special tokens}{162}{lstlisting.7.4}%
 \contentsline {lstlisting}{\numberline {7.5}Special token-aware encoding pipeline}{163}{lstlisting.7.5}%
 \contentsline {lstlisting}{\numberline {7.6}Collision detection and resolution}{164}{lstlisting.7.6}%
@@ -102,33 +102,33 @@
 \contentsline {lstlisting}{\numberline {7.16}Multi-scale position encoding for hierarchical processing}{172}{lstlisting.7.16}%
 \contentsline {lstlisting}{\numberline {7.17}Advanced embedding initialization strategies}{173}{lstlisting.7.17}%
 \contentsline {lstlisting}{\numberline {7.18}Progressive custom token integration}{174}{lstlisting.7.18}%
-\contentsline {lstlisting}{\numberline {7.19}Custom attention mechanisms for special tokens}{174}{lstlisting.7.19}%
+\contentsline {lstlisting}{\numberline {7.19}Custom attention mechanisms for special tokens}{175}{lstlisting.7.19}%
 \contentsline {lstlisting}{\numberline {8.1}Geometric embedding optimization framework}{181}{lstlisting.8.1}%
 \contentsline {lstlisting}{\numberline {8.2}Multi-objective embedding optimization}{182}{lstlisting.8.2}%
 \contentsline {lstlisting}{\numberline {8.3}Attention pattern analysis and optimization framework}{183}{lstlisting.8.3}%
 \contentsline {lstlisting}{\numberline {8.4}Comprehensive computational efficiency optimization framework}{185}{lstlisting.8.4}%
 \contentsline {lstlisting}{\numberline {8.5}Progressive curriculum framework for special token pretraining}{186}{lstlisting.8.5}%
-\contentsline {lstlisting}{\numberline {8.6}Function-preserving fine-tuning framework}{187}{lstlisting.8.6}%
-\contentsline {lstlisting}{\numberline {8.7}Core structure of the evaluation framework}{189}{lstlisting.8.7}%
+\contentsline {lstlisting}{\numberline {8.6}Function-preserving fine-tuning framework}{188}{lstlisting.8.6}%
+\contentsline {lstlisting}{\numberline {8.7}Core structure of the evaluation framework}{190}{lstlisting.8.7}%
 \contentsline {lstlisting}{\numberline {8.8}Comprehensive attention mask generator for special tokens}{191}{lstlisting.8.8}%
-\contentsline {lstlisting}{\numberline {8.9}Advanced attention masking patterns}{191}{lstlisting.8.9}%
+\contentsline {lstlisting}{\numberline {8.9}Advanced attention masking patterns}{192}{lstlisting.8.9}%
 \contentsline {lstlisting}{\numberline {8.10}Dynamic attention masking based on content}{192}{lstlisting.8.10}%
-\contentsline {lstlisting}{\numberline {8.11}Attention mask optimization techniques}{192}{lstlisting.8.11}%
-\contentsline {lstlisting}{\numberline {9.1}RAG context token implementation}{197}{lstlisting.9.1}%
-\contentsline {lstlisting}{\numberline {9.2}Knowledge source attribution tokens}{197}{lstlisting.9.2}%
-\contentsline {lstlisting}{\numberline {9.3}Memory access token implementation}{198}{lstlisting.9.3}%
-\contentsline {lstlisting}{\numberline {9.4}Hierarchical memory token system}{199}{lstlisting.9.4}%
-\contentsline {lstlisting}{\numberline {9.5}Memory consolidation with special tokens}{200}{lstlisting.9.5}%
-\contentsline {lstlisting}{\numberline {9.6}Basic tool invocation token system}{203}{lstlisting.9.6}%
-\contentsline {lstlisting}{\numberline {9.7}Structured API call tokenization}{203}{lstlisting.9.7}%
-\contentsline {lstlisting}{\numberline {9.8}Function calling token system}{204}{lstlisting.9.8}%
-\contentsline {lstlisting}{\numberline {9.9}Database query tokens}{205}{lstlisting.9.9}%
-\contentsline {lstlisting}{\numberline {9.10}File system operation tokens}{206}{lstlisting.9.10}%
-\contentsline {lstlisting}{\numberline {9.11}Web scraping and browser automation tokens}{206}{lstlisting.9.11}%
-\contentsline {lstlisting}{\numberline {9.12}Multi-tool orchestration system}{207}{lstlisting.9.12}%
-\contentsline {lstlisting}{\numberline {9.13}Basic thinking token implementation}{210}{lstlisting.9.13}%
-\contentsline {lstlisting}{\numberline {9.14}Chain-of-thought step tokenization}{210}{lstlisting.9.14}%
-\contentsline {lstlisting}{\numberline {9.15}Multi-path reasoning with branch tokens}{211}{lstlisting.9.15}%
-\contentsline {lstlisting}{\numberline {9.16}Self-reflection and verification tokens}{212}{lstlisting.9.16}%
-\contentsline {lstlisting}{\numberline {9.17}Constitutional AI principle tokens}{212}{lstlisting.9.17}%
-\contentsline {lstlisting}{\numberline {9.18}Metacognitive reasoning tokens}{213}{lstlisting.9.18}%
+\contentsline {lstlisting}{\numberline {8.11}Attention mask optimization techniques}{193}{lstlisting.8.11}%
+\contentsline {lstlisting}{\numberline {9.1}RAG context token implementation}{198}{lstlisting.9.1}%
+\contentsline {lstlisting}{\numberline {9.2}Knowledge source attribution tokens}{198}{lstlisting.9.2}%
+\contentsline {lstlisting}{\numberline {9.3}Memory access token implementation}{199}{lstlisting.9.3}%
+\contentsline {lstlisting}{\numberline {9.4}Hierarchical memory token system}{200}{lstlisting.9.4}%
+\contentsline {lstlisting}{\numberline {9.5}Memory consolidation with special tokens}{201}{lstlisting.9.5}%
+\contentsline {lstlisting}{\numberline {9.6}Basic tool invocation token system}{204}{lstlisting.9.6}%
+\contentsline {lstlisting}{\numberline {9.7}Structured API call tokenization}{204}{lstlisting.9.7}%
+\contentsline {lstlisting}{\numberline {9.8}Function calling token system}{205}{lstlisting.9.8}%
+\contentsline {lstlisting}{\numberline {9.9}Database query tokens}{206}{lstlisting.9.9}%
+\contentsline {lstlisting}{\numberline {9.10}File system operation tokens}{207}{lstlisting.9.10}%
+\contentsline {lstlisting}{\numberline {9.11}Web scraping and browser automation tokens}{207}{lstlisting.9.11}%
+\contentsline {lstlisting}{\numberline {9.12}Multi-tool orchestration system}{208}{lstlisting.9.12}%
+\contentsline {lstlisting}{\numberline {9.13}Basic thinking token implementation}{211}{lstlisting.9.13}%
+\contentsline {lstlisting}{\numberline {9.14}Chain-of-thought step tokenization}{211}{lstlisting.9.14}%
+\contentsline {lstlisting}{\numberline {9.15}Multi-path reasoning with branch tokens}{212}{lstlisting.9.15}%
+\contentsline {lstlisting}{\numberline {9.16}Self-reflection and verification tokens}{213}{lstlisting.9.16}%
+\contentsline {lstlisting}{\numberline {9.17}Constitutional AI principle tokens}{213}{lstlisting.9.17}%
+\contentsline {lstlisting}{\numberline {9.18}Metacognitive reasoning tokens}{214}{lstlisting.9.18}%
